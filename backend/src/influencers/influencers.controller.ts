@@ -16,6 +16,7 @@ import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { InfluencerSchema } from "./schemas/influencer.schema";
 import { GetUser } from "src/auth/get-user.decorator";
 import { JwtPayload } from "src/auth/dto/credentials.dto";
+import { Roles } from "src/auth/roles.decorator";
 
 @ApiTags("Influencers")
 @Controller("influencers")
@@ -63,6 +64,7 @@ export class InfluencersController {
       },
     },
   })
+  @Roles("INFLUENCER", "ADMIN")
   @Post("/publish")
   @HttpCode(HttpStatus.OK)
   publish(@GetUser() user: JwtPayload) {
