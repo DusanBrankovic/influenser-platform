@@ -4,9 +4,10 @@ import { PostsModule } from "./posts/posts.module";
 import { CommentsModule } from "./comments/comments.module";
 import { ReviewsModule } from "./reviews/reviews.module";
 import { AuthModule } from "./auth/auth.module";
-import { DataAccessModule } from './data-access/data-access.module';
+import { DataAccessModule } from "./data-access/data-access.module";
 import { APP_GUARD } from "@nestjs/core";
 import { AuthGuard } from "./auth/auth.guard";
+import { RolesGuard } from "./auth/roles.guard";
 
 @Module({
   imports: [
@@ -20,9 +21,13 @@ import { AuthGuard } from "./auth/auth.guard";
   controllers: [],
   providers: [
     {
-    provide: APP_GUARD,
-    useClass: AuthGuard,
-  },
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
   ],
 })
 export class AppModule {}
