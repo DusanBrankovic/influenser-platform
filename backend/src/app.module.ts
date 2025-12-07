@@ -5,6 +5,8 @@ import { CommentsModule } from "./comments/comments.module";
 import { ReviewsModule } from "./reviews/reviews.module";
 import { AuthModule } from "./auth/auth.module";
 import { DataAccessModule } from './data-access/data-access.module';
+import { APP_GUARD } from "@nestjs/core";
+import { AuthGuard } from "./auth/auth.guard";
 
 @Module({
   imports: [
@@ -16,6 +18,11 @@ import { DataAccessModule } from './data-access/data-access.module';
     DataAccessModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+    provide: APP_GUARD,
+    useClass: AuthGuard,
+  },
+  ],
 })
 export class AppModule {}
