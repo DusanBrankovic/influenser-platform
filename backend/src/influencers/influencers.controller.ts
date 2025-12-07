@@ -68,7 +68,7 @@ export class InfluencersController {
   @Post("/publish")
   @HttpCode(HttpStatus.OK)
   publish(@GetUser() user: JwtPayload) {
-    return this.influencersService.publish(user.sub);
+    return this.influencersService.publish(user.id);
   }
 
   @Get()
