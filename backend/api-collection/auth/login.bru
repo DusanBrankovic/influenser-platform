@@ -1,0 +1,23 @@
+meta {
+  name: login
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "test@gmail.com",
+    "password": "pass123"
+  }
+}
+
+script:post-response {
+  var data = res('access_token')
+  bru.setVar("token",data)
+}
