@@ -10,7 +10,7 @@ export class InfluencersRepository {
     return this.db.user.create({ data });
   }
 
-  async update(id: string, data: UpdateInfluencer) {
+  async update(id: number, data: UpdateInfluencer) {
     return this.db.influencer.update({
       where: { userId: id },
       data,

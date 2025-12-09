@@ -8,6 +8,8 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  UsePipes,
+  ValidationPipe,
 } from "@nestjs/common";
 import { InfluencersService } from "./influencers.service";
 import { CreateInfluencerDto } from "./dto/create-influencer.dto";
@@ -17,6 +19,7 @@ import { InfluencerSchema } from "./schemas/influencer.schema";
 import { GetUser } from "src/auth/get-user.decorator";
 import { JwtPayload } from "src/auth/dto/credentials.dto";
 import { Roles } from "src/auth/roles.decorator";
+import { Public } from "src/auth/public.decorator";
 
 @ApiTags("Influencers")
 @Controller("influencers")
@@ -38,6 +41,8 @@ export class InfluencersController {
     },
   })
   @Post()
+  @Public()
+  @UsePipes(new ValidationPipe({ transform: true }))
   create(@Body() createInfluencerDto: CreateInfluencerDto) {
     return this.influencersService.create(createInfluencerDto);
   }

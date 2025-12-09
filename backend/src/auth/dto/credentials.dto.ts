@@ -10,7 +10,7 @@ export class Credentials {
 }
 
 export class JwtPayload {
-  id: string;
+  id: number;
   email: string;
   role: string;
 }

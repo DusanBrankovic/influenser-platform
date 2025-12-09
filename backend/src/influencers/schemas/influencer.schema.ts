@@ -15,5 +15,10 @@ export const InfluencerSchema: SchemaObject = {
       type: 'string',
       example: 'john.doe@example.com',
     },
+    role: {
+      type: 'enum',
+      enum: ['INFLUENCER'],
+      example: 'INFLUENCER',
+    }
   },
 };
