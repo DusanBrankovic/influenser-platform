@@ -9,7 +9,7 @@ export class InfluencersService {
   constructor(
     private influencersRepository: InfluencersRepository,
     private passwordService: PasswordService
-  ) {}
+  ) { }
   async create(createInfluencerDto: CreateInfluencerDto) {
     const hashedPassword = await this.passwordService.hash(
       createInfluencerDto.password
@@ -48,9 +48,49 @@ export class InfluencersService {
     return `This action returns a #${id} influencer`;
   }
 
-  update(id: number, updateInfluencerDto: UpdateInfluencerDto) {
-    return `This action updates a #${id} influencer`;
+
+  async update(id: number, data: UpdateInfluencerDto) {
+
+    if (!data) {
+      throw new InternalServerErrorException("Update data (DTO) is missing.");
+    }
+
+    const passwordField = 'password';
+    const passwordValue = data[passwordField];
+
+    if (typeof passwordValue === 'string' && passwordValue.length > 0) {
+
+      const hashedPassword = await this.passwordService.hash(passwordValue);
+      data[passwordField] = hashedPassword;
+
+    } else if (passwordValue !== undefined && passwordValue !== null) {
+      delete data[passwordField];
+    }
+
+    try {
+      const updatedProfile = await this.influencersRepository.update(
+        id, 
+        data 
+      );
+
+      if (!updatedProfile) {
+        return { message: `Influencer with ID ${id} not found.` };
+      }
+
+      return updatedProfile;
+
+    } catch (error) {
+      if (error.code === 'P2002') {
+        throw new InternalServerErrorException('Email already exists or a unique field is duplicated.');
+      }
+
+      console.error("Update error:", error);
+      throw new InternalServerErrorException("Failed to update influencer profile.");
+    }
   }
+  // update(id: number, updateInfluencerDto: UpdateInfluencerDto) {
+  //   return `This action updates a #${id} influencer`;
+  // }
 
   remove(id: number) {
     return `This action removes a #${id} influencer`;

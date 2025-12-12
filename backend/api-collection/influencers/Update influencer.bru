@@ -1,0 +1,28 @@
+meta {
+  name: Update influencer
+  type: http
+  seq: 4
+}
+
+patch {
+  url: http://localhost:3000/influencers/1
+  body: json 
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}
+
+body:json {
+  {
+    "name": "Zoran Zoric",
+    "headline": "Nezaposlen",
+    // "email": "novi.email@primer.com" 
+  }
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoidGVzdDFAZ21haWwuY29tIiwicm9sZSI6IklORkxVRU5DRVIiLCJpYXQiOjE3NjU1MzY0NTcsImV4cCI6MTc2NTU0MDA1N30.AEI8uqcDJa6DPtux-QWR0pGryxKaSCyGm80Xue_9V70
+}
