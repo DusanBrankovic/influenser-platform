@@ -67,10 +67,37 @@ const formSchema = z.object({
 
 const combinedSchema = formSchema.merge(passwordConfirmationSchema);
 
-const SignIn: React.FC<{ signinProps: SignInProps }> = ({
-  signinProps: { onSwitchToSignUp, onLogin, onGuest },
+const SignIn: React.FC<SignInProps> = ({
+  onSwitchToSignUp,
+  onLogin,
+  onGuest,
 }) => {
   const { login } = useAuthStore();
+
+  const handleSubmit = async ({
+    value,
+  }: {
+    value: {
+      username: string;
+      email: string;
+      password: string;
+      rememberMe: boolean;
+    };
+  }) => {
+    const { username, email, password } = value;
+    console.log("payload", value);
+    const userFromFormValue: User = {
+      username: username,
+      email: email,
+      headline: "Signed in",
+      role: "user",
+      password: password,
+    };
+    onLogin(userFromFormValue, "token");
+
+    // mock found user
+    login(userFromFormValue, "token");
+  };
 
   const form = useForm({
     defaultValues: {
@@ -83,23 +110,11 @@ const SignIn: React.FC<{ signinProps: SignInProps }> = ({
       onSubmit: combinedSchema,
       onBlur: combinedSchema,
     },
-    onSubmit: async ({ value }) => {
-      const userFromFormValue: User = {
-        username: value.username,
-        email: value.email,
-        headline: "Signed in",
-        role: "user",
-        password: value.password,
-      };
-      await onLogin(userFromFormValue, "token");
-
-      // mock found user
-      login(userFromFormValue, "token");
-    },
+    onSubmit: handleSubmit,
   });
 
   const formFieldsArr: Array<{
-    name: "password" | "username" | "fullname" | "email";
+    name: "password" | "username" | "email";
     icon: string;
     placeholder: string;
     type: string;
