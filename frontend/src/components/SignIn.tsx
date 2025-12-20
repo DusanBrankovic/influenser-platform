@@ -135,8 +135,8 @@ const SignIn: React.FC<SignInProps> = ({
   ];
 
   return (
-    <div className="h-screen w-full flex flex-col justify-start items-center">
-      <Card className="w-full ">
+    <div className="w-full flex flex-col justify-start items-center">
+      <Card className="rounded-none w-full ">
         <CardHeader></CardHeader>
         <CardContent>
           <form

@@ -142,7 +142,7 @@ const Register = ({
   ];
 
   return (
-    <div className="h-screen w-full flex flex-col justify-start items-center">
+    <div className="w-full flex flex-col justify-start items-center">
       <Card className="w-full">
         <CardHeader></CardHeader>
         <CardContent className="w-100%">

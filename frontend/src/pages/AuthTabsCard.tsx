@@ -64,9 +64,9 @@ const AuthTabsCard: React.FC = () => {
   };
 
   return (
-    <div className="h-screen w-full flex flex-row items-center justify-between">
+    <div className="h-screen w-full flex md:flex-row flex-col items-center justify-between">
       <div className="flex flex-1 justify-center items-center flex-col relative text-primary px-3 gap-10">
-        <Card className="h-[600px] w-1/2 items-center justify-center flex flex-col border border-primary">
+        <Card className="md: min-h-[600px] w-1/2 items-center justify-center flex flex-col border border-primary">
           <div className="max-h-32 max-w-32">
             <img src={HourglassIcon} className="w-full" alt="Slika pescanika" />
           </div>
@@ -79,13 +79,13 @@ const AuthTabsCard: React.FC = () => {
         </Card>
       </div>
 
-      <div className="max-w-1/2 h-screen relative flex flex-col flex-1 bg-background pt-6">
+      <div className="h-screen max-w-1/2 relative flex flex-col flex-1 bg-background pt-6">
         <Tabs
           value={tab}
           onValueChange={(value) => setTab(value as "signin" | "register")}
-          className="w-full"
+          className=" h-screen w-full"
         >
-          <TabsList className="relative flex w-full items-end justify-stretch rounded-t-xl border-border bg-transparent px-0">
+          <TabsList className="relative w-full items-end justify-stretch rounded-t-xl border-border bg-transparent px-0">
             <TabsTrigger
               value="signin"
               className="
@@ -122,10 +122,11 @@ const AuthTabsCard: React.FC = () => {
             </TabsTrigger>
           </TabsList>
 
-          <div className="rounded-b-xl bg-muted px-6 py-12">
+          <div className="flex flex-1 min-h-min rounded bg-muted px-6 py-12">
             <TabsContent
               value="signin"
               className="
+              
                     p-0
                     data-[state=active]:opacity-100
                     data-[state=active]:translate-y-0
