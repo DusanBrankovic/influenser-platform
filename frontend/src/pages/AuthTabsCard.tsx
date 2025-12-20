@@ -1,16 +1,72 @@
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import HourglassIcon from "../assets/icons/hourglass-triangle.svg";
-import SignIn from "@/pages/SignIn";
-import Register from "@/pages/Register";
+import SignIn from "@/components/SignIn";
+import Register from "@/components/Register";
 import { useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
+import { useAuthStore } from "@/auth/authStore";
+import type { User } from "@/auth/auth.types";
 
 const AuthTabsCard: React.FC = () => {
   const [tab, setTab] = useState<"signin" | "register">("signin");
+  const navigate = useNavigate();
+
+  const login = useAuthStore((s) => s.login);
+  const loginAsGuest = useAuthStore((s) => s.loginAsGuest);
+  const register = useAuthStore((s) => s.login);
+
+  const handleLogin = async ({
+    fullname,
+    username,
+    email,
+  }: {
+    fullname?: string;
+    username?: string;
+    email?: string;
+  }) => {
+    const user: User = {
+      fullname: fullname || "User",
+      email: email || "user@local",
+      username: username || "username",
+      role: "user",
+    };
+
+    login(user, "token");
+    navigate({ to: "/" });
+  };
+
+  const handleGuest = async () => {
+    loginAsGuest();
+    navigate({ to: "/" });
+  };
+
+  const handleRegister = async ({
+    fullname,
+    username,
+    email,
+  }: {
+    fullname?: string;
+    username?: string;
+    email?: string;
+    headline?: string;
+  }) => {
+    const user: User = {
+      fullname: fullname || "User",
+      email: email || "user@local",
+      username: username || "username",
+      headline: "Registered",
+      role: "user",
+    };
+
+    register(user, "token");
+    navigate({ to: "/profile" });
+  };
+
   return (
-    <div className="h-screen w-full flex flex-row items-center justify-between">
+    <div className="h-screen w-full flex md:flex-row flex-col items-center justify-between">
       <div className="flex flex-1 justify-center items-center flex-col relative text-primary px-3 gap-10">
-        <Card className="h-[600px] w-1/2 items-center justify-center flex flex-col border border-primary">
+        <Card className="md: min-h-[600px] w-1/2 items-center justify-center flex flex-col border border-primary">
           <div className="max-h-32 max-w-32">
             <img src={HourglassIcon} className="w-full" alt="Slika pescanika" />
           </div>
@@ -23,13 +79,13 @@ const AuthTabsCard: React.FC = () => {
         </Card>
       </div>
 
-      <div className="max-w-1/2 h-screen relative flex flex-col flex-1 bg-background pt-6">
+      <div className="h-screen max-w-1/2 relative flex flex-col flex-1 bg-background pt-6">
         <Tabs
           value={tab}
           onValueChange={(value) => setTab(value as "signin" | "register")}
-          className="w-full"
+          className=" h-screen w-full"
         >
-          <TabsList className="relative flex w-full items-end justify-stretch rounded-t-xl border-border bg-transparent px-0">
+          <TabsList className="relative w-full items-end justify-stretch rounded-t-xl border-border bg-transparent px-0">
             <TabsTrigger
               value="signin"
               className="
@@ -66,10 +122,11 @@ const AuthTabsCard: React.FC = () => {
             </TabsTrigger>
           </TabsList>
 
-          <div className="rounded-b-xl bg-muted px-6 py-12">
+          <div className="flex flex-1 min-h-min rounded bg-muted px-6 py-12">
             <TabsContent
               value="signin"
               className="
+              
                     p-0
                     data-[state=active]:opacity-100
                     data-[state=active]:translate-y-0
@@ -79,7 +136,11 @@ const AuthTabsCard: React.FC = () => {
                     transition-all duration-200
                   "
             >
-              <SignIn onSwitchToSignUp={() => setTab("register")} />
+              <SignIn
+                onLogin={handleLogin}
+                onGuest={handleGuest}
+                onSwitchToSignUp={() => setTab("register")}
+              />
             </TabsContent>
 
             <TabsContent
@@ -94,7 +155,10 @@ const AuthTabsCard: React.FC = () => {
                     transition-all duration-200
                   "
             >
-              <Register onSwitchToSignIn={() => setTab("signin")} />
+              <Register
+                onRegister={handleRegister}
+                onSwitchToSignIn={() => setTab("signin")}
+              />
             </TabsContent>
           </div>
         </Tabs>
