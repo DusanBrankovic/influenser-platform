@@ -79,7 +79,7 @@ export class InfluencersController {
     return this.influencersService.setIsPrivate(user.id, isPrivate);
   }
 
-  ///Odavde sam pisao
+  
   @ApiOperation({
     summary: "Update my influencer profile",
     description: "This endpoint allows the currently logged-in influencer to update their own profile data.",
@@ -96,7 +96,8 @@ export class InfluencersController {
   update(@GetUser() user: JwtPayload, @Body() updateInfluencerDto: UpdateInfluencerDto) {
    return this.influencersService.update(user.id, updateInfluencerDto);
   }
-  /// Do ovde sam pisao
+  
+  
   @Get()
   findAll() {
     return this.influencersService.findAll();
