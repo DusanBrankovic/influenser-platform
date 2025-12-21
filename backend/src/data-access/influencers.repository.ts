@@ -34,6 +34,5 @@ export class InfluencersRepository {
       data: data,
     });
 
-    // return updatedInfluencer;
   }
 }
