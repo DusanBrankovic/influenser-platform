@@ -22,11 +22,12 @@ import { GetUser } from "src/auth/get-user.decorator";
 import { JwtPayload } from "src/auth/dto/credentials.dto";
 import { Roles } from "src/auth/roles.decorator";
 import { Public } from "src/auth/public.decorator";
+import { Role } from "generated/prisma/enums";
 
 @ApiTags("Influencers")
 @Controller("influencers")
 export class InfluencersController {
-  constructor(private readonly influencersService: InfluencersService) {}
+  constructor(private readonly influencersService: InfluencersService) { }
 
   @ApiOperation({
     summary: "Register a new influencer",
@@ -78,6 +79,25 @@ export class InfluencersController {
     return this.influencersService.setIsPrivate(user.id, isPrivate);
   }
 
+  
+  @ApiOperation({
+    summary: "Update my influencer profile",
+    description: "This endpoint allows the currently logged-in influencer to update their own profile data.",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Successfully updated profile",
+    type: "InfluencerSchema",
+  })
+  @Roles("INFLUENCER", "ADMIN")
+  @Patch("me")
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true, skipMissingProperties: true }))
+  update(@GetUser() user: JwtPayload, @Body() updateInfluencerDto: UpdateInfluencerDto) {
+   return this.influencersService.update(user.id, updateInfluencerDto);
+  }
+  
+  
   @Get()
   findAll() {
     return this.influencersService.findAll();
@@ -86,14 +106,6 @@ export class InfluencersController {
   @Get(":id")
   findOne(@Param("id") id: string) {
     return this.influencersService.findOne(+id);
-  }
-
-  @Patch(":id")
-  update(
-    @Param("id") id: string,
-    @Body() updateInfluencerDto: UpdateInfluencerDto
-  ) {
-    return this.influencersService.update(+id, updateInfluencerDto);
   }
 
   @Delete(":id")
