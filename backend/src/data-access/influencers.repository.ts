@@ -4,6 +4,7 @@ import {
   CreateInfluencer,
   UpdateInfluencer,
 } from "src/influencers/types/influencer.type";
+import { SearchQueryDto } from "src/influencers/dto/search-query.dto";
 
 @Injectable()
 export class InfluencersRepository {
@@ -33,6 +34,42 @@ export class InfluencersRepository {
       },
       data: data,
     });
+  }
 
+  async findAll(searchQuery: SearchQueryDto) {
+    const { name, industry, value } = searchQuery;
+
+    const filters: any = {};
+
+    if (name) {
+      filters.name = {
+        contains: name,
+        mode: "insensitive",
+      };
+    }
+
+    if (industry) {
+      filters.industries = {
+        has: industry,
+      };
+    }
+
+    if (value) {
+      filters.values = {
+        has: value,
+      };
+    }
+
+    return this.db.influencer.findMany({
+      select: {
+        userId: true,
+        name: true,
+        headline: true,
+        experience: true,
+        industries: true,
+        values: true,
+      },
+      where: { ...filters, isPrivate: false },
+    });
   }
 }

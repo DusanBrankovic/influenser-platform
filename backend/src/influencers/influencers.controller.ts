@@ -17,17 +17,17 @@ import { InfluencersService } from "./influencers.service";
 import { CreateInfluencerDto } from "./dto/create-influencer.dto";
 import { UpdateInfluencerDto } from "./dto/update-influencer.dto";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { InfluencerSchema } from "./schemas/influencer.schema";
+import { CreateInfluencerSchema, GetInfluencerSchema } from "./schemas/influencer.schema";
 import { GetUser } from "src/auth/get-user.decorator";
 import { JwtPayload } from "src/auth/dto/credentials.dto";
 import { Roles } from "src/auth/roles.decorator";
 import { Public } from "src/auth/public.decorator";
-import { Role } from "generated/prisma/enums";
+import { SearchQueryDto } from "src/influencers/dto/search-query.dto";
 
 @ApiTags("Influencers")
 @Controller("influencers")
 export class InfluencersController {
-  constructor(private readonly influencersService: InfluencersService) { }
+  constructor(private readonly influencersService: InfluencersService) {}
 
   @ApiOperation({
     summary: "Register a new influencer",
@@ -39,7 +39,7 @@ export class InfluencersController {
     description: "Successfully created",
     content: {
       "application/json": {
-        schema: InfluencerSchema,
+        schema: CreateInfluencerSchema,
       },
     },
   })
@@ -75,14 +75,17 @@ export class InfluencersController {
   @Roles("INFLUENCER", "ADMIN")
   @Post("/privacy")
   @HttpCode(HttpStatus.OK)
-  publish(@GetUser() user: JwtPayload, @Query("isPrivate", ParseBoolPipe) isPrivate: boolean) {
+  publish(
+    @GetUser() user: JwtPayload,
+    @Query("isPrivate", ParseBoolPipe) isPrivate: boolean
+  ) {
     return this.influencersService.setIsPrivate(user.id, isPrivate);
   }
 
-  
   @ApiOperation({
     summary: "Update my influencer profile",
-    description: "This endpoint allows the currently logged-in influencer to update their own profile data.",
+    description:
+      "This endpoint allows the currently logged-in influencer to update their own profile data.",
   })
   @ApiResponse({
     status: 200,
@@ -92,15 +95,38 @@ export class InfluencersController {
   @Roles("INFLUENCER", "ADMIN")
   @Patch("me")
   @HttpCode(HttpStatus.OK)
-  @UsePipes(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true, skipMissingProperties: true }))
-  update(@GetUser() user: JwtPayload, @Body() updateInfluencerDto: UpdateInfluencerDto) {
-   return this.influencersService.update(user.id, updateInfluencerDto);
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      skipMissingProperties: true,
+    })
+  )
+  update(
+    @GetUser() user: JwtPayload,
+    @Body() updateInfluencerDto: UpdateInfluencerDto
+  ) {
+    return this.influencersService.update(user.id, updateInfluencerDto);
   }
-  
-  
+
+  @ApiOperation({
+    summary: "Search all influencers",
+    description: "This endpoint retrieves a list of all influencers.",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Successfully retrieved",
+    content: {
+      "application/json": {
+        schema: GetInfluencerSchema
+      },
+    },
+  })
+  @Public()
   @Get()
-  findAll() {
-    return this.influencersService.findAll();
+  findAll(@Query() searchQuery: SearchQueryDto) {
+    return this.influencersService.findAll(searchQuery);
   }
 
   @Get(":id")

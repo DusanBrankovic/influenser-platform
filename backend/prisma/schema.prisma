@@ -19,6 +19,28 @@ enum Role {
   ADMIN
 }
 
+enum Industry {
+  Fitness
+  Fashion
+  Beauty
+  Lifestyle
+  Travel
+  FoodAndCooking
+  ParentingAndFamily
+  Gaming
+  Tech
+  BusinessAndFinance
+}
+
+enum Value {
+  Authenticity
+  Transparency
+  Creativity
+  Inclusivity
+  BodyPositivity
+  MentalHealthAwareness
+}
+
 model User {
   id          Int   @id @default(autoincrement())
   email       String   @unique
@@ -35,4 +57,6 @@ model Influencer {
   headline       String?
   experience     Int?
   isPrivate     Boolean  @default(true)
+  industries     Industry[]
+  values         Value[]
 }

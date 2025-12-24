@@ -3,6 +3,7 @@ import { CreateInfluencerDto } from "./dto/create-influencer.dto";
 import { UpdateInfluencerDto } from "./dto/update-influencer.dto";
 import { InfluencersRepository } from "src/data-access/influencers.repository";
 import { PasswordService } from "src/auth/password.service";
+import { SearchQueryDto } from "./dto/search-query.dto";
 
 @Injectable()
 export class InfluencersService {
@@ -40,8 +41,8 @@ export class InfluencersService {
     }
   }
 
-  findAll() {
-    return `This action returns all influencers`;
+  findAll(searchQuery: SearchQueryDto) {
+    return this.influencersRepository.findAll(searchQuery);
   }
 
   findOne(id: number) {

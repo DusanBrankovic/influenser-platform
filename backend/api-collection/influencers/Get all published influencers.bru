@@ -1,0 +1,20 @@
+meta {
+  name: Get all published influencers
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/influencers?name=Pera
+  body: none
+  auth: inherit
+}
+
+params:query {
+  name: Pera
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
