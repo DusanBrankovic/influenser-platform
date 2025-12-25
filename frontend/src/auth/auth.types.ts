@@ -5,7 +5,7 @@ export type User = {
   headline?: string;
   password?: string;
   rememberMe?: boolean;
-  role: "user" | "guest";
+  role: null | "user" | "guest";
 };
 
 export type AuthState = {
@@ -13,6 +13,8 @@ export type AuthState = {
   isLoading: boolean;
   isAuthenticated: boolean;
   token: string | null;
+  hasHydrated: boolean;
+  setHasHydrated: (v: boolean) => void;
 
   setUser: (user: User | null) => void;
   login: (user: User, token: string) => void;

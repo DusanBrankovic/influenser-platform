@@ -33,7 +33,11 @@ const AuthTabsCard: React.FC = () => {
     };
 
     login(user, "token");
-    navigate({ to: "/" });
+    localStorage.setItem(
+      "auth",
+      JSON.stringify({ isAuthenticated: true, user })
+    );
+    navigate({ to: "/influensers" });
   };
 
   const handleGuest = async () => {
@@ -60,6 +64,11 @@ const AuthTabsCard: React.FC = () => {
     };
 
     register(user, "token");
+
+    localStorage.setItem(
+      "auth",
+      JSON.stringify({ isAuthenticated: true, user })
+    );
     navigate({ to: "/profile" });
   };
 

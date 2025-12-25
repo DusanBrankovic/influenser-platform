@@ -1,9 +1,21 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-import { getAuthSnapshot } from "@/auth/authStore";
+import { getAuthSnapshot, useAuthStore } from "@/auth/authStore";
+import { Navigation } from "lucide-react";
+import { hydrateAuthFromStorage } from "@/services/rehydrate";
 
 export const Route = createFileRoute("/_private")({
   beforeLoad: () => {
     const { isAuthenticated } = getAuthSnapshot();
+    console.log("PRIVATE beforeLoad snapshot:", isAuthenticated);
+
+    const { hasHydrated } = useAuthStore.getState();
+    if (!hasHydrated) {
+      console.log("Auth store has not hydrated yet.");
+    } else {
+      hydrateAuthFromStorage();
+      console.log("Hydrated auth store from storage.");
+    }
+
     if (
       !isAuthenticated ||
       (isAuthenticated && getAuthSnapshot().user?.role === "guest")
@@ -17,9 +29,9 @@ export const Route = createFileRoute("/_private")({
 function PrivateLayout() {
   return (
     <div>
-      <nav>Private bottom nav / private header</nav>
       <main>
         <Outlet />
+        <Navigation />
       </main>
     </div>
   );

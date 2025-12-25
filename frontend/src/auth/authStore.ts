@@ -6,9 +6,13 @@ const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
       user: null,
+      role: null,
       token: null,
       isLoading: true,
       isAuthenticated: false,
+
+      hasHydrated: false,
+      setHasHydrated: (v) => set({ hasHydrated: v }),
 
       setToken: (token: string | null) =>
         set({
@@ -71,7 +75,9 @@ const useAuthStore = create<AuthState>()(
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: () => (state) => {
         state?.setIsLoading(false);
+        state?.setHasHydrated(true);
       },
+
       partialize: (state) => ({ user: state.user, token: state.token }),
     }
   )
