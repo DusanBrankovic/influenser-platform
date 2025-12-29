@@ -10,7 +10,7 @@ function Tabs({
   return (
     <TabsPrimitive.Root
       data-slot="tabs"
-      className={cn("flex flex-col rounded-t-lg rounded-b-none", className)}
+      className={cn(" flex flex-col rounded-t-lg rounded-b-none", className)}
       {...props}
     />
   );

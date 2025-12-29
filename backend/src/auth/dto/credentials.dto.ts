@@ -15,6 +15,3 @@ export class JwtPayload {
   role: string;
 }
 
-export const jwtConstants = {
-  secret: process.env.JWT_SECRET || "",
-};

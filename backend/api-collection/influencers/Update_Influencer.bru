@@ -1,0 +1,20 @@
+meta {
+  name: Update_Influencer
+  type: http
+  seq: 4
+}
+
+patch {
+  url: http://localhost:3000/influencers/me
+  body: json
+  auth: inherit
+}
+
+body:json {
+  "name": "Test Testic",
+  "headline": "Nezaposlen",
+}
+
+settings {
+  encodeUrl: true
+}

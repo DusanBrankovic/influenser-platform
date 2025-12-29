@@ -1,8 +1,6 @@
 "use client";
 import { useForm } from "@tanstack/react-form";
-import { toast, Toaster } from "sonner";
 import * as z from "zod";
-
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -19,6 +17,9 @@ import apple from "../assets/icons/apple.svg";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@radix-ui/react-separator";
+import type { User } from "@/auth/auth.types";
+import { useAuthStore } from "@/auth/authStore";
+import type { SignInProps } from "./signin.types";
 
 const passwordSchema = z
   .string()
@@ -44,7 +45,7 @@ const passwordConfirmationSchema = z
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match.",
-    path: ["confirmPassword"], // Specifies where the error message should be attached
+    path: ["confirmPassword"],
   });
 
 const formSchema = z.object({
@@ -61,72 +62,90 @@ const formSchema = z.object({
     .email()
     .min(5, "Email title must be at least 5 characters.")
     .max(32, "Email title must be at most 32 characters."),
+  rememberMe: z.boolean(),
 });
 
 const combinedSchema = formSchema.merge(passwordConfirmationSchema);
 
-const SignIn = ({ onSwitchToSignUp }: { onSwitchToSignUp: () => void }) => {
+const SignIn: React.FC<SignInProps> = ({
+  onSwitchToSignUp,
+  onLogin,
+  onGuest,
+}) => {
+  const { login } = useAuthStore();
+
+  const handleSubmit = async ({
+    value,
+  }: {
+    value: {
+      username: string;
+      email: string;
+      password: string;
+      rememberMe: boolean;
+    };
+  }) => {
+    const { username, email, password } = value;
+    console.log("payload", value);
+    const userFromFormValue: User = {
+      username: username,
+      email: email,
+      headline: "Signed in",
+      role: "user",
+      password: password,
+    };
+    onLogin(userFromFormValue, "token");
+
+    // mock found user
+    login(userFromFormValue, "token");
+  };
+
   const form = useForm({
     defaultValues: {
-      fullname: "",
       email: "",
       username: "",
       password: "",
+      rememberMe: false,
     },
     validators: {
       onSubmit: combinedSchema,
+      onBlur: combinedSchema,
     },
-    onSubmit: async ({ value }) => {
-      toast("You submitted the following values:", {
-        description: (
-          <pre className="bg-code text-code-foreground mt-2 w-[320px] overflow-x-auto rounded-md p-4">
-            <code>{JSON.stringify(value, null, 2)}</code>
-          </pre>
-        ),
-        position: "bottom-right",
-        classNames: {
-          content: "flex flex-col gap-2",
-        },
-        style: {
-          "--border-radius": "calc(var(--radius)  + 4px)",
-        } as React.CSSProperties,
-      });
-    },
+    onSubmit: handleSubmit,
   });
 
   const formFieldsArr: Array<{
-    name: "password" | "username" | "fullname" | "email";
+    name: "password" | "username" | "email";
     icon: string;
     placeholder: string;
+    type: string;
   }> = [
     {
       name: "username",
       icon: "alternate_email",
       placeholder: "Broj telefona, e-mail ili korisnicko ime",
+      type: "text",
     },
 
     {
       name: "password",
       icon: "lock",
       placeholder: "Lozinka",
+      type: "password",
     },
   ];
 
   return (
-    <div className="h-screen w-full flex flex-col justify-start items-center">
-      <Card className="w-full ">
+    <div className="w-full flex flex-col justify-start items-center">
+      <Card className="rounded-none w-full ">
         <CardHeader></CardHeader>
         <CardContent>
           <form
-            id="sign-up-form"
+            id="sign-in-form"
             className="flex flex-col gap-4"
-            onSubmit={(e) => {
-              e.preventDefault();
-              form.handleSubmit();
-            }}
+            onSubmit={form.handleSubmit}
           >
             <FieldGroup>
-              {formFieldsArr.map(({ name, icon, placeholder }) => (
+              {formFieldsArr.map(({ name, icon, placeholder, type }) => (
                 <form.Field
                   name={name}
                   key={name}
@@ -148,6 +167,7 @@ const SignIn = ({ onSwitchToSignUp }: { onSwitchToSignUp: () => void }) => {
                             aria-invalid={isInvalid}
                             placeholder={placeholder}
                             autoComplete="off"
+                            type={type}
                           />
                         </InputGroup>
 
@@ -161,10 +181,18 @@ const SignIn = ({ onSwitchToSignUp }: { onSwitchToSignUp: () => void }) => {
               ))}
             </FieldGroup>
             <FieldGroup className="flex flex-col md:flex-row justify-between items-baseline py-5">
-              <div className="flex items-center gap-3">
-                <Checkbox id="remember" />
-                <Label htmlFor="remember">Zapamti me</Label>
-              </div>
+              <form.Field name="rememberMe">
+                {(field) => (
+                  <div className="flex items-center gap-3">
+                    <Checkbox
+                      id="rememberMe"
+                      checked={field.state.value ?? false}
+                      onCheckedChange={(val) => field.handleChange(!!val)}
+                    />
+                    <Label htmlFor="rememberMe">Zapamti me</Label>
+                  </div>
+                )}
+              </form.Field>
               <p className="mt-4 text-sm">
                 <Button
                   type="button"
@@ -175,20 +203,15 @@ const SignIn = ({ onSwitchToSignUp }: { onSwitchToSignUp: () => void }) => {
                 </Button>
               </p>
             </FieldGroup>
+            <Field orientation="horizontal">
+              <Button type="submit" className="outline-none w-full" size="lg">
+                Prijavite se
+              </Button>
+            </Field>
           </form>
         </CardContent>
         <CardFooter>
           <div className="flex flex-col w-full gap-6 justify-center items-center">
-            <Field orientation="horizontal">
-              <Button
-                type="submit"
-                form="sign-up-form"
-                className="outline-none w-full"
-                size="lg"
-              >
-                Prijavite se
-              </Button>
-            </Field>
             <Field className="flex flex-row flex-1 gap-8 justify-center items-center">
               <Separator
                 orientation="horizontal"
@@ -234,14 +257,13 @@ const SignIn = ({ onSwitchToSignUp }: { onSwitchToSignUp: () => void }) => {
               <Button
                 type="button"
                 variant="link"
+                onClick={onGuest}
                 className="h-auto pl-2 align-baseline text-primary font-extrabold"
               >
                 Nastavi kao gost
               </Button>
             </p>
           </div>
-
-          <Toaster />
         </CardFooter>
       </Card>
     </div>
