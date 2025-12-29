@@ -19,7 +19,7 @@ export function BottomNav({
   return (
     <nav
       className={cn(
-        "sticky bottom-0 left-0 right-0 z-50 w-full",
+        "fixed bottom-0 left-0 right-0 z-50 w-full",
         "border-t bg-background",
         className
       )}
@@ -42,7 +42,7 @@ export function BottomNav({
 
         <Button
           type="button"
-          variant={"ghost"}
+          variant="ghost"
           onClick={() => {
             logoutUser();
             navigate({ to: "/auth", replace: true });
@@ -53,11 +53,11 @@ export function BottomNav({
             "text-destructive hover:text-destructive hover:bg-destructive/10"
           )}
           style={{ height: heightPx }}
-          aria-label={"Logout"}
+          aria-label="Logout"
         >
-          <GoogleFontIcon icon={"logout"} />
+          <GoogleFontIcon icon="logout" />
           <span className="text-[12px] leading-none whitespace-nowrap">
-            {"Izloguj me"}
+            Izloguj me
           </span>
         </Button>
       </div>
