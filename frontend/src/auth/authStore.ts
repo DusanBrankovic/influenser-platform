@@ -1,19 +1,23 @@
 import { create } from "zustand";
-import type { User, AuthState } from "./auth.types";
 import { persist, createJSONStorage } from "zustand/middleware";
+import type { User, AuthState } from "./auth.types";
 
 const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
+      // persisted (via partialize)
       user: null,
-      role: null,
       token: null,
-      isLoading: true,
-      isAuthenticated: false,
 
+      // derived / runtime
+      isAuthenticated: false,
+      isLoading: true,
+
+      // hydration flag (not persisted)
       hasHydrated: false,
       setHasHydrated: (v) => set({ hasHydrated: v }),
 
+      // helpers
       setToken: (token: string | null) =>
         set({
           token,
@@ -56,30 +60,33 @@ const useAuthStore = create<AuthState>()(
           isAuthenticated: true,
           isLoading: false,
         }),
-      // initializeAuth: async () => {
-      //   set({ isLoading: true });
-
-      //   const token = localStorage.getItem("token");
-      //   const userRaw = localStorage.getItem("user");
-      //   const user = userRaw ? (JSON.parse(userRaw) as User) : null;
-
-      //   set({
-      //     token,
-      //     user,
-      //     isAuthenticated: Boolean(token),
-      //     isLoading: false,
-      //   });
-      // },
     }),
     {
       name: "auth-storage",
       storage: createJSONStorage(() => localStorage),
-      onRehydrateStorage: () => (state) => {
+
+      // persist only what you actually want to keep
+      partialize: (state) => ({
+        user: state.user,
+        token: state.token,
+      }),
+
+      // runs after state is pulled from storage
+      onRehydrateStorage: () => (state, error) => {
+        // even if something goes wrong, unblock the UI
+        if (error) {
+          state?.setIsLoading(false);
+          state?.setHasHydrated(true);
+          return;
+        }
+
+        // IMPORTANT: recompute derived fields from persisted data
+        const token = state?.token ?? null;
+        state?.setToken(token); // sets isAuthenticated based on token
+
         state?.setIsLoading(false);
         state?.setHasHydrated(true);
       },
-
-      partialize: (state) => ({ user: state.user, token: state.token }),
     }
   )
 );
@@ -87,7 +94,8 @@ const useAuthStore = create<AuthState>()(
 export { useAuthStore, type User, type AuthState };
 
 export const getAuthSnapshot = () => {
-  const { user, token, isAuthenticated } = useAuthStore.getState();
+  const { user, token, isAuthenticated, hasHydrated, isLoading } =
+    useAuthStore.getState();
 
-  return { user, token, isAuthenticated };
+  return { user, token, isAuthenticated, hasHydrated, isLoading };
 };
