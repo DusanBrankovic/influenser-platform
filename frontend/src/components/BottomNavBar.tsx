@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { GoogleFontIcon } from "@/assets/icons/GoogleFontIcon";
 
-import type { BottomNavProps, NavActionItem } from "./bottomNav.types";
+import type { BottomNavProps } from "./bottomNav.types";
 import { BottomNavItem } from "./BottomNavItem";
 import { useAuthStore } from "@/auth/authStore";
 import { useNavigate } from "@tanstack/react-router";
@@ -16,12 +16,6 @@ export function BottomNav({
   const logoutUser = useAuthStore((s) => s.logout);
   const navigate = useNavigate();
 
-  const logout: NavActionItem = {
-    key: "logout",
-    label: "Logout",
-    icon: "logout",
-  };
-
   return (
     <nav
       className={cn(
@@ -34,7 +28,7 @@ export function BottomNav({
       <div
         className={cn("mx-auto grid w-full", maxWidthClassName)}
         style={{
-          gridTemplateColumns: `repeat(${items.length + (logout ? 1 : 0)}, 1fr)`,
+          gridTemplateColumns: `repeat(${items.length + 1}, 1fr)`,
         }}
       >
         {items.map((item) => (
@@ -48,7 +42,7 @@ export function BottomNav({
 
         <Button
           type="button"
-          variant={logout.variant ?? "ghost"}
+          variant={"ghost"}
           onClick={() => {
             logoutUser();
             navigate({ to: "/auth", replace: true });
@@ -59,11 +53,11 @@ export function BottomNav({
             "text-destructive hover:text-destructive hover:bg-destructive/10"
           )}
           style={{ height: heightPx }}
-          aria-label={logout.ariaLabel ?? logout.label}
+          aria-label={"Logout"}
         >
-          <GoogleFontIcon icon={logout.icon} />
+          <GoogleFontIcon icon={"logout"} />
           <span className="text-[12px] leading-none whitespace-nowrap">
-            {logout.label}
+            {"Izloguj me"}
           </span>
         </Button>
       </div>
