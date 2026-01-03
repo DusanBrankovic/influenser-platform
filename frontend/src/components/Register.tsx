@@ -86,7 +86,6 @@ const Register = ({
     },
     validators: {
       onSubmit: combinedSchema,
-      onBlur: combinedSchema,
     },
     onSubmit: async ({ value }) => {
       await onRegister(

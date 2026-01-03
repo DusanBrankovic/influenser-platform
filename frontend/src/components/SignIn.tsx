@@ -108,7 +108,6 @@ const SignIn: React.FC<SignInProps> = ({ onSwitchToSignUp, onGuest }) => {
     },
     validators: {
       onSubmit: signInSchema,
-      onBlur: signInSchema,
     },
     onSubmit: async ({ value }) => {
       console.log("sksksks");
