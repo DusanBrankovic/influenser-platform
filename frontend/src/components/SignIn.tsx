@@ -251,7 +251,8 @@ const SignIn: React.FC<SignInProps> = ({ onSwitchToSignUp, onGuest }) => {
                 className="w-100% border border-background my-4"
               />
             </Field>
-            <Field className="max-w-max flex flex-col gap-2.5 py-5 justify-center items-center">
+            {/*feat-146-temporarily removing third party sign ins*/}
+            {/* <Field className="max-w-max flex flex-col gap-2.5 py-5 justify-center items-center">
               <Button variant="default" size="sm">
                 <img src={google} />
                 <span className="font-light">Prijavite se uz Google </span>
@@ -260,7 +261,7 @@ const SignIn: React.FC<SignInProps> = ({ onSwitchToSignUp, onGuest }) => {
                 <img src={apple} />
                 <span className="font-light">Prijavite se uz Apple </span>
               </Button>
-            </Field>
+            </Field> */}
             <Field
               className="flex flex-row flex-1 justify-center items-center gap-2"
               orientation="horizontal"
