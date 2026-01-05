@@ -87,10 +87,9 @@ export class PostsController {
   @Public()
   @Get(":id")
   findOne(
-    @GetUser() user: JwtPayload,
     @Param("id") id: string
   ) {
-    return this.postsService.findOne(+user.id, +id);
+    return this.postsService.findOne(+id);
   }
 
   @Patch(":id")

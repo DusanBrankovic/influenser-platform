@@ -12,7 +12,13 @@ export class PostRepository {
     });
   }
 
-  findPostById(userId: number, id: number) {
+  findPostById(id: number) {
+    return this.db.post.findUnique({
+      where: { id },
+    });
+  }
+
+  findPostByUserIdAndId(userId: number, id: number) {
     return this.db.post.findUnique({
       where: { id, userId },
     });

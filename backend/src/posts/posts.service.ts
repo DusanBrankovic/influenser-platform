@@ -47,8 +47,8 @@ export class PostsService {
     return posts;
   }
 
-  async findOne(userId: number, id: number) {
-    const post = await this.postRepository.findPostById(userId, id);
+  async findOne(id: number) {
+    const post = await this.postRepository.findPostById(id);
     if (!post) {
       throw new NotFoundException(`Post with ID ${id} not found`);
     }
@@ -67,7 +67,7 @@ export class PostsService {
   }
 
   async remove(userId: number, id: number) {
-    const post = await this.postRepository.findPostById(userId, id);
+    const post = await this.postRepository.findPostByUserIdAndId(userId, id);
     if (!post) {
       throw new NotFoundException(`Post with ID ${id} not found`);
     }
