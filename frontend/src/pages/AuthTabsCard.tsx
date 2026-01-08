@@ -73,9 +73,9 @@ const AuthTabsCard: React.FC = () => {
   };
 
   return (
-    <div className="h-screen w-full flex md:flex-row flex-col items-center justify-between">
-      <div className=" md:py-0 flex flex-1 justify-center items-center flex-col relative text-primary px-3 gap-10">
-        <Card className="md:min-h-150 w-full md:w-1/2 items-center justify-center flex flex-col border border-primary">
+    <div className="h-full w-full flex md:flex-row flex-col items-center justify-between md:items-stretch">
+      <div className="flex flex-1 flex-col relative text-primary px-3 my-14 md:my-0 md:min-h-screen md:items-center md:justify-center">
+        <Card className="w-full md:w-1/2 md:h-[80vh] md:max-h-180 flex flex-col items-center justify-center border border-primary">
           <div className="max-h-32 max-w-32">
             <img src={HourglassIcon} className="w-full" alt="Slika pescanika" />
           </div>
@@ -88,11 +88,11 @@ const AuthTabsCard: React.FC = () => {
         </Card>
       </div>
 
-      <div className="h-screen w-full md:max-w-1/2 relative flex flex-col flex-1 bg-background">
+      <div className="w-full md:w-1/2 relative flex flex-col flex-1 bg-background">
         <Tabs
           value={tab}
           onValueChange={(value) => setTab(value as "signin" | "register")}
-          className=" h-screen w-full"
+          className=" h-full w-full"
         >
           <TabsList className="relative w-full items-end justify-stretch rounded-t-xl border-border bg-transparent px-0">
             <TabsTrigger
