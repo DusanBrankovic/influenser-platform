@@ -74,8 +74,8 @@ const AuthTabsCard: React.FC = () => {
 
   return (
     <div className="h-screen w-full flex md:flex-row flex-col items-center justify-between">
-      <div className="flex flex-1 justify-center items-center flex-col relative text-primary px-3 gap-10">
-        <Card className="md: min-h-150 w-1/2 items-center justify-center flex flex-col border border-primary">
+      <div className=" md:py-0 flex flex-1 justify-center items-center flex-col relative text-primary px-3 gap-10">
+        <Card className="md:min-h-150 w-full md:w-1/2 items-center justify-center flex flex-col border border-primary">
           <div className="max-h-32 max-w-32">
             <img src={HourglassIcon} className="w-full" alt="Slika pescanika" />
           </div>
@@ -88,7 +88,7 @@ const AuthTabsCard: React.FC = () => {
         </Card>
       </div>
 
-      <div className="h-screen max-w-1/2 relative flex flex-col flex-1 bg-background pt-6">
+      <div className="h-screen w-full md:max-w-1/2 relative flex flex-col flex-1 bg-background">
         <Tabs
           value={tab}
           onValueChange={(value) => setTab(value as "signin" | "register")}
@@ -99,9 +99,9 @@ const AuthTabsCard: React.FC = () => {
               value="signin"
               className="
                     flex-[0.35]
-                    rounded-t-xl border-x border-t
+                    rounded-t-2xl border-x border-t
                     bg-background text-foreground
-                    px-4 py-2 text-3xl font-bold
+                    px-4 py-10 text-3xl font-bold
                     data-[state=active]:bg-muted
                     data-[state=active]:flex-[0.65]
                     data-[state=active]:text-foreground
@@ -116,9 +116,9 @@ const AuthTabsCard: React.FC = () => {
               value="register"
               className="
                     flex-[0.35]
-                    rounded-t-xl border-x border-t 
+                    rounded-t-2xl border-x border-t 
                      bg-background text-foreground
-                    px-4 py-2 text-3xl font-bold
+                    px-4 py-10 text-3xl font-bold
                     -ml-px
                      data-[state=active]:bg-muted
                     data-[state=active]:flex-[0.65]
@@ -131,7 +131,7 @@ const AuthTabsCard: React.FC = () => {
             </TabsTrigger>
           </TabsList>
 
-          <div className="flex flex-1 min-h-min rounded bg-muted px-6 py-12">
+          <div className="flex flex-1 min-h-min bg-muted px-6 py-12">
             <TabsContent
               value="signin"
               className="

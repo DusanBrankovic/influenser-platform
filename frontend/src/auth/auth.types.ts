@@ -12,6 +12,7 @@ export type AuthState = {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  isRegistered: boolean;
   token: string | null;
   hasHydrated: boolean;
   setHasHydrated: (v: boolean) => void;
@@ -24,4 +25,5 @@ export type AuthState = {
   setToken: (token: string | null) => void;
   getToken: (token: string | null) => void;
   setIsLoading: (isLoading: boolean) => void;
+  setIsRegistered: (isRegistered: boolean) => void;
 };

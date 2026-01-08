@@ -47,7 +47,11 @@ export default function FormField({
           aria-invalid={isInvalid}
           placeholder={placeholder}
           autoComplete="off"
-          type={inputType === "password" && isVisible ? "text" : "password"}
+          type={
+            inputType != "password" || (inputType === "password" && isVisible)
+              ? "text"
+              : "password"
+          }
         />
         {inputType === "password" && (
           <InputGroupButton onClick={() => setIsVisible(!isVisible)}>

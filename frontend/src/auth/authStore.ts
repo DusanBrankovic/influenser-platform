@@ -5,19 +5,16 @@ import type { User, AuthState } from "./auth.types";
 const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
-      // persisted (via partialize)
       user: null,
       token: null,
 
-      // derived / runtime
       isAuthenticated: false,
       isLoading: true,
+      isRegistered: false,
 
-      // hydration flag (not persisted)
       hasHydrated: false,
       setHasHydrated: (v) => set({ hasHydrated: v }),
 
-      // helpers
       setToken: (token: string | null) =>
         set({
           token,
@@ -27,6 +24,7 @@ const useAuthStore = create<AuthState>()(
       getToken: () => get().token,
 
       setIsLoading: (isLoading: boolean) => set({ isLoading }),
+      setIsRegistered: (isRegistered: boolean) => set({ isRegistered }),
 
       setUser: (user: User | null) => set({ user }),
 
@@ -36,6 +34,7 @@ const useAuthStore = create<AuthState>()(
           token,
           isAuthenticated: true,
           isLoading: false,
+          isRegistered: true,
         }),
 
       logout: () => {
@@ -44,6 +43,7 @@ const useAuthStore = create<AuthState>()(
           token: null,
           isAuthenticated: false,
           isLoading: false,
+          isRegistered: false,
         });
       },
 
@@ -65,18 +65,16 @@ const useAuthStore = create<AuthState>()(
       name: "auth-storage",
       storage: createJSONStorage(() => localStorage),
 
-      // persist only what you actually want to keep
       partialize: (state) => ({
         user: state.user,
         token: state.token,
       }),
 
-      // runs after state is pulled from storage
       onRehydrateStorage: () => (state, error) => {
-        // even if something goes wrong, unblock the UI
         if (error) {
           state?.setIsLoading(false);
           state?.setHasHydrated(true);
+          state?.setIsRegistered(false);
           return;
         }
 

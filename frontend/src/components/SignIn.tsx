@@ -1,4 +1,3 @@
-"use client";
 import { useForm } from "@tanstack/react-form";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
@@ -9,8 +8,6 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Field, FieldGroup } from "@/components/ui/field";
-import google from "../assets/icons/google.svg";
-import apple from "../assets/icons/apple.svg";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@radix-ui/react-separator";
@@ -37,35 +34,12 @@ const passwordSchema = z
     message: "Password must contain at least one special character.",
   });
 
-// const passwordConfirmationSchema = z
-//   .object({
-//     password: passwordSchema,
-//     confirmPassword: z.string(),
-//   })
-//   .refine((data) => data.password === data.confirmPassword, {
-//     message: "Passwords don't match.",
-//     path: ["confirmPassword"],
-//   });
-
-// const formSchema = z.object({
-//   username: z
-//     .string()
-//     .min(5, "Username must be at least 5 characters.")
-//     .max(12, "Username title must be at most 32 characters."),
-//   fullname: z
-//     .string()
-//     .min(5, "Fullname must be at least 20 characters.")
-//     .max(100, "Fullname must be at most 100 characters.")
-//     .includes(" "),
-//   email: z
-//     .email()
-//     .min(5, "Email title must be at least 5 characters.")
-//     .max(32, "Email title must be at most 32 characters."),
-//   rememberMe: z.boolean(),
-// });
 const signInSchema = z.object({
-  username: z.string().min(1, "Username is required."),
-  password: passwordSchema, // or z.string().min(1) if you don’t want strict rules on sign-in
+  username: z
+    .string()
+    .min(5, "Username must be at least 5 characters.")
+    .max(12, "Username title must be at most 32 characters."),
+  password: passwordSchema,
   rememberMe: z.boolean(),
 });
 
@@ -73,30 +47,34 @@ const SignIn: React.FC<SignInProps> = ({ onSwitchToSignUp, onGuest }) => {
   const login = useAuthStore((s) => s.login);
   const navigate = useNavigate();
 
-  // const handleSubmit = async ({
-  //   value,
-  // }: {
-  //   value: {
-  //     username: string;
-  //     email: string;
-  //     password: string;
-  //     rememberMe: boolean;
-  //   };
-  // }) => {
-  //   const { username, email, password } = value;
-  //   console.log("payload", value);
-  //   const userFromFormValue: User = {
-  //     username: username,
-  //     email: email,
-  //     headline: "Signed in",
-  //     role: "user",
-  //     password: password,
-  //   };
-  //   onLogin(userFromFormValue, "token");
+  const handleSubmit = async ({
+    value,
+  }: {
+    value: {
+      username: string;
+      password: string;
+      rememberMe: boolean;
+    };
+  }) => {
+    const { username, password } = value;
 
-  //   // mock found user
-  //   login(userFromFormValue, "token");
-  // };
+    const user: User = {
+      fullname: "User",
+      email: "user@local",
+      username: username || "username",
+      headline: "Login",
+      role: "user",
+      password,
+    };
+
+    login(user, "token");
+
+    localStorage.setItem(
+      "auth",
+      JSON.stringify({ isAuthenticated: true, user })
+    );
+    navigate({ to: "/profile" });
+  };
 
   const form = useForm({
     defaultValues: {
@@ -107,27 +85,7 @@ const SignIn: React.FC<SignInProps> = ({ onSwitchToSignUp, onGuest }) => {
     validators: {
       onSubmit: signInSchema,
     },
-    onSubmit: async ({ value }) => {
-      console.log("sksksks");
-      const { username, password } = value;
-
-      const user: User = {
-        fullname: "User",
-        email: "user@local",
-        username: username || "username",
-        headline: "Login",
-        role: "user",
-        password,
-      };
-
-      login(user, "token");
-
-      localStorage.setItem(
-        "auth",
-        JSON.stringify({ isAuthenticated: true, user })
-      );
-      navigate({ to: "/profile" });
-    },
+    onSubmit: handleSubmit,
   });
 
   const formFieldsArr: Array<{
@@ -278,5 +236,4 @@ const SignIn: React.FC<SignInProps> = ({ onSwitchToSignUp, onGuest }) => {
     </div>
   );
 };
-
 export default SignIn;
