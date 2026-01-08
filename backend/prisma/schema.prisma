@@ -20,25 +20,60 @@ enum Role {
 }
 
 enum Industry {
-  Fitness
-  Fashion
-  Beauty
+  Beauty_And_Personal_Care
+  Fashion_And_Style
+  Health_And_Wellness
   Lifestyle
-  Travel
-  FoodAndCooking
-  ParentingAndFamily
-  Gaming
-  Tech
-  BusinessAndFinance
+  Food_And_Drink
+  Travel_And_Hospitality
+  Parenting_And_Family
+  Tech_And_Digital
+  Education_And_Knowledge
+  Business_And_Entrepreneurship
+  Finance_And_Investing
+  Gaming_And_Esports
+  Entertainment_And_Media
+  Art_And_Creativity
+  Sports
+  Sustainability_And_Ethics
+  Pets_And_Animals
+  Automotive_And_Mobility
+  Home_And_Real_Estate
+  Other
 }
 
 enum Value {
   Authenticity
   Transparency
+  Quality 
+  Honest 
+  Professionalism
   Creativity
+  Education 
+  Knowledge_sharing
+  Sustainability
+  Ethics
+  Responsibility
+  Mental_health_and_balance
+  Self_confidence 
+  Personal_growth
   Inclusivity
-  BodyPositivity
-  MentalHealthAwareness
+  Diversity
+  Body_positivity
+  Natural_beauty
+  Innovation
+  Long_term_partnerships
+  Community 
+  Support
+  Commitment 
+  Consistency
+  Social_responsibility
+  Work_life_balance
+  Premium_standards
+  Accessibility
+  Supporting_local_brands
+  Empathy
+  Other
 }
 
 model User {
