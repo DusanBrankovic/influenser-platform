@@ -14,7 +14,6 @@ const AuthTabsCard: React.FC = () => {
 
   const login = useAuthStore((s) => s.login);
   const loginAsGuest = useAuthStore((s) => s.loginAsGuest);
-  const register = useAuthStore((s) => s.login);
 
   const handleLogin = async ({
     fullname,
@@ -43,33 +42,6 @@ const AuthTabsCard: React.FC = () => {
   const handleGuest = async () => {
     loginAsGuest();
     navigate({ to: "/" });
-  };
-
-  const handleRegister = async ({
-    fullname,
-    username,
-    email,
-  }: {
-    fullname?: string;
-    username?: string;
-    email?: string;
-    headline?: string;
-  }) => {
-    const user: User = {
-      fullname: fullname || "User",
-      email: email || "user@local",
-      username: username || "username",
-      headline: "Registered",
-      role: "user",
-    };
-
-    register(user, "token");
-
-    localStorage.setItem(
-      "auth",
-      JSON.stringify({ isAuthenticated: true, user })
-    );
-    navigate({ to: "/profile" });
   };
 
   return (

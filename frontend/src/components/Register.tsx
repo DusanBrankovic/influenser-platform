@@ -10,7 +10,6 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import type { User } from "@/auth/auth.types";
 import FormField from "./FormField";
 import { useAuthStore } from "@/auth/authStore";
 import RegSuccessScreen from "./RegSuccess";
