@@ -14,7 +14,6 @@ const AuthTabsCard: React.FC = () => {
 
   const login = useAuthStore((s) => s.login);
   const loginAsGuest = useAuthStore((s) => s.loginAsGuest);
-  const register = useAuthStore((s) => s.login);
 
   const handleLogin = async ({
     fullname,
@@ -33,7 +32,11 @@ const AuthTabsCard: React.FC = () => {
     };
 
     login(user, "token");
-    navigate({ to: "/" });
+    localStorage.setItem(
+      "auth",
+      JSON.stringify({ isAuthenticated: true, user })
+    );
+    navigate({ to: "/influensers" });
   };
 
   const handleGuest = async () => {
@@ -41,32 +44,10 @@ const AuthTabsCard: React.FC = () => {
     navigate({ to: "/" });
   };
 
-  const handleRegister = async ({
-    fullname,
-    username,
-    email,
-  }: {
-    fullname?: string;
-    username?: string;
-    email?: string;
-    headline?: string;
-  }) => {
-    const user: User = {
-      fullname: fullname || "User",
-      email: email || "user@local",
-      username: username || "username",
-      headline: "Registered",
-      role: "user",
-    };
-
-    register(user, "token");
-    navigate({ to: "/profile" });
-  };
-
   return (
-    <div className="h-screen w-full flex md:flex-row flex-col items-center justify-between">
-      <div className="flex flex-1 justify-center items-center flex-col relative text-primary px-3 gap-10">
-        <Card className="md: min-h-[600px] w-1/2 items-center justify-center flex flex-col border border-primary">
+    <div className="h-full w-full flex md:flex-row flex-col items-center justify-between md:items-stretch">
+      <div className="flex flex-1 flex-col relative text-primary px-3 my-14 md:my-0 md:min-h-screen md:items-center md:justify-center">
+        <Card className="w-full md:w-1/2 md:h-[80vh] md:max-h-180 flex flex-col items-center justify-center border border-primary">
           <div className="max-h-32 max-w-32">
             <img src={HourglassIcon} className="w-full" alt="Slika pescanika" />
           </div>
@@ -79,20 +60,20 @@ const AuthTabsCard: React.FC = () => {
         </Card>
       </div>
 
-      <div className="h-screen max-w-1/2 relative flex flex-col flex-1 bg-background pt-6">
+      <div className="w-full md:w-1/2 relative flex flex-col flex-1 bg-background">
         <Tabs
           value={tab}
           onValueChange={(value) => setTab(value as "signin" | "register")}
-          className=" h-screen w-full"
+          className=" h-full w-full"
         >
           <TabsList className="relative w-full items-end justify-stretch rounded-t-xl border-border bg-transparent px-0">
             <TabsTrigger
               value="signin"
               className="
                     flex-[0.35]
-                    rounded-t-xl border-x border-t
+                    rounded-t-2xl border-x border-t
                     bg-background text-foreground
-                    px-4 py-2 text-3xl font-bold
+                    px-4 py-10 text-3xl font-bold
                     data-[state=active]:bg-muted
                     data-[state=active]:flex-[0.65]
                     data-[state=active]:text-foreground
@@ -107,9 +88,9 @@ const AuthTabsCard: React.FC = () => {
               value="register"
               className="
                     flex-[0.35]
-                    rounded-t-xl border-x border-t 
+                    rounded-t-2xl border-x border-t 
                      bg-background text-foreground
-                    px-4 py-2 text-3xl font-bold
+                    px-4 py-10 text-3xl font-bold
                     -ml-px
                      data-[state=active]:bg-muted
                     data-[state=active]:flex-[0.65]
@@ -122,7 +103,7 @@ const AuthTabsCard: React.FC = () => {
             </TabsTrigger>
           </TabsList>
 
-          <div className="flex flex-1 min-h-min rounded bg-muted px-6 py-12">
+          <div className="flex flex-1 min-h-min bg-muted px-6 py-12">
             <TabsContent
               value="signin"
               className="
@@ -155,10 +136,7 @@ const AuthTabsCard: React.FC = () => {
                     transition-all duration-200
                   "
             >
-              <Register
-                onRegister={handleRegister}
-                onSwitchToSignIn={() => setTab("signin")}
-              />
+              <Register onSwitchToSignIn={() => setTab("signin")} />
             </TabsContent>
           </div>
         </Tabs>

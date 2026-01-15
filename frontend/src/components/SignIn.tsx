@@ -1,4 +1,3 @@
-"use client";
 import { useForm } from "@tanstack/react-form";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
@@ -8,18 +7,15 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { Field, FieldError, FieldGroup } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { GoogleFontIcon } from "@/assets/icons/GoogleFontIcon";
-import { InputGroup, InputGroupButton } from "@/components/ui/input-group";
-import google from "../assets/icons/google.svg";
-import apple from "../assets/icons/apple.svg";
+import { Field, FieldGroup } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@radix-ui/react-separator";
 import type { User } from "@/auth/auth.types";
 import { useAuthStore } from "@/auth/authStore";
 import type { SignInProps } from "./signin.types";
+import { useNavigate } from "@tanstack/react-router";
+import FormField from "./FormField";
 
 const passwordSchema = z
   .string()
@@ -38,83 +34,62 @@ const passwordSchema = z
     message: "Password must contain at least one special character.",
   });
 
-const passwordConfirmationSchema = z
-  .object({
-    password: passwordSchema,
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match.",
-    path: ["confirmPassword"],
-  });
-
-const formSchema = z.object({
+const signInSchema = z.object({
   username: z
     .string()
     .min(5, "Username must be at least 5 characters.")
     .max(12, "Username title must be at most 32 characters."),
-  fullname: z
-    .string()
-    .min(5, "Fullname must be at least 20 characters.")
-    .max(100, "Fullname must be at most 100 characters.")
-    .includes(" "),
-  email: z
-    .email()
-    .min(5, "Email title must be at least 5 characters.")
-    .max(32, "Email title must be at most 32 characters."),
+  password: passwordSchema,
   rememberMe: z.boolean(),
 });
 
-const combinedSchema = formSchema.merge(passwordConfirmationSchema);
-
-const SignIn: React.FC<SignInProps> = ({
-  onSwitchToSignUp,
-  onLogin,
-  onGuest,
-}) => {
-  const { login } = useAuthStore();
+const SignIn: React.FC<SignInProps> = ({ onSwitchToSignUp, onGuest }) => {
+  const login = useAuthStore((s) => s.login);
+  const navigate = useNavigate();
 
   const handleSubmit = async ({
     value,
   }: {
     value: {
       username: string;
-      email: string;
       password: string;
       rememberMe: boolean;
     };
   }) => {
-    const { username, email, password } = value;
-    console.log("payload", value);
-    const userFromFormValue: User = {
-      username: username,
-      email: email,
-      headline: "Signed in",
-      role: "user",
-      password: password,
-    };
-    onLogin(userFromFormValue, "token");
+    const { username, password } = value;
 
-    // mock found user
-    login(userFromFormValue, "token");
+    const user: User = {
+      fullname: "User",
+      email: "user@local",
+      username: username || "username",
+      headline: "Login",
+      role: "user",
+      password,
+    };
+
+    login(user, "token");
+
+    localStorage.setItem(
+      "auth",
+      JSON.stringify({ isAuthenticated: true, user })
+    );
+    navigate({ to: "/profile" });
   };
 
   const form = useForm({
     defaultValues: {
-      email: "",
       username: "",
       password: "",
       rememberMe: false,
     },
     validators: {
-      onSubmit: combinedSchema,
-      onBlur: combinedSchema,
+      onSubmit: signInSchema,
     },
     onSubmit: handleSubmit,
   });
 
   const formFieldsArr: Array<{
-    name: "password" | "username" | "email";
+    name: "password" | "username";
     icon: string;
     placeholder: string;
     type: string;
@@ -142,7 +117,11 @@ const SignIn: React.FC<SignInProps> = ({
           <form
             id="sign-in-form"
             className="flex flex-col gap-4"
-            onSubmit={form.handleSubmit}
+            onSubmit={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              form.handleSubmit();
+            }}
           >
             <FieldGroup>
               {formFieldsArr.map(({ name, icon, placeholder, type }) => (
@@ -153,28 +132,15 @@ const SignIn: React.FC<SignInProps> = ({
                     const isInvalid =
                       field.state.meta.isTouched && !field.state.meta.isValid;
                     return (
-                      <Field data-invalid={isInvalid}>
-                        <InputGroup>
-                          <InputGroupButton className="border-none shadow-none">
-                            <GoogleFontIcon icon={icon} />
-                          </InputGroupButton>
-                          <Input
-                            id={field.name}
-                            name={field.name}
-                            value={field.state.value}
-                            onBlur={field.handleBlur}
-                            onChange={(e) => field.handleChange(e.target.value)}
-                            aria-invalid={isInvalid}
-                            placeholder={placeholder}
-                            autoComplete="off"
-                            type={type}
-                          />
-                        </InputGroup>
-
-                        {isInvalid && (
-                          <FieldError errors={field.state.meta.errors} />
-                        )}
-                      </Field>
+                      <FormField
+                        field={field}
+                        name={field.name}
+                        icon={icon}
+                        inputType={type}
+                        isInvalid={isInvalid}
+                        placeholder={placeholder}
+                        key={name}
+                      />
                     );
                   }}
                 />
@@ -227,7 +193,8 @@ const SignIn: React.FC<SignInProps> = ({
                 className="w-100% border border-background my-4"
               />
             </Field>
-            <Field className="max-w-max flex flex-col gap-2.5 py-5 justify-center items-center">
+            {/*feat-146-temporarily removing third party sign ins*/}
+            {/* <Field className="max-w-max flex flex-col gap-2.5 py-5 justify-center items-center">
               <Button variant="default" size="sm">
                 <img src={google} />
                 <span className="font-light">Prijavite se uz Google </span>
@@ -236,7 +203,7 @@ const SignIn: React.FC<SignInProps> = ({
                 <img src={apple} />
                 <span className="font-light">Prijavite se uz Apple </span>
               </Button>
-            </Field>
+            </Field> */}
             <Field
               className="flex flex-row flex-1 justify-center items-center gap-2"
               orientation="horizontal"
@@ -269,5 +236,4 @@ const SignIn: React.FC<SignInProps> = ({
     </div>
   );
 };
-
 export default SignIn;
