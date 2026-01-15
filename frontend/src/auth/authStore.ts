@@ -1,14 +1,21 @@
 import { create } from "zustand";
-import type { User, AuthState } from "./auth.types";
 import { persist, createJSONStorage } from "zustand/middleware";
+import type { User, AuthState } from "./auth.types";
 
 const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
       user: null,
       token: null,
-      isLoading: true,
+
       isAuthenticated: false,
+      isLoading: true,
+      isRegistered: false,
+
+      hasHydrated: false,
+      setHasHydrated: (v) => set({ hasHydrated: v }),
+
+      setIsAuthenticated: (v: boolean) => set({ isAuthenticated: v }),
 
       setToken: (token: string | null) =>
         set({
@@ -19,6 +26,7 @@ const useAuthStore = create<AuthState>()(
       getToken: () => get().token,
 
       setIsLoading: (isLoading: boolean) => set({ isLoading }),
+      setIsRegistered: (isRegistered: boolean) => set({ isRegistered }),
 
       setUser: (user: User | null) => set({ user }),
 
@@ -28,15 +36,18 @@ const useAuthStore = create<AuthState>()(
           token,
           isAuthenticated: true,
           isLoading: false,
+          isRegistered: true,
         }),
 
-      logout: () =>
+      logout: () => {
         set({
           user: null,
           token: null,
           isAuthenticated: false,
           isLoading: false,
-        }),
+          isRegistered: false,
+        });
+      },
 
       loginAsGuest: () =>
         set({
@@ -51,28 +62,31 @@ const useAuthStore = create<AuthState>()(
           isAuthenticated: true,
           isLoading: false,
         }),
-      // initializeAuth: async () => {
-      //   set({ isLoading: true });
-
-      //   const token = localStorage.getItem("token");
-      //   const userRaw = localStorage.getItem("user");
-      //   const user = userRaw ? (JSON.parse(userRaw) as User) : null;
-
-      //   set({
-      //     token,
-      //     user,
-      //     isAuthenticated: Boolean(token),
-      //     isLoading: false,
-      //   });
-      // },
     }),
     {
       name: "auth-storage",
       storage: createJSONStorage(() => localStorage),
-      onRehydrateStorage: () => (state) => {
+
+      partialize: (state) => ({
+        user: state.user,
+        token: state.token,
+      }),
+
+      onRehydrateStorage: () => (state, error) => {
+        if (error) {
+          state?.setIsLoading(false);
+          state?.setHasHydrated(true);
+          state?.setIsRegistered(false);
+          return;
+        }
+
+        // IMPORTANT: recompute derived fields from persisted data
+        const token = state?.token ?? null;
+        state?.setToken(token); // sets isAuthenticated based on token
+
         state?.setIsLoading(false);
+        state?.setHasHydrated(true);
       },
-      partialize: (state) => ({ user: state.user, token: state.token }),
     }
   )
 );
@@ -80,7 +94,8 @@ const useAuthStore = create<AuthState>()(
 export { useAuthStore, type User, type AuthState };
 
 export const getAuthSnapshot = () => {
-  const { user, token, isAuthenticated } = useAuthStore.getState();
+  const { user, token, isAuthenticated, hasHydrated, isLoading } =
+    useAuthStore.getState();
 
-  return { user, token, isAuthenticated };
+  return { user, token, isAuthenticated, hasHydrated, isLoading };
 };
