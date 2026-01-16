@@ -83,6 +83,7 @@ model User {
   role        Role
 
   influencer Influencer?
+  business Business?
 }
 
 model Influencer {
@@ -94,4 +95,10 @@ model Influencer {
   isPrivate     Boolean  @default(true)
   industries     Industry[]
   values         Value[]
+}
+
+model Business {
+  userId         Int  @id
+  business       User @relation(fields: [userId], references: [id])
+  name           String
 }

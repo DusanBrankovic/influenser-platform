@@ -1,0 +1,15 @@
+meta {
+  name: Get Influencer by ID
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/influencers/
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}
