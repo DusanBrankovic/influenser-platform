@@ -1,11 +1,11 @@
 export type User = {
   fullname?: string;
   email: string;
-  username: string;
+  name: string;
   headline?: string;
   password?: string;
   rememberMe?: boolean;
-  role: null | "user" | "guest";
+  role: null | "INFLUENCER" | "guest";
 };
 
 export type AuthState = {

@@ -61,9 +61,9 @@ const SignIn: React.FC<SignInProps> = ({ onSwitchToSignUp, onGuest }) => {
     const user: User = {
       fullname: "User",
       email: "user@local",
-      username: username || "username",
+      name: username || "username",
       headline: "Login",
-      role: "user",
+      role: "INFLUENCER",
       password,
     };
 

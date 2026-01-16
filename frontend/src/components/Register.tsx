@@ -11,8 +11,10 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import FormField from "./FormField";
-import { useAuthStore } from "@/auth/authStore";
+import { useAuthStore, type User } from "@/auth/authStore";
 import RegSuccessScreen from "./RegSuccess";
+import { registerApi } from "@/services/authApi";
+import type { RegisterPayload } from "@/services/authApi";
 
 const passwordSchema = z
   .string()
@@ -65,7 +67,13 @@ const formSchema = z.object({
 
 const combinedSchema = formSchema.merge(passwordConfirmationSchema);
 
-const Register = ({ onSwitchToSignIn }: { onSwitchToSignIn: () => void }) => {
+const Register = ({ 
+  onSwitchToSignIn, 
+  onRegister 
+}: { 
+  onSwitchToSignIn: () => void;
+  onRegister: (user: User) => void;
+}) => {
   const { isRegistered, setIsRegistered } = useAuthStore();
   const form = useForm({
     defaultValues: {
@@ -81,7 +89,16 @@ const Register = ({ onSwitchToSignIn }: { onSwitchToSignIn: () => void }) => {
     validators: {
       onSubmit: combinedSchema,
     },
-    onSubmit: async () => {
+    onSubmit: async ({ value }) => {
+      const user: RegisterPayload = {
+        email: value.email,
+        name: value.username,
+        password: value.password,
+        role: "INFLUENCER"
+      };
+
+      console.log("Registering user:", user);
+      registerApi(user);
       setIsRegistered(true);
     },
   });

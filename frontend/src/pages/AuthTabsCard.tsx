@@ -27,8 +27,8 @@ const AuthTabsCard: React.FC = () => {
     const user: User = {
       fullname: fullname || "User",
       email: email || "user@local",
-      username: username || "username",
-      role: "user",
+      name: username || "username",
+      role: "INFLUENCER",
     };
 
     login(user, "token");
@@ -43,6 +43,10 @@ const AuthTabsCard: React.FC = () => {
     loginAsGuest();
     navigate({ to: "/" });
   };
+
+  const handleRegister = async () => {
+    navigate({ to: "/profile" });
+  }
 
   return (
     <div className="h-full w-full flex md:flex-row flex-col items-center justify-between md:items-stretch">
@@ -136,7 +140,10 @@ const AuthTabsCard: React.FC = () => {
                     transition-all duration-200
                   "
             >
-              <Register onSwitchToSignIn={() => setTab("signin")} />
+              <Register 
+                onRegister={handleRegister}
+                onSwitchToSignIn={() => setTab("signin")}
+              />
             </TabsContent>
           </div>
         </Tabs>

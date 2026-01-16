@@ -5,8 +5,8 @@ export type LoginPayload = { email: string; password: string };
 export type RegisterPayload = {
   email: string;
   password: string;
-  fullname: string;
-  username: string;
+  name: string;
+  role: string;
 };
 
 export async function loginApi(
@@ -25,7 +25,8 @@ export async function loginApi(
 export async function registerApi(
   payload: RegisterPayload
 ): Promise<{ user: User; token: string }> {
-  const res = await fetch("/api/register", {
+  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+  const res = await fetch(`${apiUrl}/influencers`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
