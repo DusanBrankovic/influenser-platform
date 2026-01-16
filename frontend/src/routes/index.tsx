@@ -1,5 +1,4 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import InfluenserList from "@/pages/InfluenserList";
 import { getAuthSnapshot } from "@/auth/authStore";
 
 export const Route = createFileRoute("/")({
@@ -9,20 +8,9 @@ export const Route = createFileRoute("/")({
     // If logged in "real user", send them to the private main page
     if (isAuthenticated && user?.role === "INFLUENCER") {
       throw redirect({ to: "/influensers" });
-    } else if (!isAuthenticated) {
-      if (user?.role === null) {
-        throw redirect({ to: "/auth" });
-      }
     }
-  },
-  component: PublicHomeRoute,
+    // Otherwise redirect to auth page
+    throw redirect({ to: "/auth" });
+  }
 });
 
-function PublicHomeRoute() {
-  return (
-    <div>
-      <header>Guest header (search only)</header>
-      <InfluenserList mode="guest" />
-    </div>
-  );
-}
