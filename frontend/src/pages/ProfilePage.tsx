@@ -27,7 +27,7 @@ export default function ProfilePage(): React.ReactElement {
             {user?.fullname || "Jane Doe"}
           </h1>
           <p className="text-xl text-gray-600">
-            @{user?.username || "janedoe"}
+            @{user?.name || "janedoe"}
           </p>
           <div>
             <span className="text-lg text-gray-700 font-semibold mt-2">

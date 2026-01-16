@@ -7,7 +7,7 @@ export const Route = createFileRoute("/")({
     const { isAuthenticated, user } = getAuthSnapshot();
 
     // If logged in "real user", send them to the private main page
-    if (isAuthenticated && user?.role === "user") {
+    if (isAuthenticated && user?.role === "INFLUENCER") {
       throw redirect({ to: "/influensers" });
     } else if (!isAuthenticated) {
       if (user?.role === null) {
