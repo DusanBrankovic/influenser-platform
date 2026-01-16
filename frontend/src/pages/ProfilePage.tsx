@@ -29,11 +29,13 @@ export default function ProfilePage(): React.ReactElement {
           <p className="text-xl text-gray-600">
             @{user?.username || "janedoe"}
           </p>
-          <p className="text-lg text-gray-700 font-semibold mt-2">
-            {user?.headline || "Lifestyle & Wellness Influencer"}
+          <div>
+            <span className="text-lg text-gray-700 font-semibold mt-2">
+              {user?.headline || "Lifestyle & Wellness Influencer"}
+            </span>
             <Separator orientation="horizontal" className="border mx-2" />
             {user?.email || null}
-          </p>
+          </div>
         </div>
 
         <InfluenserBio />

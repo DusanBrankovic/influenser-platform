@@ -1,8 +1,10 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from "@nestjs/common";
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { CreateInfluencerDto } from "./dto/create-influencer.dto";
 import { UpdateInfluencerDto } from "./dto/update-influencer.dto";
 import { InfluencersRepository } from "src/data-access/influencers.repository";
 import { PasswordService } from "src/auth/password.service";
+import { SearchQueryDto } from "./dto/search-query.dto";
+import { JwtPayload } from "src/auth/dto/credentials.dto";
 
 @Injectable()
 export class InfluencersService {
@@ -40,12 +42,22 @@ export class InfluencersService {
     }
   }
 
-  findAll() {
-    return `This action returns all influencers`;
+  findAll(searchQuery: SearchQueryDto) {
+    return this.influencersRepository.findAll(searchQuery);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} influencer`;
+  async findOne(id: number, currentUser?: JwtPayload) {
+    const isAdmin = currentUser?.role === 'ADMIN';
+    const isOwner = currentUser?.id === id;
+
+    const onlyPublic = !(isAdmin || isOwner);
+
+    const influencer = await this.influencersRepository.findOne(id, onlyPublic);
+
+    if (!influencer) {
+      throw new NotFoundException(`Influencer with ID ${id} not found or is private.`);
+    }
+    return influencer;
   }
 
 

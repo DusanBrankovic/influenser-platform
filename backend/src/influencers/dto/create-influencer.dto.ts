@@ -1,6 +1,7 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsArray, IsEmail, IsNotEmpty, IsOptional, IsString, IsEnum } from "class-validator";
 import { Role } from "generated/prisma/enums";
-
+import { Value } from "generated/prisma/enums";
+import { Industry } from "generated/prisma/enums";
 export class CreateInfluencerDto {
     @IsEmail()
     @IsNotEmpty()
@@ -21,4 +22,16 @@ export class CreateInfluencerDto {
     @IsString()
     @IsOptional()
     headline: string;
+
+    @IsOptional()
+    @IsArray()
+    @IsEnum(Value, {each: true})
+    values: Value[]
+
+    @IsOptional()
+    @IsArray()
+    @IsEnum(Industry, {each: true})
+    industries: Industry[]
+    
+
 }
