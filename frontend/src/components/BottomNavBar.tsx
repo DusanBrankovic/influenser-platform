@@ -7,7 +7,7 @@ import { BottomNavItem } from "./BottomNavItem";
 import { getActions } from "@/auth/authStore";
 import { useNavigate } from "@tanstack/react-router";
 
-const { clearTokens } = getActions();
+const { clearTokens, setIsUnregistered } = getActions();
 
 export function BottomNav({
   items,
@@ -46,6 +46,7 @@ export function BottomNav({
           type="button"
           variant="ghost"
           onClick={() => {
+            setIsUnregistered();
             clearTokens();
             navigate({ to: "/auth", replace: true });
           }}

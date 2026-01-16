@@ -13,6 +13,10 @@ import { Label } from "@/components/ui/label";
 import FormField from "./FormField";
 import { registerApi } from "@/services/authApi";
 import type { RegisterPayload } from "@/services/authApi";
+import RegSuccessScreen from "./RegSuccess";
+import { getActions, useIsRegistered } from "@/auth/authStore";
+
+const { setIsRegistered } = getActions();
 
 const passwordSchema = z
   .string()
@@ -94,6 +98,8 @@ const Register = ({
 
       console.log("Registering user:", user);
       registerApi(user);
+
+      setIsRegistered()
     },
   });
 
@@ -135,8 +141,13 @@ const Register = ({
     },
   ];
 
+  const isRegistered = useIsRegistered();
+
   return (
     <div className="w-full flex flex-col justify-start items-center">
+      {isRegistered ? (
+        <RegSuccessScreen onSwitchToSignIn={onSwitchToSignIn} />
+      ) : (
         <Card className="w-full">
           <CardHeader></CardHeader>
           <CardContent className="w-100%">
@@ -227,6 +238,7 @@ const Register = ({
             </div>
           </CardFooter>
         </Card>
+      )}
     </div>
   );
 };

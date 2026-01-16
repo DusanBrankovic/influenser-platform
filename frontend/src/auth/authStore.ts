@@ -17,10 +17,12 @@ type TokenData = z.infer<typeof TokenDataSchema>;
 type AuthStore = {
   accessToken: string | undefined;
   accessTokenData: TokenData | undefined;
+  isRegistered: boolean;
 
   actions: {
 		setAccessToken: (accessToken: string | undefined) => void;
-		
+		setIsRegistered: () => void;
+    setIsUnregistered: () => void;
 		init: () => void;
 		clearTokens: () => void;
 	}
@@ -33,7 +35,7 @@ export const authStore = createStore<AuthStore>()(
       (set, get) => ({
         accessToken: undefined,
         accessTokenData: undefined,
-        refreshToken: undefined,
+        isRegistered: false,
 
         actions: {
           setAccessToken: (accessToken: string | undefined) => {
@@ -52,6 +54,14 @@ export const authStore = createStore<AuthStore>()(
             })();
 
             set({ accessToken, accessTokenData });
+          },
+
+          setIsRegistered: () => {
+            set({ isRegistered : true });
+          },
+
+          setIsUnregistered: () => {
+            set({ isRegistered : false });
           },
 
           init: () => {
@@ -87,11 +97,13 @@ export type ExtractState<S> = S extends {
 const accessTokenSelector = (state: ExtractState<typeof authStore>) => state.accessToken;
 const accessTokenDataSelector = (state: ExtractState<typeof authStore>) => state.accessTokenData;
 const actionsSelector = (state: ExtractState<typeof authStore>) => state.actions;
+const isRegisteredSelector = (state: ExtractState<typeof authStore>) => state.isRegistered;
 
 // getters
 export const getAccessToken = () => accessTokenSelector(authStore.getState());
 export const getAccessTokenData = () => accessTokenDataSelector(authStore.getState());
 export const getActions = () => actionsSelector(authStore.getState());
+export const getIsRegistered = () => isRegisteredSelector(authStore.getState());
 
 export function useAuthStore<U>(
   selector: (s: ExtractState<typeof authStore>) => U,
@@ -104,3 +116,4 @@ export function useAuthStore<U>(
 export const useAccessToken = () => useAuthStore(accessTokenSelector);
 export const useAccessTokenData = () => useAuthStore(accessTokenDataSelector);
 export const useActions = () => useAuthStore(actionsSelector);
+export const useIsRegistered = () => useAuthStore(isRegisteredSelector);
