@@ -13,6 +13,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as PrivateRouteRouteImport } from './routes/_private/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PrivateProfileRouteImport } from './routes/_private/profile'
+import { Route as PrivateInfluensersRouteImport } from './routes/_private/influensers'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -33,15 +34,22 @@ const PrivateProfileRoute = PrivateProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => PrivateRouteRoute,
 } as any)
+const PrivateInfluensersRoute = PrivateInfluensersRouteImport.update({
+  id: '/influensers',
+  path: '/influensers',
+  getParentRoute: () => PrivateRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/influensers': typeof PrivateInfluensersRoute
   '/profile': typeof PrivateProfileRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/influensers': typeof PrivateInfluensersRoute
   '/profile': typeof PrivateProfileRoute
 }
 export interface FileRoutesById {
@@ -49,14 +57,21 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_private': typeof PrivateRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_private/influensers': typeof PrivateInfluensersRoute
   '/_private/profile': typeof PrivateProfileRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/profile'
+  fullPaths: '/' | '/auth' | '/influensers' | '/profile'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/profile'
-  id: '__root__' | '/' | '/_private' | '/auth' | '/_private/profile'
+  to: '/' | '/auth' | '/influensers' | '/profile'
+  id:
+    | '__root__'
+    | '/'
+    | '/_private'
+    | '/auth'
+    | '/_private/influensers'
+    | '/_private/profile'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -95,14 +110,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivateProfileRouteImport
       parentRoute: typeof PrivateRouteRoute
     }
+    '/_private/influensers': {
+      id: '/_private/influensers'
+      path: '/influensers'
+      fullPath: '/influensers'
+      preLoaderRoute: typeof PrivateInfluensersRouteImport
+      parentRoute: typeof PrivateRouteRoute
+    }
   }
 }
 
 interface PrivateRouteRouteChildren {
+  PrivateInfluensersRoute: typeof PrivateInfluensersRoute
   PrivateProfileRoute: typeof PrivateProfileRoute
 }
 
 const PrivateRouteRouteChildren: PrivateRouteRouteChildren = {
+  PrivateInfluensersRoute: PrivateInfluensersRoute,
   PrivateProfileRoute: PrivateProfileRoute,
 }
 
