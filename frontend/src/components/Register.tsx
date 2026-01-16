@@ -11,7 +11,7 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import FormField from "./FormField";
-import { useAuthStore, type User } from "@/auth/authStore";
+import { useAuthStore } from "@/auth/authStore";
 import RegSuccessScreen from "./RegSuccess";
 import { registerApi } from "@/services/authApi";
 import type { RegisterPayload } from "@/services/authApi";
@@ -68,11 +68,9 @@ const formSchema = z.object({
 const combinedSchema = formSchema.merge(passwordConfirmationSchema);
 
 const Register = ({ 
-  onSwitchToSignIn, 
-  onRegister 
+  onSwitchToSignIn
 }: { 
   onSwitchToSignIn: () => void;
-  onRegister: (user: User) => void;
 }) => {
   const { isRegistered, setIsRegistered } = useAuthStore();
   const form = useForm({

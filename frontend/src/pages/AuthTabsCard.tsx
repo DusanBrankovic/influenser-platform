@@ -44,10 +44,6 @@ const AuthTabsCard: React.FC = () => {
     navigate({ to: "/" });
   };
 
-  const handleRegister = async () => {
-    navigate({ to: "/profile" });
-  }
-
   return (
     <div className="h-full w-full flex md:flex-row flex-col items-center justify-between md:items-stretch">
       <div className="flex flex-1 flex-col relative text-primary px-3 my-14 md:my-0 md:min-h-screen md:items-center md:justify-center">
@@ -141,7 +137,6 @@ const AuthTabsCard: React.FC = () => {
                   "
             >
               <Register 
-                onRegister={handleRegister}
                 onSwitchToSignIn={() => setTab("signin")}
               />
             </TabsContent>
