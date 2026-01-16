@@ -8,6 +8,8 @@ import { DataAccessModule } from "./data-access/data-access.module";
 import { APP_GUARD } from "@nestjs/core";
 import { JwtAuthGuard } from "./auth/auth.guard";
 import { RolesGuard } from "./auth/roles.guard";
+import { ConfigModule } from "@nestjs/config";
+import { BusinessesModule } from './businesses/businesses.module';
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { RolesGuard } from "./auth/roles.guard";
     ReviewsModule,
     AuthModule,
     DataAccessModule,
+    ConfigModule.forRoot({ isGlobal: true }),
+    BusinessesModule
   ],
   controllers: [],
   providers: [
