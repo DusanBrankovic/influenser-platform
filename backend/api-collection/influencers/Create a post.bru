@@ -1,0 +1,27 @@
+meta {
+  name: Create a post
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/posts
+  body: multipartForm
+  auth: inherit
+}
+
+body:json {
+  {
+    "text": "moj prvi post"
+  }
+}
+
+body:multipart-form {
+  text: moj drugi post sa vise slika
+  images: @file()
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
