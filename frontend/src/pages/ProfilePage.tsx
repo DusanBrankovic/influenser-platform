@@ -14,7 +14,6 @@ import {
   Pencil,
   Plus,
   X,
-  Save,
   Star,
   Phone,
   Mail,
@@ -22,6 +21,9 @@ import {
   MapPin,
   Share2,
 } from "lucide-react";
+import { useRouteContext } from "@tanstack/react-router";
+import { togglePrivateProfile } from "@/services/influencerService";
+import { useState } from "react";
 
 function Stars({ value = 4, outOf = 5 }: { value?: number; outOf?: number }) {
   const v = Math.max(0, Math.min(value, outOf));
@@ -38,9 +40,16 @@ function Stars({ value = 4, outOf = 5 }: { value?: number; outOf?: number }) {
 }
 
 export default function InfluencerProfile() {
+
+  const [lastAction, setLastAction] = useState<"published" | "unpublished" | null>(null);
+
   const [bio, setBio] = React.useState(
     "U opisu profila influenser može ukratko da predstavi sebe, da naznači koji je njegov fokus i cilj sa budućim kampanjama. Trebalo bi navesti u par rečenica oko čega se bazira njegov sadržaj pre nego što pregledamo kompletan profil. Ovaj prozor može imati ograničenje u vidu maksimalnog broja simbola."
   );
+
+  const { influencer } = useRouteContext({
+    from: "/_private/profile",
+  });
 
   const industries = ["Industrija 1", "Industrija 2", "Industrija 3"];
   const values = ["Vrednosti 1", "Vrednosti 2", "Vrednosti 3", "Vrednosti 4"];
@@ -68,17 +77,38 @@ export default function InfluencerProfile() {
 
       <div className="px-4 sm:px-10 pt-14 sm:pt-16">
         <div className="mx-auto flex max-w-5xl items-center justify-end gap-2 sm:gap-3">
-          <Button className="rounded-full" size="sm">
+
+           <div className="min-h-[20px] text-sm">
+              {lastAction === "published" && (
+                <span className="rounded-full bg-green-100 px-3 py-1 text-green-700">
+                  Profile published
+                </span>
+              )}
+
+              {lastAction === "unpublished" && (
+                <span className="rounded-full bg-yellow-100 px-3 py-1 text-yellow-800">
+                  Profile unpublished
+                </span>
+              )}
+            </div>
+
+          <Button className="rounded-full" size="sm" onClick={() => 
+            {
+              togglePrivateProfile(false)
+              setLastAction("published");
+            }
+          }>
             <Plus className="mr-2 h-4 w-4" />
             Publish
           </Button>
-          <Button variant="outline" className="rounded-full" size="sm">
+          <Button variant="outline" className="rounded-full" size="sm" onClick={() => 
+            {
+              togglePrivateProfile(true)
+              setLastAction("unpublished");
+            }
+          }>
             <X className="mr-2 h-4 w-4" />
             Unpublish
-          </Button>
-          <Button variant="outline" className="rounded-full" size="sm">
-            <Save className="mr-2 h-4 w-4" />
-            Save as draft
           </Button>
         </div>
       </div>
@@ -88,8 +118,8 @@ export default function InfluencerProfile() {
           <CardHeader className="pb-3">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">
-                <CardTitle className="text-xl sm:text-2xl">Ime Prezime</CardTitle>
-                <p className="text-sm text-black">@nadimak</p>
+                <CardTitle className="text-xl sm:text-2xl">{influencer.name}</CardTitle>
+                <p className="text-sm text-black">@{influencer.userId}</p>
               </div>
 
               <div className="flex flex-col items-start sm:items-end gap-2">
