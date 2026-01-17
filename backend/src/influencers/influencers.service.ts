@@ -10,7 +10,7 @@ import { JwtPayload } from "src/auth/dto/credentials.dto";
 export class InfluencersService {
   constructor(
     private influencersRepository: InfluencersRepository,
-    private passwordService: PasswordService
+    private passwordService: PasswordService,
   ) { }
   async create(createInfluencerDto: CreateInfluencerDto) {
     const hashedPassword = await this.passwordService.hash(
