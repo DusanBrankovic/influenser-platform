@@ -12,7 +12,12 @@ export async function loginApi(
     body: JSON.stringify(payload),
   });
 
-  if (!res.ok) throw new Error("Login failed");
+  if (!res.ok) {
+    const err: any = new Error("Login failed");
+    err.status = res.status;
+    throw err;
+  }
+
   return res.json();
 }
 

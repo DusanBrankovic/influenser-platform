@@ -17,6 +17,7 @@ import { useNavigate } from "@tanstack/react-router";
 import FormField from "./FormField";
 import { loginApi } from "@/services/authService";
 import type { LoginPayload } from "@/types/auth.types";
+import { useState } from "react";
 
 const passwordSchema = z
   .string()
@@ -48,6 +49,8 @@ const { setAccessToken } = getActions();
 
 const SignIn: React.FC<SignInProps> = ({ onSwitchToSignUp, onGuest }) => {
 
+  const [authError, setAuthError] = useState<string | null>(null);
+
   const navigate = useNavigate();
 
   const handleSubmit = async ({
@@ -59,22 +62,27 @@ const SignIn: React.FC<SignInProps> = ({ onSwitchToSignUp, onGuest }) => {
       rememberMe: boolean;
     };
   }) => {
+    setAuthError(null);
 
-    const user: LoginPayload = {
-      email: value.email,
-      password: value.password
-    };
+    try {
+      const user: LoginPayload = {
+        email: value.email,
+        password: value.password,
+      };
 
-    console.log("Logging in user:", user);
-    var response = await loginApi(user);
+      const response = await loginApi(user);
 
-    console.log("Before setting tokens, received response:", response);
-    setAccessToken(response.access_token);
-    console.log("After setting tokens, received response:", response);
-    console.log("User logged in, token set:", response.access_token);
-
-    navigate({ to: "/profile" });
+      setAccessToken(response.access_token);
+      navigate({ to: "/profile" });
+    } catch (err: any) {
+      const status = err?.status;
     
+      if (status === 401 || status === 403) {
+        setAuthError("Pogrešan e-mail ili lozinka.");
+      } else {
+        setAuthError("Došlo je do greške. Pokušajte ponovo.");
+      }
+    }
   };
 
   const form = useForm({
@@ -146,6 +154,11 @@ const SignIn: React.FC<SignInProps> = ({ onSwitchToSignUp, onGuest }) => {
                 />
               ))}
             </FieldGroup>
+            {authError && (
+              <Label className="block rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                {authError}
+              </Label>
+              )}
             <FieldGroup className="flex flex-col md:flex-row justify-between items-baseline py-5">
               <form.Field name="rememberMe">
                 {(field) => (
