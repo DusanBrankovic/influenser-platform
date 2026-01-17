@@ -18,31 +18,32 @@ export default function InfluenserList({
   const [loading, setLoading] = React.useState(false);
 
   return (
-    <div className="w-full px-6 sm:px-10">
-      <div className="mx-auto w-full max-w-6xl space-y-8">
-        <h1 className="text-3xl sm:text-4xl font-extrabold leading-tight">
-          Pronađite influensere
-          <span className="block">za saradnju</span>
-        </h1>
+    <div className="w-full bg-muted/40">
+  <div className="mx-auto max-w-6xl px-6 sm:px-10 py-16 space-y-10">
 
-        <div className="w-full max-w-4xl">
-          <SearchComponent
-            valueEnumValues={valueEnumValues}
-            industryEnumValues={industryEnumValues}
-            onSearch={async (params) => {
-                setLoading(true);
-                try {
-                const data = await getAllInfluencers(params);
-                setInfluencers(data);
-                } finally {
-                setLoading(false);
-                }
-            }}
-            />
+    <h1 className="text-3xl sm:text-4xl font-extrabold leading-tight">
+      Pronađite influensere
+      <span className="block">za saradnju</span>
+    </h1>
 
 
-        </div>
-
+    <div className="w-full">
+      <div className="w-full rounded-2xl bg-muted p-4">
+        <SearchComponent
+          valueEnumValues={valueEnumValues}
+          industryEnumValues={industryEnumValues}
+          onSearch={async (params) => {
+            setLoading(true)
+            try {
+              const data = await getAllInfluencers(params)
+              setInfluencers(data)
+            } finally {
+              setLoading(false)
+            }
+          }}
+        />
+      </div>
+    </div>
         <div
           className="
             grid

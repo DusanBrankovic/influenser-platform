@@ -40,14 +40,14 @@ export default function SearchComponent({
 
   return (
     <form
-      className="mx-auto w-full max-w-2xl rounded-2xl bg-neutral-300 p-4"
+      className="mx-auto w-full rounded-2xl bg-neutral-300 p-4"
       onSubmit={(e) => {
         e.preventDefault();
         submitSearch();
       }}
     >
       <Input
-        className="w-full"
+        className="w-full bg-white rounded-lg"
         placeholder="Pretraži po imenu ili opisu..."
         value={name}
         onChange={(e) => setSearch(e.target.value)}
