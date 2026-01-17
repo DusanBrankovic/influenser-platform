@@ -1,42 +1,53 @@
+import * as React from "react";
 import InfluencerCard from "@/components/InfluencerCard";
 import SearchComponent from "@/components/SearchComponent";
 import type { Influencer } from "@/types/influencer.types";
 
 export default function InfluenserList({ influencers }: { influencers: Influencer[] }) {
+  const [query, setQuery] = React.useState("");
 
-return (
+  const filtered = React.useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return influencers;
 
+    return influencers.filter((inf) => {
+      const name = (inf.name ?? "").toLowerCase();
+      const headline = (inf.headline ?? "").toLowerCase();
+      return name.includes(q) || headline.includes(q);
+    });
+  }, [influencers, query]);
 
-    <div className="space-y-6">
-    
-        <p className="pl-3"></p>
-            <h1 className="text-4xl font-bold pl-4">Pronađite influensere za saradnju</h1>
-        
-        <SearchComponent />
-    
-        <div
-            className="
-                grid
-                grid-cols-[repeat(auto-fit,minmax(350px,1fr))]
-                gap-6
-                justify-items-center
-                mx-auto
-                w-full
-                max-w-7xl
-                bg-backgroud
-            "
-        >
-            
-        {influencers.map((influencer) => (
-            <InfluencerCard
-            key={influencer.userId}
-            influencer={influencer}
-            />
-        ))}
+  return (
+    <div className="w-full px-6 sm:px-10">
+  <div className="mx-auto w-full max-w-6xl space-y-8">
+    {/* Title */}
+    <h1 className="text-3xl sm:text-4xl font-extrabold leading-tight">
+      Pronađite influensere
+      <span className="block">za saradnju</span>
+    </h1>
 
-        </div>
-
+    {/* Search (narrower than the grid, centered in the same column) */}
+    <div className="w-full max-w-4xl">
+      <SearchComponent value={query} onChange={setQuery} />
     </div>
-    
-)
+
+    {/* Cards grid */}
+    <div
+        className="
+            grid
+            grid-cols-[repeat(auto-fit,minmax(280px,1fr))]
+            gap-4
+            justify-items-start
+            place-content-start
+            w-full
+        "
+        >
+        {filtered.map((influencer) => (
+            <InfluencerCard key={influencer.userId} influencer={influencer} />
+        ))}
+        </div>
+  </div>
+</div>
+
+  );
 }
