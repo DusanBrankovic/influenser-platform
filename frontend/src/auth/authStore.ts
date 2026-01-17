@@ -10,6 +10,7 @@ const ACCESS_TOKEN_KEY = 'accessToken';
 const TokenDataSchema = z.object({
 	email: z.string(),
 	role: z.string(),
+  sub: z.number(),
 })
 
 type TokenData = z.infer<typeof TokenDataSchema>;
