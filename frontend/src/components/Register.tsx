@@ -91,7 +91,7 @@ const Register = ({
     onSubmit: async ({ value }) => {
       const user: RegisterPayload = {
         email: value.email,
-        name: value.username,
+        name: value.fullname,
         password: value.password,
         role: "INFLUENCER"
       };
