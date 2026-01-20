@@ -7,4 +7,5 @@ export type Post = {
   numLikes: number;
   numComments: number;
   likedByLoggedUser: boolean;
+  savedByLoggedUser: boolean;
 };

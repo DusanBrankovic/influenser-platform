@@ -1,5 +1,5 @@
 import { useState } from "react";
-import InfluencerProfileFeed from "./InfluencerProfileFeed";
+import InfluencerProfileFeed from "./influencer-feed/InfluencerProfileFeed";
 
 type NavContent = {
   name: string;
