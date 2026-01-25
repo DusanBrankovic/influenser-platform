@@ -34,3 +34,28 @@ export async function createPost(formData: FormData): Promise<Post> {
     if (!res.ok) throw new Error("Failed to create post");
     return res.json();
 }
+
+export async function deletePost(postId: number): Promise<void> {
+    const res = await fetch(`${apiUrl}/posts/${postId}`, {
+        method: "DELETE",
+        headers: {
+            ...authHeaders(),
+        },
+    });
+
+    if (!res.ok) throw new Error("Failed to delete post");
+}
+
+export async function editPost(postId: number, text: string): Promise<Post> {
+    const res = await fetch(`${apiUrl}/posts/${postId}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            ...authHeaders(),
+        },
+        body: JSON.stringify({ text }),
+    });
+
+    if (!res.ok) throw new Error("Failed to edit post");
+    return res.json();
+}
