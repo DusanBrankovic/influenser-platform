@@ -1,18 +1,18 @@
 import { ToastContainer } from "react-toastify";
 
-export type AreYouSureModalProps = {
+export type ConfirmModalProps = {
   text: string;
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
 };
 
-export default function AreYouSureModal({
+export default function ConfirmModal({
   text,
   isOpen,
   onClose,
   onConfirm,
-}: AreYouSureModalProps) {
+}: ConfirmModalProps) {
   if (!isOpen) return null;
 
   return (

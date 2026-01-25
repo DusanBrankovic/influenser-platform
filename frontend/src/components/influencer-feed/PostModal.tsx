@@ -1,19 +1,22 @@
-import { createPost } from "@/services/postService";
+import { createPost, editPost } from "@/services/postService";
 import { useCustomContext } from "@/state-management/useContextHook";
 import { useRouteContext } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LuImagePlus } from "react-icons/lu";
 import { ToastContainer, toast } from "react-toastify";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Spinner from "../Spinner";
+import { insertAtCursor } from "@/utils/insertAtCursor";
+import { EmojiPickerButton } from "../EmojiButton";
+
 
 export default function PostModal() {
-  const { createPost } = useCustomContext();
+  const { isOpenPostModal, isPostEditMode, selectedPostId } = useCustomContext();
   const { influencer } = useRouteContext({
     from: "/_private/profile",
   });
   useEffect(() => {
-    if (createPost) {
+    if (isOpenPostModal) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
@@ -22,11 +25,11 @@ export default function PostModal() {
     return () => {
       document.body.style.overflow = "";
     };
-  }, [createPost]);
+  }, [isOpenPostModal]);
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center bg-black/70 bg-opacity-50 w-screen h-screen ${createPost ? "" : "hidden"}`}
+      className={`fixed inset-0 z-50 flex items-center justify-center backdrop-brightness-90 bg-opacity-50 w-screen h-screen ${isOpenPostModal ? "" : "hidden"}`}
     >
       <ToastContainer />
       <div className="bg-white rounded-lg shadow-md w-1/3 h-[80%] p-10 flex flex-col">
@@ -35,7 +38,7 @@ export default function PostModal() {
           profileUrl={influencer.profileUrl}
         />
         <PostContent />
-        <PostFooter influencerId={influencer.userId} />
+        <PostFooter influencerId={influencer.userId} isEditMode={isPostEditMode} postId={selectedPostId || 0} />
       </div>
     </div>
   );
@@ -66,17 +69,41 @@ const PostHeader = ({
 const PostContent = () => {
   const { images, removeImage, postText, setPostText } = useCustomContext();
   const [ indexImageDisplayed, setIndexImageDisplayed ] =  useState<number>(0);
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  const handleEmoji = (emoji: string) => {
+    setPostText(insertAtCursor(postText, emoji, textareaRef.current))
+
+    requestAnimationFrame(() => {
+      textareaRef.current?.focus()
+    })
+  }
+
   const showImage = () => {
-    return URL.createObjectURL(images[indexImageDisplayed]);
+    const image = images[indexImageDisplayed];
+    if (!image) return "";
+    if (typeof image === 'string') {
+      return image;
+    }
+    return URL.createObjectURL(image);
   };
+
+  const onRemoveImage = (index: number) => {
+    setIndexImageDisplayed(0);
+    removeImage(index);
+  }
   return (
-    <div className="flex flex-col gap-4 h-[80%]">
+    <div className="flex flex-col gap-4 h-[80%] relative">
       <textarea
-        className={`w-full border border-primary rounded-lg p-4 resize-none focus:outline-none focus:ring-2 focus:ring-primary ${images.length > 0 ? "h-1/3" : "h-full"}`}
+        ref={textareaRef}
+        className={`w-full border border-primary rounded-lg px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-primary ${images.length > 0 ? "h-1/3" : "h-full"}`}
         placeholder="What's on your mind?"
         value={postText}
         onChange={(e) => setPostText(e.target.value)}
       ></textarea>
+      <div className="absolute top-3 right-3">
+        <EmojiPickerButton onSelect={handleEmoji} />
+      </div>
       {images.length > 0 && (
         <div className="grid grid-cols-1 min-h-[80%]">
             <div className="relative h-full overflow-hidden">
@@ -85,7 +112,7 @@ const PostContent = () => {
                 className="rounded-lg object-cover h-full w-full"
               />
               <button
-                onClick={() => removeImage(indexImageDisplayed)}
+                onClick={() => onRemoveImage(indexImageDisplayed)}
                 className="absolute top-2 right-2 bg-black/60 text-white rounded-full px-2"
               >
                 ✕
@@ -109,8 +136,8 @@ const PostContent = () => {
   );
 };
 
-const PostFooter = ({ influencerId }: { influencerId: number }) => {
-  const { closeCreatePost } = useCustomContext();
+const PostFooter = ({ influencerId, isEditMode, postId }: { influencerId: number, isEditMode: boolean, postId: number }) => {
+  const { closePostModal } = useCustomContext();
   const { images, postText, addImages, resetPost } = useCustomContext();
 
   const queryClient = useQueryClient();
@@ -122,11 +149,26 @@ const PostFooter = ({ influencerId }: { influencerId: number }) => {
         queryKey: ["posts", influencerId],
       });
 
-      closeCreatePost();
+      closePostModal();
       resetPost();
     },
     onError: () => {
       toast("Failed to create post. Please try again.", { type: "error" });
+    },
+  });
+
+  const editPostMutation = useMutation({
+    mutationFn: editPost,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["posts", influencerId],
+      });
+
+      closePostModal();
+      resetPost();
+    },
+    onError: () => {
+      toast("Failed to edit post. Please try again.", { type: "error" });
     },
   });
 
@@ -141,10 +183,10 @@ const PostFooter = ({ influencerId }: { influencerId: number }) => {
 
   const discardPost = () => {
     resetPost();
-    closeCreatePost();
+    closePostModal();
   };
 
-  const createAPost = () => {
+  const onCreatePost = () => {
     if (!postText && images.length === 0) {
       toast("Cannot create an empty post.", { type: "error" });
       return;
@@ -156,9 +198,33 @@ const PostFooter = ({ influencerId }: { influencerId: number }) => {
     createPostMutation.mutate(formData);
   };
 
+  const onEditPost = () => {
+    if (!postText && images.length === 0) {
+      toast("Cannot create an empty post.", { type: "error" });
+      return;
+    }
+    const formData = new FormData();
+    formData.append("postId", postId.toString());
+    formData.append("text", postText);
+    const newImages = images.filter((img) => typeof img !== "string");
+    const existingImageUrls = images.filter((img) => typeof img === "string");
+    formData.append("existingImageUrls", JSON.stringify(existingImageUrls));
+    newImages.forEach((img) => formData.append("newImages", img));
+
+    editPostMutation.mutate(formData);
+  };
+
+  const onActionClick = () => {
+    if (isEditMode) {
+      onEditPost();
+    } else {
+      onCreatePost();
+    }
+  };
+
   return (
     <div className="w-full flex items-center justify-between mt-6">
-      {createPostMutation.isPending && (
+      {createPostMutation.isPending || editPostMutation.isPending && (
         <div className="absolute inset-0 bg-black/30 flex items-center justify-center rounded-xl">
           <Spinner />
         </div>
@@ -180,9 +246,9 @@ const PostFooter = ({ influencerId }: { influencerId: number }) => {
       <div className="flex gap-3">
         <button
           className="bg-primary text-white px-4 py-2 rounded-lg cursor-pointer"
-          onClick={createAPost}
+          onClick={onActionClick}
         >
-          Post
+          {isEditMode ? "Update Post" : "Create Post"}
         </button>
         <button
           className="bg-gray-300 text-black px-4 py-2 rounded-lg cursor-pointer"

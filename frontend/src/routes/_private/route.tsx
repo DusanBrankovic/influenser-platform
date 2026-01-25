@@ -17,7 +17,7 @@ export const Route = createFileRoute("/_private")({
 });
 
 function PrivateLayout() {
-  const { openCreatePost } = useCustomContext();
+  const { openPostModal, setIsPostEditMode, setSelectedPostId } = useCustomContext();
   const navItems: BottomNavItem[] = [
   {
     key: "influencers",
@@ -44,7 +44,9 @@ function PrivateLayout() {
     fuzzy: true,
     icon: "add_circle",
     onClick: () => {
-      openCreatePost();
+      setIsPostEditMode(false);
+      setSelectedPostId(null);
+      openPostModal();
     },
   },
 ];

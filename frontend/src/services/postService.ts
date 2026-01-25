@@ -46,14 +46,15 @@ export async function deletePost(postId: number): Promise<void> {
     if (!res.ok) throw new Error("Failed to delete post");
 }
 
-export async function editPost(postId: number, text: string): Promise<Post> {
+export async function editPost(formData: FormData): Promise<Post> {
+    const postId = formData.get("postId");
+    formData.delete("postId");
     const res = await fetch(`${apiUrl}/posts/${postId}`, {
         method: "PUT",
         headers: {
-            "Content-Type": "application/json",
             ...authHeaders(),
         },
-        body: JSON.stringify({ text }),
+       body: formData,
     });
 
     if (!res.ok) throw new Error("Failed to edit post");

@@ -1,19 +1,21 @@
 import { useState, type ReactNode } from "react"
-import { Context } from "./context"
+import { Context, type ImageType } from "./context"
 
 export function ContextProvider({ children }: { children: ReactNode }) {
-  const [createPost, setCreatePost] = useState(false)
-  const [images, setImages] = useState<File[]>([])
+  const [isOpenPostModal, setIsOpenPostModal] = useState(false)
+  const [isPostEditMode, setIsPostEditMode] = useState(false)
+  const [selectedPostId, setSelectedPostId] = useState<number | null>(null)
+  const [images, setImages] = useState<ImageType[]>([])
   const [postText, setPostText] = useState("")
 
   return (
     <Context.Provider
       value={{
-        createPost,
-        openCreatePost: () => setCreatePost(true),
-        closeCreatePost: () => setCreatePost(false),
+        isOpenPostModal,
+        openPostModal: () => setIsOpenPostModal(true),
+        closePostModal: () => setIsOpenPostModal(false),
         images,
-        addImages: (images: File[]) => {
+        addImages: (images: ImageType[]) => {
           setImages((prevImages) => [...prevImages, ...images])
         },
         removeImage: (imageIndex: number) => {
@@ -25,8 +27,13 @@ export function ContextProvider({ children }: { children: ReactNode }) {
           setPostText("");
           setImages([]);
         },
+        setImages,
         postText,
         setPostText,
+        isPostEditMode,
+        setIsPostEditMode,
+        selectedPostId,
+        setSelectedPostId,
       }}
     >
       {children}

@@ -2,19 +2,21 @@ import { useCustomContext } from "@/state-management/useContextHook";
 import { useRouteContext } from "@tanstack/react-router";
 
 export default function CreatePostCard() {
-  const { openCreatePost } = useCustomContext();
+  const { openPostModal, setIsPostEditMode, setSelectedPostId } = useCustomContext();
   const { influencer } = useRouteContext({
     from: "/_private/profile",
   });
 
-  const createPost = () => {
-    openCreatePost();
-  };
+  const onOpenPostModal = () => {
+    setIsPostEditMode(false);
+    setSelectedPostId(null);
+    openPostModal();
+  }
 
   return (
     <div
       className="border border-primary rounded-lg p-6 mb-16 bg-white flex gap-4 items-center justify-start cursor-pointer"
-      onClick={createPost}
+      onClick={() => onOpenPostModal()}
     >
       <img
         src={
