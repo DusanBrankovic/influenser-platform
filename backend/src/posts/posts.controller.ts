@@ -3,11 +3,11 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   UseInterceptors,
   UploadedFiles,
+  Put,
 } from "@nestjs/common";
 import { PostsService } from "./posts.service";
 import { CreatePostDto } from "./dto/create-post.dto";
@@ -44,7 +44,7 @@ export class PostsController {
   create(
     @GetUser() user: JwtPayload,
     @UploadedFiles() files: Express.Multer.File[],
-    @Body() createPostDto: CreatePostDto
+    @Body() createPostDto: CreatePostDto,
   ) {
     return this.postsService.create(+user.id, createPostDto, files);
   }
@@ -66,8 +66,8 @@ export class PostsController {
     },
   })
   @Public()
-  @Get('/influencer/:id')
-  findAllForUser(@Param('id') id: string) {
+  @Get("/influencer/:id")
+  findAllForUser(@Param("id") id: string) {
     return this.postsService.findAllForUser(+id);
   }
 
@@ -86,15 +86,33 @@ export class PostsController {
   })
   @Public()
   @Get(":id")
-  findOne(
-    @Param("id") id: string
-  ) {
+  findOne(@Param("id") id: string) {
     return this.postsService.findOne(+id);
   }
 
-  @Patch(":id")
-  update(@Param("id") id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postsService.update(+id, updatePostDto);
+  @ApiOperation({
+    summary: "Edit post",
+    description: "This endpoint edits a post by its ID.",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Successfully edited",
+    content: {
+      "application/json": {
+        schema: PostSchema,
+      },
+    },
+  })
+  @Put(":id")
+  @Roles(Role.INFLUENCER)
+  @UseInterceptors(FilesInterceptor("newImages"))
+  update(
+    @Param("id") id: string,
+    @Body() updatePostDto: UpdatePostDto,
+    @GetUser() user: JwtPayload,
+    @UploadedFiles() newImages: Express.Multer.File[],
+  ) {
+    return this.postsService.update(+user.id, +id, updatePostDto, newImages);
   }
 
   @ApiOperation({
@@ -116,10 +134,7 @@ export class PostsController {
     },
   })
   @Delete(":id")
-  remove(
-    @GetUser() user: JwtPayload,
-    @Param("id") id: string
-  ) {
+  remove(@GetUser() user: JwtPayload, @Param("id") id: string) {
     return this.postsService.remove(+user.id, +id);
   }
 }

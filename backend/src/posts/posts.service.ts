@@ -62,8 +62,42 @@ export class PostsService {
     
   }
 
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
+  async update(userId: number, id: number, updatePostDto: UpdatePostDto, newImages: Express.Multer.File[]) {
+    const post = await this.postRepository.findPostByUserIdAndId(userId, id);
+    if (!post) {
+      throw new NotFoundException(`Post with ID ${id} not found`);
+    }
+
+    const imageNames = post.images.map((dbUrl) => {
+      const parts = dbUrl.split("/");
+      return parts[parts.length - 1];
+    });
+  
+    if (updatePostDto.existingImageUrls) {
+      const imagesToDelete = post.images.filter((dbUrl) => {
+        const imageName = dbUrl.split("/").pop() || "";
+        return !updatePostDto.existingImageUrls?.some((existingUrl) => existingUrl.includes(imageName));
+      });
+      const deletePromises = imagesToDelete.map(async (dbUrl) => {
+        await this.bucketService.deleteFile(dbUrl);
+      });
+      await Promise.all(deletePromises);
+      post.images = post.images.filter((dbUrl) => {
+        const imageName = dbUrl.split("/").pop() || "";
+        return updatePostDto.existingImageUrls?.some((existingUrl) => existingUrl.includes(imageName));
+      });
+    }
+
+    if (newImages.length > 0) {
+      const uploadedImages = await this.bucketService.uploadFiles(newImages, userId);
+      post.images.push(...uploadedImages.map((urlObj) => urlObj.dbUrl));
+    }
+
+    post.text = updatePostDto.text ?? post.text;
+    post.updatedAt = new Date();
+
+    await this.postRepository.updatePostById(post.id, post);
+    return post;
   }
 
   async remove(userId: number, id: number) {

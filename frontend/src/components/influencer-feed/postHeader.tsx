@@ -1,22 +1,26 @@
 import { deletePost } from "@/services/postService";
 import type { Influencer } from "@/types/influencer.types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import AreYouSureModal from "../AreYouSureModal";
+import ConfirmModal from "../ConfirmModal";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { useCustomContext } from "@/state-management/useContextHook";
+import type { Post } from "@/types/post.types";
 
 type PostHeaderProps = {
   influencer: Influencer;
-  postTimestamp: string;
-  postId: number;
+  post: Post;
 };
 
-export default function PostHeader({
-  influencer,
-  postTimestamp,
-  postId,
-}: PostHeaderProps) {
-  const [ isOpen, setIsOpen ] = useState(false);
+export default function PostHeader({ influencer, post }: PostHeaderProps) {
+  const [isOpenConfirmModal, setIsOpenConfirmModal] = useState(false);
+  const {
+    openPostModal,
+    setPostText,
+    setImages,
+    setIsPostEditMode,
+    setSelectedPostId,
+  } = useCustomContext();
   const queryClient = useQueryClient();
 
   const deletePostMutation = useMutation({
@@ -30,8 +34,25 @@ export default function PostHeader({
       toast("Failed to delete post. Please try again.", { type: "error" });
     },
   });
-  const handleEditPost = (id: number) => {
-    console.log(`Edit post with ID: ${id}`);
+
+  const transformToFormat = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    };
+    return new Date(dateString).toLocaleDateString("sr-RS", options);
+  };
+
+  const handleEditPost = () => {
+    setPostText(post.text);
+    setImages(post.images || []);
+    setIsPostEditMode(true);
+    setSelectedPostId(post.id);
+    openPostModal();
   };
 
   const handleDeletePost = (id: number) => {
@@ -40,11 +61,13 @@ export default function PostHeader({
 
   return (
     <div className="flex items-center justify-between mb-4">
-      <AreYouSureModal
-        text={"Are you sure you want to delete this post? This action cannot be undone."}
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        onConfirm={() => handleDeletePost(postId)}
+      <ConfirmModal
+        text={
+          "Are you sure you want to delete this post? This action cannot be undone."
+        }
+        isOpen={isOpenConfirmModal}
+        onClose={() => setIsOpenConfirmModal(false)}
+        onConfirm={() => handleDeletePost(post.id)}
       />
       <div className="flex gap-4">
         <img
@@ -56,19 +79,21 @@ export default function PostHeader({
         />
         <div className="flex flex-col items-start">
           <div className="font-bold text-lg">{influencer.name}</div>
-          <div className="text-gray-500 text-xs">{postTimestamp}</div>
+          <div className="text-gray-500 text-xs">
+            {transformToFormat(post.createdAt)}
+          </div>
         </div>
       </div>
       <div className="flex gap-4 text-gray-500">
         <button
           className="hover:text-gray-800 cursor-pointer"
-          onClick={() => handleEditPost(postId)}
+          onClick={handleEditPost}
         >
           Edit
         </button>
         <button
           className="hover:text-gray-800 cursor-pointer"
-          onClick={() => setIsOpen(true)}
+          onClick={() => setIsOpenConfirmModal(true)}
         >
           Delete
         </button>

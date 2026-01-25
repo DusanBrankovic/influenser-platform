@@ -34,3 +34,26 @@ export const PostSchema: SchemaObject = {
     },
   },
 };
+
+export const UpdateSchema: SchemaObject = {
+  type: "object",
+  properties: {
+    text: {
+      type: "string",
+      example: "This is an updated post text.",
+    },
+    existingImageUrls: {
+      type: "array",
+      items: {
+        type: "string",
+        example: "https://bucket.example.com/user1/image1.jpg",
+      },
+    },
+    newImages: {
+      type: "array",
+      items: {
+        type: "File",
+      },
+    },
+  },
+};

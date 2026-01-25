@@ -29,6 +29,7 @@
     "@tanstack/router-plugin": "^1.142.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "emoji-picker-react": "^4.17.1",
     "i": "^0.3.7",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.554.0",
