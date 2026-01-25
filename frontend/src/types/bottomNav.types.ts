@@ -13,6 +13,7 @@ export type NavRouteItem = {
   key: string;
   type: "route";
   to: string;
+  param?: number;
   label: string;
   icon: IconName;
   ariaLabel?: string;
@@ -23,6 +24,7 @@ export type NavProfileItem = {
   key: string;
   type: "profile";
   to: string;
+  param: number;
   label: string;
   ariaLabel?: string;
   fuzzy?: boolean;

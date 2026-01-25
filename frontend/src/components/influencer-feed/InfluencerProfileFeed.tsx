@@ -6,7 +6,7 @@ import PostCard from "./postCard";
 
 export default function InfluencerProfileFeed() {
   const { influencer } = useRouteContext({
-    from: "/_private/profile",
+    from: "/_private/profile/$userId",
   });
 
   const { data, isLoading, error } = useQuery<Post[]>({

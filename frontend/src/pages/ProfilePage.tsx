@@ -64,7 +64,7 @@ export default function InfluencerProfile() {
   );
 
   const { influencer } = useRouteContext({
-    from: "/_private/profile",
+    from: "/_private/profile/$userId"
   });
 
   const industries = ["Industrija 1", "Industrija 2", "Industrija 3"];

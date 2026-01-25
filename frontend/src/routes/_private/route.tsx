@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-import { authStore } from "@/auth/authStore";
+import { authStore, getAccessTokenData } from "@/auth/authStore";
 import { BottomNav } from "@/components/BottomNavBar";
 import type { BottomNavItem } from "@/types/bottomNav.types";
 
@@ -28,6 +28,7 @@ const navItems: BottomNavItem[] = [
     key: "profile",
     type: "profile",
     to: "/profile",
+    param: getAccessTokenData()?.sub!,
     label: "Profile",
     avatarUrl: null,
     avatarFallback: "ME",

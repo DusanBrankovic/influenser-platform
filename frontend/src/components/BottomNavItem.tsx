@@ -25,9 +25,11 @@ export function BottomNavItem({ item, heightPx }: Props) {
     "flex flex-col items-center justify-center gap-1"
   );
 
+  const redirectTo = item.to + "/" + item.param;
+  
   if (item.type === "profile") {
     return (
-      <Link to={item.to} className="w-full">
+      <Link to={redirectTo} className="w-full">
         <Button
           type="button"
           variant={isActive ? "default" : "ghost"}

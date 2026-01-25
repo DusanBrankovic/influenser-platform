@@ -11,7 +11,7 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@radix-ui/react-separator";
-import { getActions } from "@/auth/authStore";
+import { getActions, getAccessTokenData } from "@/auth/authStore";
 import type { SignInProps } from "../types/signin.types";
 import { useNavigate } from "@tanstack/react-router";
 import FormField from "./FormField";
@@ -73,7 +73,11 @@ const SignIn: React.FC<SignInProps> = ({ onSwitchToSignUp, onGuest }) => {
       const response = await loginApi(user);
 
       setAccessToken(response.access_token);
-      navigate({ to: "/profile" });
+      navigate({ to: "/profile/$userId",
+        params: {
+          userId: getAccessTokenData()?.sub+''
+        }
+      });
     } catch (err: any) {
       const status = err?.status;
     

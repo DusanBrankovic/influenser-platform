@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { BadgeCheck } from "lucide-react"
 import MockImage from "@/assets/img/MockImage";
 import type { Influencer } from "@/types/influencer.types";
+import { useNavigate } from "@tanstack/react-router";
 
 type ProfileCardProps = {
   influencer: Influencer;
@@ -9,8 +10,18 @@ type ProfileCardProps = {
 
 export default function InfluencerCard({ influencer }: ProfileCardProps) {
 
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    console.log('/profile/' + influencer.userId);
+
+    return navigate({ to: "/profile/$userId", params: { 
+      userId: influencer.userId+'',
+    }});
+  };
+
   return (
-    <Card className="w-full max-w-[340px] max-h-[420px] overflow-hidden rounded-3xl bg-white shadow-sm">
+    <Card onClick={handleClick} className="w-full max-w-[340px] max-h-[420px] overflow-hidden rounded-3xl bg-white shadow-sm">
       <CardContent className="p-4">
         <div className="overflow-hidden rounded-2xl bg-[#C4C4C4] h-[190px]">
           <MockImage imageStyle="w-full h-full object-cover" />
@@ -27,7 +38,7 @@ export default function InfluencerCard({ influencer }: ProfileCardProps) {
             </div>
 
             <p className="text-sm text-muted-foreground">
-              {influencer.experience}
+              {influencer.userId}
             </p>
           </div>
         </div>
