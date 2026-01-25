@@ -26,18 +26,12 @@ export default function InfluencerProfileFeed() {
       <div className="mt-10 p-10 px-20 text-center">Error loading posts.</div>
     );
   }
-
-  if (!data || data.length === 0) {
-    return (
-      <div className="mt-10 p-10 px-20 text-center">No posts available.</div>
-    );
-  }
  
   return (
     <div className="mt-10 p-10 px-20">
       <CreatePostCard />
       <CreatePostModal />
-      {data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map((post) => (
+      {data?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map((post) => (
         <PostCard key={post.id} influencer={influencer} post={post} />
       ))}
     </div>
