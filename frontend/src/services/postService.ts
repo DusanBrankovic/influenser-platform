@@ -21,3 +21,16 @@ export async function getInfluencerPosts(userId: number): Promise<Post[]> {
     if (!res.ok) throw new Error("Failed to fetch influencers");
     return res.json();
 }
+
+export async function createPost(formData: FormData): Promise<Post> {
+    const res = await fetch(`${apiUrl}/posts`, {
+        method: "POST",
+        headers: {
+            ...authHeaders(),
+        },
+        body: formData,
+    });
+
+    if (!res.ok) throw new Error("Failed to create post");
+    return res.json();
+}

@@ -2,6 +2,7 @@ import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { authStore } from "@/auth/authStore";
 import { BottomNav } from "@/components/BottomNavBar";
 import type { BottomNavItem } from "@/types/bottomNav.types";
+import { useCustomContext } from "@/state-management/useContextHook";
 
 export const Route = createFileRoute("/_private")({
   beforeLoad: () => {
@@ -15,7 +16,9 @@ export const Route = createFileRoute("/_private")({
   component: PrivateLayout,
 });
 
-const navItems: BottomNavItem[] = [
+function PrivateLayout() {
+  const { openCreatePost } = useCustomContext();
+  const navItems: BottomNavItem[] = [
   {
     key: "influencers",
     type: "route",
@@ -33,9 +36,18 @@ const navItems: BottomNavItem[] = [
     avatarFallback: "ME",
     fuzzy: true,
   },
+   {
+    key: "create-post",
+    type: "route",
+    to: "/profile",
+    label: "Create post",
+    fuzzy: true,
+    icon: "add_circle",
+    onClick: () => {
+      openCreatePost();
+    },
+  },
 ];
-
-function PrivateLayout() {
   return (
     <div>
       <main>

@@ -4,6 +4,7 @@ export type Influencer = {
   headline: string | null;
   experience: number | null;
   isPrivate: boolean;
+  profileUrl: string | null;
 };
 
 export type SearchQueryParams = {
