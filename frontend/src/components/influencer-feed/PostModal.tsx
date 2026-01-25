@@ -1,13 +1,13 @@
 import { createPost } from "@/services/postService";
 import { useCustomContext } from "@/state-management/useContextHook";
 import { useRouteContext } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { LuImagePlus } from "react-icons/lu";
 import { ToastContainer, toast } from "react-toastify";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Spinner from "../Spinner";
 
-export default function CreatePostModal() {
+export default function PostModal() {
   const { createPost } = useCustomContext();
   const { influencer } = useRouteContext({
     from: "/_private/profile",
@@ -29,19 +29,19 @@ export default function CreatePostModal() {
       className={`fixed inset-0 z-50 flex items-center justify-center bg-black/70 bg-opacity-50 w-screen h-screen ${createPost ? "" : "hidden"}`}
     >
       <ToastContainer />
-      <div className="bg-white rounded-lg shadow-md w-1/2 h-[70%] p-10 flex flex-col">
-        <CreatePostHeader
+      <div className="bg-white rounded-lg shadow-md w-1/3 h-[80%] p-10 flex flex-col">
+        <PostHeader
           name={influencer.name}
           profileUrl={influencer.profileUrl}
         />
-        <CreatePostContent />
-        <CreatePostFooter influencerId={influencer.userId} />
+        <PostContent />
+        <PostFooter influencerId={influencer.userId} />
       </div>
     </div>
   );
 }
 
-const CreatePostHeader = ({
+const PostHeader = ({
   name,
   profileUrl,
 }: {
@@ -63,39 +63,53 @@ const CreatePostHeader = ({
   );
 };
 
-const CreatePostContent = () => {
+const PostContent = () => {
   const { images, removeImage, postText, setPostText } = useCustomContext();
+  const [ indexImageDisplayed, setIndexImageDisplayed ] =  useState<number>(0);
+  const showImage = () => {
+    return URL.createObjectURL(images[indexImageDisplayed]);
+  };
   return (
     <div className="flex flex-col gap-4 h-[80%]">
       <textarea
-        className="w-full h-full border border-primary rounded-lg p-4 resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+        className={`w-full border border-primary rounded-lg p-4 resize-none focus:outline-none focus:ring-2 focus:ring-primary ${images.length > 0 ? "h-1/3" : "h-full"}`}
         placeholder="What's on your mind?"
         value={postText}
         onChange={(e) => setPostText(e.target.value)}
       ></textarea>
       {images.length > 0 && (
-        <div className="grid grid-cols-3 gap-3 overflow-y-auto h-64">
-          {images.map((file, index) => (
-            <div key={index} className="relative">
+        <div className="grid grid-cols-1 min-h-[80%]">
+            <div className="relative h-full overflow-hidden">
               <img
-                src={URL.createObjectURL(file)}
-                className="rounded-lg object-cover h-32 w-full"
+                src={showImage()}
+                className="rounded-lg object-cover h-full w-full"
               />
               <button
-                onClick={() => removeImage(index)}
-                className="absolute top-1 right-1 bg-black/60 text-white rounded-full px-2"
+                onClick={() => removeImage(indexImageDisplayed)}
+                className="absolute top-2 right-2 bg-black/60 text-white rounded-full px-2"
               >
                 ✕
               </button>
+              <button
+                onClick={() => setIndexImageDisplayed((prev) => prev === 0 ? images.length - 1 : prev - 1)}
+                className={`absolute top-1/2 left-1 bg-black/60 text-white rounded-full px-2 ${indexImageDisplayed === 0 ? 'hidden' : ''}`}
+              >
+                {'<'}
+              </button>
+              <button
+                onClick={() => setIndexImageDisplayed((prev) => prev === images.length - 1 ? 0 : prev + 1)}
+                className={`absolute top-1/2 right-1 bg-black/60 text-white rounded-full px-2 ${indexImageDisplayed === images.length - 1 ? 'hidden' : ''}`}
+              >
+                {'>'}
+              </button>
             </div>
-          ))}
         </div>
       )}
     </div>
   );
 };
 
-const CreatePostFooter = ({ influencerId }: { influencerId: number }) => {
+const PostFooter = ({ influencerId }: { influencerId: number }) => {
   const { closeCreatePost } = useCustomContext();
   const { images, postText, addImages, resetPost } = useCustomContext();
 

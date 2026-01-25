@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useRouteContext } from "@tanstack/react-router";
 import PostCard from "./postCard";
 import CreatePostCard from "./CreatePostCard";
-import CreatePostModal from "./CreatePostModal";
+import PostModal from "./PostModal";
 
 export default function InfluencerProfileFeed() {
   const { influencer } = useRouteContext({
@@ -30,7 +30,7 @@ export default function InfluencerProfileFeed() {
   return (
     <div className="mt-10 p-10 px-20">
       <CreatePostCard />
-      <CreatePostModal />
+      <PostModal />
       {data?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map((post) => (
         <PostCard key={post.id} influencer={influencer} post={post} />
       ))}
