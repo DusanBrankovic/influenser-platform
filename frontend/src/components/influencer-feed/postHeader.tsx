@@ -1,25 +1,51 @@
+import { deletePost } from "@/services/postService";
 import type { Influencer } from "@/types/influencer.types";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import AreYouSureModal from "../AreYouSureModal";
+import { useState } from "react";
+import { toast } from "react-toastify";
 
 type PostHeaderProps = {
   influencer: Influencer;
   postTimestamp: string;
   postId: number;
-}
+};
 
 export default function PostHeader({
   influencer,
   postTimestamp,
   postId,
 }: PostHeaderProps) {
+  const [ isOpen, setIsOpen ] = useState(false);
+  const queryClient = useQueryClient();
+
+  const deletePostMutation = useMutation({
+    mutationFn: deletePost,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["posts", influencer.userId],
+      });
+    },
+    onError: () => {
+      toast("Failed to delete post. Please try again.", { type: "error" });
+    },
+  });
   const handleEditPost = (id: number) => {
     console.log(`Edit post with ID: ${id}`);
   };
 
   const handleDeletePost = (id: number) => {
-    console.log(`Delete post with ID: ${id}`);
+    deletePostMutation.mutate(id);
   };
+
   return (
     <div className="flex items-center justify-between mb-4">
+      <AreYouSureModal
+        text={"Are you sure you want to delete this post? This action cannot be undone."}
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        onConfirm={() => handleDeletePost(postId)}
+      />
       <div className="flex gap-4">
         <img
           src={
@@ -38,15 +64,15 @@ export default function PostHeader({
           className="hover:text-gray-800 cursor-pointer"
           onClick={() => handleEditPost(postId)}
         >
-          Izmeni objavu
+          Edit
         </button>
         <button
           className="hover:text-gray-800 cursor-pointer"
-          onClick={() => handleDeletePost(postId)}
+          onClick={() => setIsOpen(true)}
         >
-          Izbriši objavu
+          Delete
         </button>
       </div>
     </div>
   );
-};
+}

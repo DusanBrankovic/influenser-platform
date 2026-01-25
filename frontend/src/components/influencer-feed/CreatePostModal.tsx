@@ -111,6 +111,9 @@ const CreatePostFooter = ({ influencerId }: { influencerId: number }) => {
       closeCreatePost();
       resetPost();
     },
+    onError: () => {
+      toast("Failed to create post. Please try again.", { type: "error" });
+    },
   });
 
   const uploadImage = (event: React.ChangeEvent<HTMLInputElement>) => {
