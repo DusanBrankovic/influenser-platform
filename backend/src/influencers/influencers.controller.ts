@@ -13,17 +13,24 @@ import {
   Query,
   ParseBoolPipe,
   ParseIntPipe,
+  UseInterceptors,
+  UploadedFile,
 } from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
 import { InfluencersService } from "./influencers.service";
 import { CreateInfluencerDto } from "./dto/create-influencer.dto";
 import { UpdateInfluencerDto } from "./dto/update-influencer.dto";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { CreateInfluencerSchema, GetInfluencerSchema } from "./schemas/influencer.schema";
+import {
+  CreateInfluencerSchema,
+  GetInfluencerSchema,
+} from "./schemas/influencer.schema";
 import { GetUser } from "src/auth/get-user.decorator";
 import { JwtPayload } from "src/auth/dto/credentials.dto";
 import { Roles } from "src/auth/roles.decorator";
 import { Public } from "src/auth/public.decorator";
 import { SearchQueryDto } from "src/influencers/dto/search-query.dto";
+import { ProfilePictureSchema } from "./schemas/profilePictureSchema";
 
 @ApiTags("Influencers")
 @Controller("influencers")
@@ -76,10 +83,7 @@ export class InfluencersController {
   @Roles("INFLUENCER", "ADMIN")
   @Post("/privacy")
   @HttpCode(HttpStatus.OK)
-  publish(
-    @GetUser() user: JwtPayload,
-    @Body("isPrivate") isPrivate: boolean
-  ) {
+  publish(@GetUser() user: JwtPayload, @Body("isPrivate") isPrivate: boolean) {
     return this.influencersService.setIsPrivate(user.id, isPrivate);
   }
 
@@ -102,11 +106,11 @@ export class InfluencersController {
       whitelist: true,
       forbidNonWhitelisted: true,
       skipMissingProperties: true,
-    })
+    }),
   )
   update(
     @GetUser() user: JwtPayload,
-    @Body() updateInfluencerDto: UpdateInfluencerDto
+    @Body() updateInfluencerDto: UpdateInfluencerDto,
   ) {
     return this.influencersService.update(user.id, updateInfluencerDto);
   }
@@ -120,7 +124,7 @@ export class InfluencersController {
     description: "Successfully retrieved",
     content: {
       "application/json": {
-        schema: GetInfluencerSchema
+        schema: GetInfluencerSchema,
       },
     },
   })
@@ -139,13 +143,38 @@ export class InfluencersController {
     description: "Successfully retrieved",
     content: {
       "application/json": {
-        schema: GetInfluencerSchema
+        schema: GetInfluencerSchema,
       },
     },
   })
   @Get(":id")
   findOne(@Param("id", ParseIntPipe) id: number, @GetUser() user: JwtPayload) {
     return this.influencersService.findOne(+id, user);
+  }
+
+  @ApiOperation({
+    summary: "Update INFLUENCER profilePicture",
+    description: "This endpoint updates INFLUENCER profilePicture.",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Successfully updated",
+    content: {
+      "application/json": {
+        schema: ProfilePictureSchema,
+      },
+    },
+  })
+  @Roles("INFLUENCER")
+  @Patch("me/profile-picture")
+  @HttpCode(HttpStatus.OK)
+  @UseInterceptors(FileInterceptor("image"))
+  async updateProfilePicture(
+    @GetUser() user: JwtPayload,
+    @UploadedFile() image: Express.Multer.File,
+  ) {
+    // console.log("###############: ", image?.originalname, "type", image.mimetype, " size: ", image.size)
+    return this.influencersService.updateProfilePicture(+user.id, image);
   }
 
   @Delete(":id")

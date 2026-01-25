@@ -1,14 +1,16 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { CreateInfluencerDto } from "./dto/create-influencer.dto";
 import { UpdateInfluencerDto } from "./dto/update-influencer.dto";
 import { InfluencersRepository } from "src/data-access/influencers.repository";
 import { PasswordService } from "src/auth/password.service";
 import { SearchQueryDto } from "./dto/search-query.dto";
 import { JwtPayload } from "src/auth/dto/credentials.dto";
-
+import { BACKBLAZE } from "src/data-access/bucket/consts";
+import { BucketService } from "src/data-access/bucket/bucket.service";
 @Injectable()
 export class InfluencersService {
-  constructor(
+  constructor( 
+    @Inject(BACKBLAZE) private readonly bucketService: BucketService,
     private influencersRepository: InfluencersRepository,
     private passwordService: PasswordService,
   ) { }
@@ -84,6 +86,29 @@ export class InfluencersService {
   }
  
 
+  
+  async updateProfilePicture(userId: number, file: Express.Multer.File) {
+      if (!file) throw new BadRequestException("No file uploaded");
+      if (!file.mimetype?.startsWith("image/")) throw new BadRequestException("Only image files are allowed");
+      
+      const [uploadResult] = await this.bucketService.uploadFiles([file], userId);
+      const { dbUrl, signedUrl } = uploadResult;
+
+      const existing = await this.influencersRepository.findOne(userId);
+      if (existing?.profilePicture) {
+        try {
+          await this.bucketService.deleteFile(existing.profilePicture);
+        } catch (err) {
+          console.error("Failed to delete old profile picture", err);
+        }
+      }
+  
+      const updated = await this.influencersRepository.update(userId, { profilePicture: dbUrl });
+  
+      return { ...updated, profilePicture: signedUrl };
+    }
+  
+  
   remove(id: number) {
     return `This action removes a #${id} influencer`;
   }
