@@ -36,7 +36,7 @@ export function BottomNav({
         {items.map((item) => (
           <div key={item.key} className="w-full">
             {/* Safer: use inline height to avoid Tailwind dynamic class issues */}
-            <div style={{ height: heightPx }}>
+            <div style={{ height: heightPx }} className="text-white">
               <BottomNavItem item={item} heightPx={heightPx} />
             </div>
           </div>
