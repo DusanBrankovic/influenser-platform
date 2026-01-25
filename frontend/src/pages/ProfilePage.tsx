@@ -12,8 +12,6 @@ import { Separator } from "@/components/ui/separator";
 
 import {
   Pencil,
-  Plus,
-  X,
   Star,
   Phone,
   Mail,
@@ -25,6 +23,8 @@ import { useRouteContext } from "@tanstack/react-router";
 import { togglePrivateProfile } from "@/services/influencerService";
 import { useState } from "react";
 import InfluencerContent from "@/components/InfluencerContent";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 function Stars({ value = 4, outOf = 5 }: { value?: number; outOf?: number }) {
   const v = Math.max(0, Math.min(value, outOf));
@@ -42,7 +42,22 @@ function Stars({ value = 4, outOf = 5 }: { value?: number; outOf?: number }) {
 
 export default function InfluencerProfile() {
 
-  const [lastAction, setLastAction] = useState<"published" | "unpublished" | null>(null);
+  const [isToggled, setIsToggled] = useState(() => {
+    if (typeof window !== "undefined") {
+      const savedState = localStorage.getItem("isPublished");
+      return savedState === "true" ? true : false;
+    }
+  return false;
+  });
+
+  React.useEffect(() => {
+    localStorage.setItem("isPublished", String(isToggled));
+  }, [isToggled]);
+  
+  const handleToggle = (checked: boolean) => {
+    setIsToggled(checked);
+    togglePrivateProfile(!checked);
+  };
 
   const [bio, setBio] = React.useState(
     "U opisu profila influenser može ukratko da predstavi sebe, da naznači koji je njegov fokus i cilj sa budućim kampanjama. Trebalo bi navesti u par rečenica oko čega se bazira njegov sadržaj pre nego što pregledamo kompletan profil. Ovaj prozor može imati ograničenje u vidu maksimalnog broja simbola."
@@ -77,40 +92,10 @@ export default function InfluencerProfile() {
       </div>
 
       <div className="px-4 sm:px-10 pt-14 sm:pt-16">
-        <div className="mx-auto flex max-w-5xl items-center justify-end gap-2 sm:gap-3">
-
-           <div className="min-h-[20px] text-sm">
-              {lastAction === "published" && (
-                <span className="rounded-full bg-green-100 px-3 py-1 text-green-700">
-                  Profile published
-                </span>
-              )}
-
-              {lastAction === "unpublished" && (
-                <span className="rounded-full bg-yellow-100 px-3 py-1 text-yellow-800">
-                  Profile unpublished
-                </span>
-              )}
-            </div>
-
-          <Button className="rounded-full" size="sm" onClick={() => 
-            {
-              togglePrivateProfile(false)
-              setLastAction("published");
-            }
-          }>
-            <Plus className="mr-2 h-4 w-4" />
-            Publish
-          </Button>
-          <Button variant="outline" className="rounded-full" size="sm" onClick={() => 
-            {
-              togglePrivateProfile(true)
-              setLastAction("unpublished");
-            }
-          }>
-            <X className="mr-2 h-4 w-4" />
-            Unpublish
-          </Button>
+        <div className="mx-auto flex max-w-5xl items-center justify-end gap-3 sm:gap-x-3">
+              {isToggled == false && <Label htmlFor="publish">Unpublished</Label>}
+              {isToggled == true && <Label htmlFor="publish">Published</Label>}
+              <Switch id="publish" checked={isToggled} onCheckedChange={handleToggle} />
         </div>
       </div>
 
@@ -147,7 +132,7 @@ export default function InfluencerProfile() {
                 <Textarea
                   value={bio}
                   onChange={(e) => setBio(e.target.value)}
-                  className="min-h-[92px] resize-none rounded-xl bg-white/60 border border-black"
+                  className="min-h-23 resize-none rounded-xl bg-white/60 border border-black"
                 />
                 <Button variant="link" className="h-auto p-0 text-black/70">
                   Pročitaj više
