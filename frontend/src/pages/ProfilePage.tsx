@@ -24,6 +24,7 @@ import {
 import { useRouteContext } from "@tanstack/react-router";
 import { togglePrivateProfile } from "@/services/influencerService";
 import { useState } from "react";
+import InfluencerContent from "@/components/InfluencerContent";
 
 function Stars({ value = 4, outOf = 5 }: { value?: number; outOf?: number }) {
   const v = Math.max(0, Math.min(value, outOf));
@@ -215,6 +216,9 @@ export default function InfluencerProfile() {
 
               <div className="hidden md:block rounded-xl border border-dashed border-black/15 bg-transparent" />
             </div>
+              <CardContent className="rounded-xl border border-black bg-white p-0">
+                <InfluencerContent />
+              </CardContent>
           </CardContent>
         </Card>
       </div>

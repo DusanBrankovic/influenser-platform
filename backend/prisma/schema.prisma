@@ -53,17 +53,28 @@ model User {
 
 model Influencer {
   userId         Int  @id
-  user           User    @relation(fields: [userId], references: [id])
+  user           User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   name           String
   headline       String?
   experience     Int?
   isPrivate     Boolean  @default(true)
   industries     Industry[]
   values         Value[]
+
+  post       Post[]
 }
 
+model Post {
+  id          Int   @id @default(autoincrement())
+  userId      Int 
+  user        Influencer    @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  text        String?
+  images      String[]
+  createdAt   DateTime
+  updatedAt   DateTime?
+}
 model Business {
   userId         Int  @id
-  business       User @relation(fields: [userId], references: [id])
+  business       User @relation(fields: [userId], references: [id], onDelete: Cascade)
   name           String
 }

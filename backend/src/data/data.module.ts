@@ -8,5 +8,6 @@ import { DataService } from "./data.service";
   imports: [DataAccessModule, AuthModule],
   controllers: [DataController],
   providers: [DataService],
+  exports: [DataService],
 })
 export class DataModule {}
