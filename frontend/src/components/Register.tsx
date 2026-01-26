@@ -14,10 +14,17 @@ import FormField from "./FormField";
 import { registerApi } from "@/services/authService";
 import RegSuccessScreen from "./RegSuccess";
 import { getActions, useIsRegistered } from "@/auth/authStore";
-import type { RegisterPayload } from "@/types/auth.types";
+import { UserRole, type RegisterPayload } from "@/types/auth.types";
+import { SelectAccountView } from "./SelectAccountVIew";
+import { useState } from "react";
 
 const { setIsRegistered } = getActions();
 
+const roleSchema = z
+  .enum([UserRole.NOT_SELECTED, UserRole.BUSINESS, UserRole.INFLUENCER])
+  .refine((r) => r !== UserRole.NOT_SELECTED, {
+    message: "Morate izabrati tip naloga.",
+  });
 const passwordSchema = z
   .string()
   .min(8, { message: "Lozinka mora imati najmanje 8 karaktera." })
@@ -65,17 +72,17 @@ const formSchema = z.object({
   rememberMe: z.boolean().refine((val) => val === true, {
     message: "Morate potvrditi da želite da zapamtite lozinku.",
   }),
+  role: roleSchema,
 });
-
 const combinedSchema = formSchema.merge(passwordConfirmationSchema);
 
-const Register = ({ 
-  onSwitchToSignIn
-}: { 
-  onSwitchToSignIn: () => void;
-}) => {
+const Register = ({ onSwitchToSignIn }: { onSwitchToSignIn: () => void }) => {
+  const [currentSelectedRole, setCurrentSelectedRole] = useState<UserRole>(
+    UserRole.NOT_SELECTED,
+  );
   const form = useForm({
     defaultValues: {
+      role: UserRole.NOT_SELECTED as UserRole,
       fullname: "",
       email: "",
       username: "",
@@ -93,13 +100,13 @@ const Register = ({
         email: value.email,
         name: value.fullname,
         password: value.password,
-        role: "INFLUENCER"
+        role: value.role,
       };
 
       console.log("Registering user:", user);
       registerApi(user);
 
-      setIsRegistered()
+      setIsRegistered();
     },
   });
 
@@ -145,100 +152,121 @@ const Register = ({
 
   return (
     <div className="w-full flex flex-col justify-start items-center">
-      {isRegistered ? (
-        <RegSuccessScreen onSwitchToSignIn={onSwitchToSignIn} />
-      ) : (
-        <Card className="w-full">
-          <CardHeader></CardHeader>
-          <CardContent className="w-100%">
-            <form
-              id="sign-up-form"
-              className="flex flex-col gap-4"
-              onSubmit={(e) => {
-                e.preventDefault();
-                form.handleSubmit();
-              }}
-            >
-              <FieldGroup>
-                {formFieldsArr.map(({ name, icon, placeholder, type }) => (
-                  <form.Field
-                    name={name}
-                    key={name}
-                    children={(field) => {
-                      const isInvalid =
-                        field.state.meta.isTouched && !field.state.meta.isValid;
-                      return (
-                        <FormField
-                          field={field}
-                          name={field.name}
-                          icon={icon}
-                          inputType={type}
-                          isInvalid={isInvalid}
-                          placeholder={placeholder}
-                          key={name}
-                        />
-                      );
+      <div className="">
+        {isRegistered ? (
+          <RegSuccessScreen onSwitchToSignIn={onSwitchToSignIn} />
+        ) : (
+          <Card className="w-full">
+            <CardHeader></CardHeader>
+            <CardContent className="w-100%">
+              <form
+                id="sign-up-form"
+                className="flex flex-col gap-4"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  form.handleSubmit();
+                }}
+              >
+                <div
+                  className={`${currentSelectedRole === UserRole.NOT_SELECTED ? "" : "hidden"}`}
+                >
+                  <SelectAccountView
+                    onRoleChange={(field, value) => {
+                      form.setFieldValue(field as "role", value);
+                      setCurrentSelectedRole(value as UserRole);
                     }}
                   />
-                ))}
-              </FieldGroup>
-              <FieldGroup className="flex flex-col gap-2.5 py-5">
-                <form.Field name="rememberMe">
-                  {(field) => (
-                    <div className="flex items-center gap-3">
-                      <Checkbox
-                        id="rememberMe"
-                        checked={field.state.value ?? false}
-                        onCheckedChange={(val) => field.handleChange(!!val)}
+                </div>
+                <div
+                  className={`${currentSelectedRole !== UserRole.NOT_SELECTED ? "" : "hidden"}`}
+                >
+                  <FieldGroup>
+                    {formFieldsArr.map(({ name, icon, placeholder, type }) => (
+                      <form.Field
+                        name={name}
+                        key={name}
+                        children={(field) => {
+                          const isInvalid =
+                            field.state.meta.isTouched &&
+                            !field.state.meta.isValid;
+                          return (
+                            <FormField
+                              field={field}
+                              name={field.name}
+                              icon={icon}
+                              inputType={type}
+                              isInvalid={isInvalid}
+                              placeholder={placeholder}
+                              key={name}
+                            />
+                          );
+                        }}
                       />
-                      <Label htmlFor="rememberMe">Zapamti me</Label>
-                    </div>
-                  )}
-                </form.Field>
-                <form.Field name="termsAccepted">
-                  {(field) => (
-                    <div className="flex items-center gap-3">
-                      <Checkbox
-                        id="termsAccepted"
-                        checked={field.state.value}
-                        onCheckedChange={(val) => field.handleChange(!!val)}
-                      />
-                      <Label htmlFor="termsAccepted">
-                        Prihvatam uslove koriscenja
-                      </Label>
-                    </div>
-                  )}
-                </form.Field>
-              </FieldGroup>
-              <Field orientation="horizontal">
-                <Button type="submit" className="w-full outline-none" size="lg">
-                  Registrujte se
-                </Button>
-              </Field>
-            </form>
-          </CardContent>
-          <CardFooter>
-            <div className="flex flex-col w-full">
-              <Field
-                className="flex flex-row flex-1 justify-center items-center gap-2"
-                orientation="horizontal"
-              >
-                <p className="mt-4 text-sm text-primary">
-                  Vec imate nalog?
-                  <Button
-                    type="button"
-                    variant="link"
-                    className="pl-2 align-baseline text-primary font-extrabold underline"
-                    onClick={onSwitchToSignIn}
-                  >
-                    Ulogujte se
-                  </Button>
-                </p>
-              </Field>
-            </div>
-          </CardFooter>
-        </Card>
-      )}
+                    ))}
+                  </FieldGroup>
+                  <FieldGroup className="flex flex-col gap-2.5 py-5">
+                    <form.Field name="rememberMe">
+                      {(field) => (
+                        <div className="flex items-center gap-3">
+                          <Checkbox
+                            id="rememberMe"
+                            checked={field.state.value ?? false}
+                            onCheckedChange={(val) => field.handleChange(!!val)}
+                          />
+                          <Label htmlFor="rememberMe">Zapamti me</Label>
+                        </div>
+                      )}
+                    </form.Field>
+                    <form.Field name="termsAccepted">
+                      {(field) => (
+                        <div className="flex items-center gap-3">
+                          <Checkbox
+                            id="termsAccepted"
+                            checked={field.state.value}
+                            onCheckedChange={(val) => field.handleChange(!!val)}
+                          />
+                          <Label htmlFor="termsAccepted">
+                            Prihvatam uslove koriscenja
+                          </Label>
+                        </div>
+                      )}
+                    </form.Field>
+                  </FieldGroup>
+                  <Field orientation="horizontal">
+                    <Button
+                      type="submit"
+                      className="w-full outline-none"
+                      size="lg"
+                    >
+                      Registrujte se
+                    </Button>
+                  </Field>
+                </div>
+              </form>
+            </CardContent>
+            <CardFooter>
+              <div className="flex flex-col w-full">
+                <Field
+                  className="flex flex-row flex-1 justify-center items-center gap-2"
+                  orientation="horizontal"
+                >
+                  <p className="mt-4 text-sm text-primary">
+                    Vec imate nalog?
+                    <Button
+                      type="button"
+                      variant="link"
+                      className="pl-2 align-baseline text-primary font-extrabold underline"
+                      onClick={onSwitchToSignIn}
+                    >
+                      Ulogujte se
+                    </Button>
+                  </p>
+                </Field>
+              </div>
+            </CardFooter>
+          </Card>
+        )}
+      </div>
     </div>
   );
 };
