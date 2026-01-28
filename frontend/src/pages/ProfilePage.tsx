@@ -1,10 +1,5 @@
 import * as React from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
@@ -24,6 +19,7 @@ import {
 import { useRouteContext } from "@tanstack/react-router";
 import { togglePrivateProfile } from "@/services/influencerService";
 import { useState } from "react";
+import { CanAccess } from "@/auth/CanAccess";
 
 function Stars({ value = 4, outOf = 5 }: { value?: number; outOf?: number }) {
   const v = Math.max(0, Math.min(value, outOf));
@@ -40,11 +36,12 @@ function Stars({ value = 4, outOf = 5 }: { value?: number; outOf?: number }) {
 }
 
 export default function InfluencerProfile() {
-
-  const [lastAction, setLastAction] = useState<"published" | "unpublished" | null>(null);
+  const [lastAction, setLastAction] = useState<
+    "published" | "unpublished" | null
+  >(null);
 
   const [bio, setBio] = React.useState(
-    "U opisu profila influenser može ukratko da predstavi sebe, da naznači koji je njegov fokus i cilj sa budućim kampanjama. Trebalo bi navesti u par rečenica oko čega se bazira njegov sadržaj pre nego što pregledamo kompletan profil. Ovaj prozor može imati ograničenje u vidu maksimalnog broja simbola."
+    "U opisu profila influenser može ukratko da predstavi sebe, da naznači koji je njegov fokus i cilj sa budućim kampanjama. Trebalo bi navesti u par rečenica oko čega se bazira njegov sadržaj pre nego što pregledamo kompletan profil. Ovaj prozor može imati ograničenje u vidu maksimalnog broja simbola.",
   );
 
   const { influencer } = useRouteContext({
@@ -74,11 +71,10 @@ export default function InfluencerProfile() {
           </div>
         </div>
       </div>
-
-      <div className="px-4 sm:px-10 pt-14 sm:pt-16">
-        <div className="mx-auto flex max-w-5xl items-center justify-end gap-2 sm:gap-3">
-
-           <div className="min-h-[20px] text-sm">
+      <CanAccess roles={["INFLUENCER"]}>
+        <div className="px-4 sm:px-10 pt-14 sm:pt-16">
+          <div className="mx-auto flex max-w-5xl items-center justify-end gap-2 sm:gap-3">
+            <div className="min-h-[20px] text-sm">
               {lastAction === "published" && (
                 <span className="rounded-full bg-green-100 px-3 py-1 text-green-700">
                   Profile published
@@ -92,50 +88,59 @@ export default function InfluencerProfile() {
               )}
             </div>
 
-          <Button className="rounded-full" size="sm" onClick={() => 
-            {
-              togglePrivateProfile(false)
-              setLastAction("published");
-            }
-          }>
-            <Plus className="mr-2 h-4 w-4" />
-            Publish
-          </Button>
-          <Button variant="outline" className="rounded-full" size="sm" onClick={() => 
-            {
-              togglePrivateProfile(true)
-              setLastAction("unpublished");
-            }
-          }>
-            <X className="mr-2 h-4 w-4" />
-            Unpublish
-          </Button>
+            <Button
+              className="rounded-full"
+              size="sm"
+              onClick={() => {
+                togglePrivateProfile(false);
+                setLastAction("published");
+              }}
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Publish
+            </Button>
+            <Button
+              variant="outline"
+              className="rounded-full"
+              size="sm"
+              onClick={() => {
+                togglePrivateProfile(true);
+                setLastAction("unpublished");
+              }}
+            >
+              <X className="mr-2 h-4 w-4" />
+              Unpublish
+            </Button>
+          </div>
         </div>
-      </div>
-
+      </CanAccess>
       <div className="px-4 sm:px-8 pb-10 pt-4">
         <Card className="mx-auto max-w-5xl rounded-2xl border border-black bg-white">
           <CardHeader className="pb-3">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">
-                <CardTitle className="text-xl sm:text-2xl">{influencer.name}</CardTitle>
+                <CardTitle className="text-xl sm:text-2xl">
+                  {influencer.name}
+                </CardTitle>
                 <p className="text-sm text-black">@{influencer.userId}</p>
               </div>
-
-              <div className="flex flex-col items-start sm:items-end gap-2">
-                <div className="flex items-center gap-2">
-                  <Badge className="rounded-full bg-white text-black border border-black">
-                    ocena
-                    <span className="mx-2 inline-flex items-center">
-                      <Stars value={4} outOf={5} />
-                    </span>
-                    <span className="font-semibold">4/5</span>
-                  </Badge>
+              <CanAccess roles={["INFLUENCER"]}>
+                <div className="flex flex-col items-start sm:items-end gap-2">
+                  <div className="flex items-center gap-2">
+                    <Badge className="rounded-full bg-white text-black border border-black">
+                      ocena
+                      <span className="mx-2 inline-flex items-center">
+                        <Stars value={4} outOf={5} />
+                      </span>
+                      <span className="font-semibold">4/5</span>
+                    </Badge>
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    <span className="font-semibold text-black">500k</span>{" "}
+                    pratilaca
+                  </div>
                 </div>
-                <div className="text-sm text-muted-foreground">
-                  <span className="font-semibold text-black">500k</span> pratilaca
-                </div>
-              </div>
+              </CanAccess>
             </div>
           </CardHeader>
 
@@ -148,41 +153,43 @@ export default function InfluencerProfile() {
                   onChange={(e) => setBio(e.target.value)}
                   className="min-h-[92px] resize-none rounded-xl bg-white/60 border border-black"
                 />
-                <Button variant="link" className="h-auto p-0 text-black/70">
-                  Pročitaj više
-                </Button>
+                <CanAccess roles={["INFLUENCER"]}>
+                  <Button variant="link" className="h-auto p-0 text-black/70">
+                    Pročitaj više
+                  </Button>
+                </CanAccess>
               </div>
             </div>
+            <CanAccess roles={["INFLUENCER"]}>
+              {/* 2) Experience + tags */}
+              <div className="space-y-3">
+                <div className="text-sm font-semibold">3 godine iskustva</div>
 
-            {/* 2) Experience + tags */}
-            <div className="space-y-3">
-              <div className="text-sm font-semibold">3 godine iskustva</div>
+                <div className="flex flex-wrap gap-2">
+                  {industries.map((t) => (
+                    <Badge
+                      key={t}
+                      variant="secondary"
+                      className="rounded-md bg-black/20 text-black hover:bg-black/25"
+                    >
+                      {t}
+                    </Badge>
+                  ))}
+                </div>
 
-              <div className="flex flex-wrap gap-2">
-                {industries.map((t) => (
-                  <Badge
-                    key={t}
-                    variant="secondary"
-                    className="rounded-md bg-black/20 text-black hover:bg-black/25"
-                  >
-                    {t}
-                  </Badge>
-                ))}
+                <div className="flex flex-wrap gap-2">
+                  {values.map((t) => (
+                    <Badge
+                      key={t}
+                      variant="secondary"
+                      className="rounded-md bg-black/20 text-black hover:bg-black/25"
+                    >
+                      {t}
+                    </Badge>
+                  ))}
+                </div>
               </div>
-
-              <div className="flex flex-wrap gap-2">
-                {values.map((t) => (
-                  <Badge
-                    key={t}
-                    variant="secondary"
-                    className="rounded-md bg-black/20 text-black hover:bg-black/25"
-                  >
-                    {t}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-
+            </CanAccess>
             <Separator />
 
             <div className="grid gap-4 md:grid-cols-2">

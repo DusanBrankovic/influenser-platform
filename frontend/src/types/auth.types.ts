@@ -13,3 +13,5 @@ export type RegisterPayload = {
   name: string;
   role: UserRole;
 };
+
+export type AppRole = Exclude<UserRole, "NOT_SELECTED">;
