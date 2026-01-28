@@ -4,18 +4,21 @@ import { AppModule } from "./app.module";
 import { DocumentBuilder } from "@nestjs/swagger/dist/document-builder";
 import { SwaggerModule } from "@nestjs/swagger/dist/swagger-module";
 import { ValidationPipe } from "@nestjs/common";
+import cookieParser from "cookie-parser";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
+  app.use(cookieParser());
+
+  const frontendOrigin =
+    process.env.FRONTEND_ORIGIN || "http://localhost:5173";
+
   app.enableCors({
-    origin: [
-      'http://localhost:5173',
-      'https://influenser-platform-app.vercel.app'
-    ],
+    origin: frontendOrigin,
     credentials: true,
   });
-  
+
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -34,3 +37,6 @@ async function bootstrap() {
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
+
+
+

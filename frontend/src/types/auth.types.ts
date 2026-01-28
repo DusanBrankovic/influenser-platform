@@ -1,7 +1,12 @@
-export type LoginPayload = { email: string; password: string };
-export type RegisterPayload = {
+export type LoginPayload = {
   email: string;
   password: string;
+  rememberMe: boolean;
+};
+
+export type RegisterPayload = {
+  email: string;
   name: string;
-  role: string;
+  password: string;
+  role: "INFLUENCER" | "BUSINESS";
 };

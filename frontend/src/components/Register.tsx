@@ -62,9 +62,7 @@ const formSchema = z.object({
   termsAccepted: z.boolean().refine((val) => val === true, {
     message: "Morate prihvatiti uslove korišćenja.",
   }),
-  rememberMe: z.boolean().refine((val) => val === true, {
-    message: "Morate potvrditi da želite da zapamtite lozinku.",
-  }),
+  rememberMe: z.boolean()
 });
 
 const combinedSchema = formSchema.merge(passwordConfirmationSchema);
@@ -196,18 +194,31 @@ const Register = ({
                   )}
                 </form.Field>
                 <form.Field name="termsAccepted">
-                  {(field) => (
-                    <div className="flex items-center gap-3">
-                      <Checkbox
-                        id="termsAccepted"
-                        checked={field.state.value}
-                        onCheckedChange={(val) => field.handleChange(!!val)}
-                      />
-                      <Label htmlFor="termsAccepted">
-                        Prihvatam uslove koriscenja
-                      </Label>
-                    </div>
-                  )}
+                  {(field) => {
+                    const showError =
+                      (form.state.submissionAttempts > 0 || field.state.meta.isTouched) &&
+                      !field.state.meta.isValid;
+
+                    return (
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-3">
+                          <Checkbox
+                            id="termsAccepted"
+                            checked={field.state.value}
+                            onCheckedChange={(val) => field.handleChange(!!val)}
+                            onBlur={field.handleBlur} // important
+                          />
+                          <Label htmlFor="termsAccepted">Prihvatam uslove koriscenja</Label>
+                        </div>
+
+                        {showError && (
+                          <p className="text-sm text-destructive">
+                            {field.state.meta.errors?.[0]?.message}
+                          </p>
+                        )}
+                      </div>
+                    );
+                  }}
                 </form.Field>
               </FieldGroup>
               <Field orientation="horizontal">

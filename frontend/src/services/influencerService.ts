@@ -1,4 +1,5 @@
 import { getAccessToken } from "@/auth/authStore";
+import { authFetch } from "@/lib/authFetch";
 import type { Influencer, SearchQueryParams } from "@/types/influencer.types";
 
 const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
@@ -30,9 +31,9 @@ export async function getAllInfluencers(params?: SearchQueryParams): Promise<Inf
     return res.json();
 }
 
-export async function getLoggedInInfluencer(userId: number): Promise<Influencer> {
+export async function getLoggedInInfluencer(): Promise<Influencer> {
 
-    const res = await fetch(`${apiUrl}/influencers/${userId}`, {
+    const res = await fetch(`${apiUrl}/influencers/me`, {
         method: "GET",
         headers: { 
             "Content-Type": "application/json",

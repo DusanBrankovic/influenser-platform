@@ -1,4 +1,4 @@
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Card, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import HourglassIcon from "../assets/icons/hourglass-triangle.svg";
 import SignIn from "@/components/SignIn";
@@ -23,9 +23,6 @@ const AuthTabsCard: React.FC = () => {
           </div>
           <div className="flex flex-col w-full max-w-xs rounded-3xl px-5 border border-white/10 items-center justify-center">
             <CardTitle className="text-xl">Design in progress</CardTitle>
-            <CardContent className="flex flex-1 items-center justify-center text-sm lowercase text-primary sm:text-wrap">
-              Ovde bi trebalo da dođe neki kreirani baner
-            </CardContent>
           </div>
         </Card>
       </div>
@@ -51,7 +48,7 @@ const AuthTabsCard: React.FC = () => {
                     transition-all duration-200
                   "
             >
-              Prijava
+              Sign In
             </TabsTrigger>
 
             <TabsTrigger
@@ -69,7 +66,7 @@ const AuthTabsCard: React.FC = () => {
                     transition-all duration-200
                   "
             >
-              Registracija
+              Register
             </TabsTrigger>
           </TabsList>
 
