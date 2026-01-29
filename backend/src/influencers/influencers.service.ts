@@ -44,6 +44,17 @@ export class InfluencersService {
     }
   }
 
+  async getIsPrivate(id: number) {
+    try {
+      const influencer = await this.influencersRepository.findOne(id);
+      return influencer!.isPrivate;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        "Influencer not found."
+      );
+    }
+  }
+
   findAll(searchQuery: SearchQueryDto) {
     return this.influencersRepository.findAll(searchQuery);
   }

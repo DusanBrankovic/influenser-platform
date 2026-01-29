@@ -21,3 +21,42 @@ export async function getInfluencerPosts(userId: number): Promise<Post[]> {
     if (!res.ok) throw new Error("Failed to fetch influencers");
     return res.json();
 }
+
+export async function createPost(formData: FormData): Promise<Post> {
+    const res = await fetch(`${apiUrl}/posts`, {
+        method: "POST",
+        headers: {
+            ...authHeaders(),
+        },
+        body: formData,
+    });
+
+    if (!res.ok) throw new Error("Failed to create post");
+    return res.json();
+}
+
+export async function deletePost(postId: number): Promise<void> {
+    const res = await fetch(`${apiUrl}/posts/${postId}`, {
+        method: "DELETE",
+        headers: {
+            ...authHeaders(),
+        },
+    });
+
+    if (!res.ok) throw new Error("Failed to delete post");
+}
+
+export async function editPost(formData: FormData): Promise<Post> {
+    const postId = formData.get("postId");
+    formData.delete("postId");
+    const res = await fetch(`${apiUrl}/posts/${postId}`, {
+        method: "PUT",
+        headers: {
+            ...authHeaders(),
+        },
+       body: formData,
+    });
+
+    if (!res.ok) throw new Error("Failed to edit post");
+    return res.json();
+}

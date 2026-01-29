@@ -9,12 +9,19 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as GuestRouteImport } from './routes/guest'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as PrivateRouteRouteImport } from './routes/_private/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PrivateProfileRouteImport } from './routes/_private/profile'
 import { Route as PrivateInfluensersRouteImport } from './routes/_private/influensers'
+import { Route as PrivatePreviewUserIdRouteImport } from './routes/_private/preview.$userId'
 
+const GuestRoute = GuestRouteImport.update({
+  id: '/guest',
+  path: '/guest',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -39,49 +46,82 @@ const PrivateInfluensersRoute = PrivateInfluensersRouteImport.update({
   path: '/influensers',
   getParentRoute: () => PrivateRouteRoute,
 } as any)
+const PrivatePreviewUserIdRoute = PrivatePreviewUserIdRouteImport.update({
+  id: '/preview/$userId',
+  path: '/preview/$userId',
+  getParentRoute: () => PrivateRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/guest': typeof GuestRoute
   '/influensers': typeof PrivateInfluensersRoute
   '/profile': typeof PrivateProfileRoute
+  '/preview/$userId': typeof PrivatePreviewUserIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/guest': typeof GuestRoute
   '/influensers': typeof PrivateInfluensersRoute
   '/profile': typeof PrivateProfileRoute
+  '/preview/$userId': typeof PrivatePreviewUserIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_private': typeof PrivateRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/guest': typeof GuestRoute
   '/_private/influensers': typeof PrivateInfluensersRoute
   '/_private/profile': typeof PrivateProfileRoute
+  '/_private/preview/$userId': typeof PrivatePreviewUserIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/influensers' | '/profile'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/guest'
+    | '/influensers'
+    | '/profile'
+    | '/preview/$userId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/influensers' | '/profile'
+  to:
+    | '/'
+    | '/auth'
+    | '/guest'
+    | '/influensers'
+    | '/profile'
+    | '/preview/$userId'
   id:
     | '__root__'
     | '/'
     | '/_private'
     | '/auth'
+    | '/guest'
     | '/_private/influensers'
     | '/_private/profile'
+    | '/_private/preview/$userId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   PrivateRouteRoute: typeof PrivateRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  GuestRoute: typeof GuestRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/guest': {
+      id: '/guest'
+      path: '/guest'
+      fullPath: '/guest'
+      preLoaderRoute: typeof GuestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -117,17 +157,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivateInfluensersRouteImport
       parentRoute: typeof PrivateRouteRoute
     }
+    '/_private/preview/$userId': {
+      id: '/_private/preview/$userId'
+      path: '/preview/$userId'
+      fullPath: '/preview/$userId'
+      preLoaderRoute: typeof PrivatePreviewUserIdRouteImport
+      parentRoute: typeof PrivateRouteRoute
+    }
   }
 }
 
 interface PrivateRouteRouteChildren {
   PrivateInfluensersRoute: typeof PrivateInfluensersRoute
   PrivateProfileRoute: typeof PrivateProfileRoute
+  PrivatePreviewUserIdRoute: typeof PrivatePreviewUserIdRoute
 }
 
 const PrivateRouteRouteChildren: PrivateRouteRouteChildren = {
   PrivateInfluensersRoute: PrivateInfluensersRoute,
   PrivateProfileRoute: PrivateProfileRoute,
+  PrivatePreviewUserIdRoute: PrivatePreviewUserIdRoute,
 }
 
 const PrivateRouteRouteWithChildren = PrivateRouteRoute._addFileChildren(
@@ -138,6 +187,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   PrivateRouteRoute: PrivateRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  GuestRoute: GuestRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

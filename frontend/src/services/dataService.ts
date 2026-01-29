@@ -27,4 +27,3 @@ export async function getEnumValues(enumType: string): Promise<string[]> {
     if (!res.ok) throw new Error("Failed to fetch enum values");
     return res.json();
 }
-

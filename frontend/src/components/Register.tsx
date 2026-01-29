@@ -1,12 +1,7 @@
 import { useForm } from "@tanstack/react-form";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -20,19 +15,19 @@ const { setIsRegistered } = getActions();
 
 const passwordSchema = z
   .string()
-  .min(8, { message: "Lozinka mora imati najmanje 8 karaktera." })
-  .max(32, { message: "Lozinka može imati najviše 32 karaktera." })
+  .min(8, { message: "Password must be at least 8 characters long." })
+  .max(32, { message: "Password can be at most 32 characters long." })
   .refine((password) => /[A-Z]/.test(password), {
-    message: "Lozinka mora sadržati bar jedno veliko slovo.",
+    message: "Password must contain at least one uppercase letter.",
   })
   .refine((password) => /[a-z]/.test(password), {
-    message: "Lozinka mora sadržati bar jedno malo slovo.",
+    message: "Password must contain at least one lowercase letter.",
   })
   .refine((password) => /[0-9]/.test(password), {
-    message: "Lozinka mora sadržati bar jedan broj.",
+    message: "Password must contain at least one number.",
   })
   .refine((password) => /[!@#$%^&*()_+={}[\]|:;"'<>,.?/-]/.test(password), {
-    message: "Lozinka mora sadržati bar jedan specijalni karakter.",
+    message: "Password must contain at least one special character.",
   });
 
 const passwordConfirmationSchema = z
@@ -41,37 +36,35 @@ const passwordConfirmationSchema = z
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Lozinke se ne poklapaju.",
+    message: "Passwords do not match.",
     path: ["confirmPassword"],
   });
 
 const formSchema = z.object({
   username: z
     .string()
-    .min(5, "Korisničko ime mora imati najmanje 5 karaktera.")
-    .max(12, "Korisničko ime može imati najviše 12 karaktera."),
+    .min(5, "Username must be at least 5 characters long.")
+    .max(12, "Username can be at most 12 characters long."),
   fullname: z
     .string()
-    .min(5, "Ime i prezime mora imati najmanje 5 karaktera.")
-    .max(100, "Ime i prezime može imati najviše 100 karaktera.")
-    .includes(" ", { message: "Unesite ime i prezime (sa razmakom)." }),
+    .min(5, "Full name must be at least 5 characters long.")
+    .max(100, "Full name can be at most 100 characters long.")
+    .includes(" ", { message: "Please enter both first and last name (with a space)." }),
   email: z
-    .email({ message: "Unesite ispravnu e-mail adresu." })
-    .min(5, "E-mail adresa mora imati najmanje 5 karaktera.")
-    .max(32, "E-mail adresa može imati najviše 32 karaktera."),
+    .email({ message: "Please enter a valid email address." })
+    .min(5, "Email must be at least 5 characters long.")
+    .max(32, "Email can be at most 32 characters long."),
   termsAccepted: z.boolean().refine((val) => val === true, {
-    message: "Morate prihvatiti uslove korišćenja.",
+    message: "You must accept the terms of service.",
   }),
-  rememberMe: z.boolean().refine((val) => val === true, {
-    message: "Morate potvrditi da želite da zapamtite lozinku.",
-  }),
+  rememberMe: z.boolean(),
 });
 
 const combinedSchema = formSchema.merge(passwordConfirmationSchema);
 
-const Register = ({ 
-  onSwitchToSignIn
-}: { 
+const Register = ({
+  onSwitchToSignIn,
+}: {
   onSwitchToSignIn: () => void;
 }) => {
   const form = useForm({
@@ -93,13 +86,13 @@ const Register = ({
         email: value.email,
         name: value.fullname,
         password: value.password,
-        role: "INFLUENCER"
+        role: "INFLUENCER",
       };
 
       console.log("Registering user:", user);
       registerApi(user);
 
-      setIsRegistered()
+      setIsRegistered();
     },
   });
 
@@ -112,13 +105,13 @@ const Register = ({
     {
       name: "fullname",
       icon: "person",
-      placeholder: "Ime i Prezime",
+      placeholder: "Full Name",
       type: "text",
     },
     {
       name: "username",
       icon: "alternate_email",
-      placeholder: "Korisnicko ime",
+      placeholder: "Username",
       type: "text",
     },
     {
@@ -130,13 +123,13 @@ const Register = ({
     {
       name: "password",
       icon: "lock",
-      placeholder: "Lozinka",
+      placeholder: "Password",
       type: "password",
     },
     {
       name: "confirmPassword",
       icon: "lock",
-      placeholder: "Potvrdi lozinku",
+      placeholder: "Confirm password",
       type: "password",
     },
   ];
@@ -182,6 +175,7 @@ const Register = ({
                   />
                 ))}
               </FieldGroup>
+
               <FieldGroup className="flex flex-col gap-2.5 py-5">
                 <form.Field name="rememberMe">
                   {(field) => (
@@ -191,32 +185,51 @@ const Register = ({
                         checked={field.state.value ?? false}
                         onCheckedChange={(val) => field.handleChange(!!val)}
                       />
-                      <Label htmlFor="rememberMe">Zapamti me</Label>
+                      <Label htmlFor="rememberMe">Remember me</Label>
                     </div>
                   )}
                 </form.Field>
+
                 <form.Field name="termsAccepted">
-                  {(field) => (
-                    <div className="flex items-center gap-3">
-                      <Checkbox
-                        id="termsAccepted"
-                        checked={field.state.value}
-                        onCheckedChange={(val) => field.handleChange(!!val)}
-                      />
-                      <Label htmlFor="termsAccepted">
-                        Prihvatam uslove koriscenja
-                      </Label>
-                    </div>
-                  )}
+                  {(field) => {
+                    const showError =
+                      (form.state.submissionAttempts > 0 ||
+                        field.state.meta.isTouched) &&
+                      !field.state.meta.isValid;
+
+                    return (
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-3">
+                          <Checkbox
+                            id="termsAccepted"
+                            checked={field.state.value}
+                            onCheckedChange={(val) => field.handleChange(!!val)}
+                            onBlur={field.handleBlur} // important
+                          />
+                          <Label htmlFor="termsAccepted">
+                            I accept the terms of service
+                          </Label>
+                        </div>
+
+                        {showError && (
+                          <p className="text-sm text-destructive">
+                            {field.state.meta.errors?.[0]?.message}
+                          </p>
+                        )}
+                      </div>
+                    );
+                  }}
                 </form.Field>
               </FieldGroup>
+
               <Field orientation="horizontal">
                 <Button type="submit" className="w-full outline-none" size="lg">
-                  Registrujte se
+                  Register
                 </Button>
               </Field>
             </form>
           </CardContent>
+
           <CardFooter>
             <div className="flex flex-col w-full">
               <Field
@@ -224,14 +237,14 @@ const Register = ({
                 orientation="horizontal"
               >
                 <p className="mt-4 text-sm text-primary">
-                  Vec imate nalog?
+                  Already have an account?
                   <Button
                     type="button"
                     variant="link"
                     className="pl-2 align-baseline text-primary font-extrabold underline"
                     onClick={onSwitchToSignIn}
                   >
-                    Ulogujte se
+                    Sign in
                   </Button>
                 </p>
               </Field>

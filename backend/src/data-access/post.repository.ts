@@ -36,4 +36,11 @@ export class PostRepository {
       where: { id, userId },
     });
   }
+
+  updatePostById(id: number, postData: Partial<CreatePost>) {
+    return this.db.post.update({
+      where: { id },
+      data: postData,
+    });
+  }
 }

@@ -12,6 +12,10 @@ export class UpdateInfluencerDto {
   headline?: string;
 
   @IsOptional()
+  @IsNumber()
+  experience?: number;
+
+  @IsOptional()
   @IsArray()
   @IsEnum(Value, {each: true})
   values: Value[]

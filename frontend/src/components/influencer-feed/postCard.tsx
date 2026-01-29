@@ -8,29 +8,20 @@ import PostButtons from "./postButtons";
 type PostCardProps = {
   influencer: Influencer;
   post: Post;
+  isEditable?: boolean;
 }
 
 export default function PostCard({
   influencer,
   post,
+  isEditable = true
 }: PostCardProps) {
-  const transformToFormat = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    };
-    return new Date(dateString).toLocaleDateString("sr-RS", options);
-  };
   return (
     <div className="border border-primary rounded-lg p-6 mb-16 bg-white">
       <PostHeader
         influencer={influencer}
-        postTimestamp={transformToFormat(post.createdAt)}
-        postId={post.id}
+        post={post}
+        isEditable={isEditable}
       />
       <div className="mb-4">{post.text}</div>
       {post.images.length > 0 && <PostGallery images={post.images} />}

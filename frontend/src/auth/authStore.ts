@@ -2,8 +2,8 @@ import { createStore } from 'zustand/vanilla';
 import { devtools } from 'zustand/middleware';
 import { z } from "zod";
 import { jwtDecode } from 'jwt-decode';
-import { CookieService } from '../services/cookieService';
 import { useStoreWithEqualityFn } from "zustand/traditional";
+import { CookieService } from '@/services/cookieService';
 
 const ACCESS_TOKEN_KEY = 'accessToken';
 
@@ -41,6 +41,8 @@ export const authStore = createStore<AuthStore>()(
         actions: {
           setAccessToken: (accessToken: string | undefined) => {
             
+            console.log("Setting access token in auth store:", accessToken);
+
             if (accessToken) {
               CookieService.set(ACCESS_TOKEN_KEY, accessToken);
             }
