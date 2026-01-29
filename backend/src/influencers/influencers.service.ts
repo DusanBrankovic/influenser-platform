@@ -60,15 +60,6 @@ export class InfluencersService {
     return influencer;
   }
 
-  async getLoggedInUser(userId: number) {
-    const influencer = await this.influencersRepository.findOne(userId);
-
-    if (!influencer) {
-      throw new NotFoundException(`Influencer with ID ${userId} not found or is private.`);
-    }
-    return influencer;
-  }
-
 
   async update(id: number, data: UpdateInfluencerDto) {
 

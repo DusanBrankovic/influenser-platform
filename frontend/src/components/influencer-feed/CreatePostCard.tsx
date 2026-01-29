@@ -1,16 +1,13 @@
 import { useCustomContext } from "@/state-management/useContextHook";
 import AvatarInitials from "../AvatarInitials";
-import { useQuery } from "@tanstack/react-query";
-import { getLoggedInInfluencer } from "@/services/influencerService";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useRouteContext } from "@tanstack/react-router";
 
 export default function CreatePostCard() {
   const { openPostModal, setIsPostEditMode, setSelectedPostId } =
     useCustomContext();
 
-  const { data: influencer, isLoading } = useQuery({
-    queryKey: ["me"],
-    queryFn: getLoggedInInfluencer,
+  const { influencer } = useRouteContext({
+    from: "/_private/profile",
   });
 
   const onOpenPostModal = () => {
@@ -18,20 +15,6 @@ export default function CreatePostCard() {
     setSelectedPostId(null);
     openPostModal();
   };
-
-  if (isLoading) {
-    return (
-      <div className="border border-primary rounded-lg p-6 mb-16 bg-white flex gap-4 items-center">
-        <Skeleton className="h-16 w-16 rounded-full" />
-        <Skeleton className="h-14 w-5/6 rounded-lg" />
-      </div>
-    );
-  }
-
-  // If not logged in / request failed / null
-  if (!influencer) {
-    return null; // or render a disabled card / prompt to login
-  }
 
   return (
     <div

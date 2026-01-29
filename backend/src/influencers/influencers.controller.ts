@@ -13,8 +13,6 @@ import {
   Query,
   ParseBoolPipe,
   ParseIntPipe,
-  UseGuards,
-  Req,
 } from "@nestjs/common";
 import { InfluencersService } from "./influencers.service";
 import { CreateInfluencerDto } from "./dto/create-influencer.dto";
@@ -26,8 +24,6 @@ import { JwtPayload } from "src/auth/dto/credentials.dto";
 import { Roles } from "src/auth/roles.decorator";
 import { Public } from "src/auth/public.decorator";
 import { SearchQueryDto } from "src/influencers/dto/search-query.dto";
-import { JwtAuthGuard } from "src/auth/auth.guard";
-import { CurrentUser } from "src/auth/current-user.decorator";
 
 @ApiTags("Influencers")
 @Controller("influencers")
@@ -52,7 +48,6 @@ export class InfluencersController {
   @Public()
   @UsePipes(new ValidationPipe({ transform: true }))
   create(@Body() createInfluencerDto: CreateInfluencerDto) {
-    
     return this.influencersService.create(createInfluencerDto);
   }
 
@@ -153,19 +148,8 @@ export class InfluencersController {
     return this.influencersService.findOne(+id, user);
   }
 
-  @Get("me")
-  async getMe(@CurrentUser() user: { sub: number }) {
-    const userId = user.sub;
-
-    console.log("Getting logged-in influencer with ID:", userId);
-
-    return this.influencersService.getLoggedInUser(userId);
-  }
-
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.influencersService.remove(+id);
   }
 }
-
-

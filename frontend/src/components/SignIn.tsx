@@ -1,10 +1,16 @@
 import { useForm } from "@tanstack/react-form";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+// import { Separator } from "@radix-ui/react-separator";
 import { getActions } from "@/auth/authStore";
 import type { SignInProps } from "../types/signin.types";
 import { useNavigate } from "@tanstack/react-router";
@@ -48,31 +54,44 @@ const SignIn: React.FC<SignInProps> = ({ onSwitchToSignUp, onGuest }) => {
   const handleSubmit = async ({
     value,
   }: {
-    value: { email: string; password: string; rememberMe: boolean };
+    value: {
+      email: string;
+      password: string;
+      rememberMe: boolean;
+    };
   }) => {
     setAuthError(null);
 
     try {
-      const payload: LoginPayload = {
+      const user: LoginPayload = {
         email: value.email,
         password: value.password,
-        rememberMe: value.rememberMe,
       };
 
-      const response = await loginApi(payload);
-      setAccessToken(response.accessToken);
+      const response = await loginApi(user);
 
+      setAccessToken(response.access_token);
       navigate({ to: "/profile" });
     } catch (err: any) {
       const status = err?.status;
-      if (status === 401 || status === 403) setAuthError("Incorrect email or password.");
-      else setAuthError("An error occurred. Please try again.");
+
+      if (status === 401 || status === 403) {
+        setAuthError("Incorrect email or password.");
+      } else {
+        setAuthError("An error occurred. Please try again.");
+      }
     }
   };
 
   const form = useForm({
-    defaultValues: { email: "", password: "", rememberMe: false },
-    validators: { onSubmit: signInSchema },
+    defaultValues: {
+      email: "",
+      password: "",
+      rememberMe: false,
+    },
+    validators: {
+      onSubmit: signInSchema,
+    },
     onSubmit: handleSubmit,
   });
 
@@ -82,14 +101,24 @@ const SignIn: React.FC<SignInProps> = ({ onSwitchToSignUp, onGuest }) => {
     placeholder: string;
     type: string;
   }> = [
-    { name: "email", icon: "alternate_email", placeholder: "E-mail", type: "text" },
-    { name: "password", icon: "lock", placeholder: "Password", type: "password" },
+    {
+      name: "email",
+      icon: "alternate_email",
+      placeholder: "E-mail",
+      type: "text",
+    },
+    {
+      name: "password",
+      icon: "lock",
+      placeholder: "Password",
+      type: "password",
+    },
   ];
 
   return (
     <div className="w-full flex flex-col justify-start items-center">
-      <Card className="rounded-none w-full">
-        <CardHeader />
+      <Card className="rounded-none w-full ">
+        <CardHeader></CardHeader>
         <CardContent>
           <form
             id="sign-in-form"
@@ -102,8 +131,8 @@ const SignIn: React.FC<SignInProps> = ({ onSwitchToSignUp, onGuest }) => {
             <FieldGroup>
               {formFieldsArr.map(({ name, icon, placeholder, type }) => (
                 <form.Field
-                  key={name}
                   name={name}
+                  key={name}
                   children={(field) => {
                     const isInvalid =
                       field.state.meta.isTouched && !field.state.meta.isValid;
@@ -115,6 +144,7 @@ const SignIn: React.FC<SignInProps> = ({ onSwitchToSignUp, onGuest }) => {
                         inputType={type}
                         isInvalid={isInvalid}
                         placeholder={placeholder}
+                        key={name}
                       />
                     );
                   }}
@@ -141,6 +171,16 @@ const SignIn: React.FC<SignInProps> = ({ onSwitchToSignUp, onGuest }) => {
                   </div>
                 )}
               </form.Field>
+
+              {/* <p className="mt-4 text-sm">
+                <Button
+                  type="button"
+                  variant="link"
+                  className="h-auto text-primary font-normal underline"
+                >
+                  Forgot your password?
+                </Button>
+              </p> */}
             </FieldGroup>
 
             <Field orientation="horizontal">
@@ -153,6 +193,22 @@ const SignIn: React.FC<SignInProps> = ({ onSwitchToSignUp, onGuest }) => {
 
         <CardFooter>
           <div className="flex flex-col w-full gap-6 justify-center items-center">
+            <Field className="flex flex-row flex-1 gap-8 justify-center items-center">
+              {/* <Separator
+                orientation="horizontal"
+                decorative
+                className="w-100% border border-background my-4"
+              />
+              <p className="flex flex-row flex-1 text-primary/80 font-medium justify-center items-center">
+                OR
+              </p>
+              <Separator
+                orientation="horizontal"
+                decorative
+                className="w-100% border border-background my-4"
+              /> */}
+            </Field>
+
             <Field
               className="flex flex-row flex-1 justify-center items-center gap-2"
               orientation="horizontal"

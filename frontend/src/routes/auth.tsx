@@ -5,11 +5,11 @@ import AuthTabs from "@/pages/AuthTabsCard";
 
 export const Route = createFileRoute("/auth")({
   beforeLoad: () => {
-    // const { accessToken, accessTokenData } = authStore.getState();
+    const { accessToken, accessTokenData } = authStore.getState();
 
-    // if (accessToken !== undefined && accessTokenData?.role !== "GUEST") {
-    //   throw redirect({ to: "/influensers" });
-    // }
+    if (accessToken !== undefined && accessTokenData?.role !== "GUEST") {
+      throw redirect({ to: "/influensers" });
+    }
   },
   component: AuthTabsPage,
 });

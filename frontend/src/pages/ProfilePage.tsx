@@ -1,42 +1,38 @@
 import AvatarInitials from "@/components/AvatarInitials";
 import InfluencerContent from "@/components/InfluencerContent";
-import ProfilePageSkeleton from "@/components/ProfilePageSkeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { getLoggedInInfluencer } from "@/services/influencerService";
-import { useQuery } from "@tanstack/react-query";
+import { togglePrivateProfile } from "@/services/influencerService";
+import { useRouteContext } from "@tanstack/react-router";
 import { Globe, Mail, MapPin, Pencil, Phone, Share2 } from "lucide-react";
+import React, { useState } from "react";
 
 export default function ProfilePage() {
-  const {
-    data: influencer,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["me"],
-    queryFn: getLoggedInInfluencer,
+  const [isToggled, setIsToggled] = useState(() => {
+    if (typeof window !== "undefined") {
+      const savedState = localStorage.getItem("isPublished");
+      return savedState === "true" ? true : false;
+    }
+  return false;
   });
 
-  if (isLoading) return <ProfilePageSkeleton />;
+  React.useEffect(() => {
+    localStorage.setItem("isPublished", String(isToggled));
+  }, [isToggled]);
+  
+  const handleToggle = (checked: boolean) => {
+    setIsToggled(checked);
+    togglePrivateProfile(!checked);
+  };
 
-  if (isError || !influencer) {
-    return (
-      <div className="min-h-screen bg-[#F3F3F3] flex items-center justify-center p-6">
-        <Card className="max-w-md w-full rounded-2xl">
-          <CardHeader>
-            <CardTitle>Couldn&apos;t load profile</CardTitle>
-          </CardHeader>
-          <CardContent className="text-sm text-black/70">
-            Please refresh and try again.
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  const { influencer } = useRouteContext({
+    from: "/_private/profile",
+  });
 
   return (
     <div className="min-h-screen bg-[#F3F3F3]">
@@ -63,19 +59,30 @@ export default function ProfilePage() {
             )}
           </div>
         </div>
+        
       </div>
 
       <div className="px-4 sm:px-8 pb-10 pt-20">
         <Card className="mx-auto max-w-5xl rounded-2xl border-none">
           <CardHeader className="py-3 ps-15">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-              <div className="min-w-0">
-                <CardTitle className="text-xl sm:text-2xl">
-                  {influencer.name}
-                </CardTitle>
-                <p className="text-sm text-black">@{influencer.userId}</p>
+            <div className="flex flex-row gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0">
+                  <CardTitle className="text-xl sm:text-2xl">
+                    {influencer.name}
+                  </CardTitle>
+                  <p className="text-sm text-black">@{influencer.userId}</p>
+                </div>
+              </div>
+              <div className="px-4 sm:px-10 pt-8 sm:pt-5">
+                <div className="mx-auto flex max-w-5xl items-center justify-end gap-3 sm:gap-x-3">
+                      {isToggled == false && <Label htmlFor="publish">Unpublished</Label>}
+                      {isToggled == true && <Label htmlFor="publish">Published</Label>}
+                      <Switch id="publish" checked={isToggled} onCheckedChange={handleToggle} />
+                </div>
               </div>
             </div>
+            
           </CardHeader>
 
           <CardContent>

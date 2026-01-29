@@ -11,7 +11,7 @@ const AuthTabsCard: React.FC = () => {
   const navigate = useNavigate();
 
   const handleGuest = async () => {
-    navigate({ to: "/" });
+    navigate({ to: "/guest" });
   };
 
   return (

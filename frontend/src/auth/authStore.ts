@@ -1,206 +1,92 @@
-// import { createStore } from "zustand/vanilla";
-// import { devtools } from "zustand/middleware";
-// import { z } from "zod";
-// import { jwtDecode } from "jwt-decode";
-// import { useStoreWithEqualityFn } from "zustand/traditional";
-// import { refreshAccessToken } from "@/services/authService";
-
-// const TokenDataSchema = z.object({
-//   email: z.string(),
-//   role: z.string(),
-//   sub: z.number(),
-// });
-
-// type TokenData = z.infer<typeof TokenDataSchema>;
-
-// type AuthStore = {
-//   accessToken: string | undefined;
-//   accessTokenData: TokenData | undefined;
-//   isRegistered: boolean;
-
-//   actions: {
-//     setAccessToken: (accessToken: string | undefined) => void;
-//     setIsRegistered: () => void;
-//     setIsUnregistered: () => void;
-//     init: () => Promise<void>;
-//     clearTokens: () => Promise<void>;
-//   };
-// };
-
-// export const decodeAccessToken = (accessToken: string) =>
-//   TokenDataSchema.parse(jwtDecode<TokenData>(accessToken));
-
-// export const authStore = createStore<AuthStore>()(
-//   devtools(
-//     (set, get) => ({
-//       accessToken: undefined,
-//       accessTokenData: undefined,
-//       isRegistered: false,
-
-//       actions: {
-//         setAccessToken: (accessToken) => {
-//           const accessTokenData = (() => {
-//             try {
-//               return accessToken ? decodeAccessToken(accessToken) : undefined;
-//             } catch (error) {
-//               console.error(error);
-//               return undefined;
-//             }
-//           })();
-
-//           set({ accessToken, accessTokenData });
-//         },
-
-//         setIsRegistered: () => set({ isRegistered: true }),
-//         setIsUnregistered: () => set({ isRegistered: false }),
-
-//         init: async () => {
-//           const { setAccessToken } = get().actions;
-
-//           try {
-//             const accessToken = await refreshAccessToken();
-//             setAccessToken(accessToken);
-//           } catch {
-//             setAccessToken(undefined);
-//           }
-//         },
-
-//         clearTokens: async () => {
-//           // clears refresh cookie server-side (HttpOnly)
-//           try {
-//             await fetch("/auth/logout", {
-//               method: "POST",
-//               credentials: "include",
-//             });
-//           } catch {
-//             // ignore
-//           } finally {
-//             set({ accessToken: undefined, accessTokenData: undefined });
-//           }
-//         },
-//       },
-//     }),
-//     { name: "auth-store", enabled: !import.meta.env.PROD }
-//   )
-// );
-
-// export type ExtractState<S> = S extends {
-// 		getState: () => infer T;
-// 	}
-// 	? T
-// 	: never;
-
-// // Selectors
-// const accessTokenSelector = (state: ExtractState<typeof authStore>) => state.accessToken;
-// const accessTokenDataSelector = (state: ExtractState<typeof authStore>) => state.accessTokenData;
-// const actionsSelector = (state: ExtractState<typeof authStore>) => state.actions;
-// const isRegisteredSelector = (state: ExtractState<typeof authStore>) => state.isRegistered;
-
-// // getters
-// export const getAccessToken = () => accessTokenSelector(authStore.getState());
-// export const getAccessTokenData = () => accessTokenDataSelector(authStore.getState());
-// export const getActions = () => actionsSelector(authStore.getState());
-// export const getIsRegistered = () => isRegisteredSelector(authStore.getState());
-
-// export function useAuthStore<U>(
-//   selector: (s: ExtractState<typeof authStore>) => U,
-//   equalityFn?: (a: U, b: U) => boolean
-// ) {
-//   return useStoreWithEqualityFn(authStore, selector, equalityFn);
-// }
-
-// // Hooks
-// export const useAccessToken = () => useAuthStore(accessTokenSelector);
-// export const useAccessTokenData = () => useAuthStore(accessTokenDataSelector);
-// export const useActions = () => useAuthStore(actionsSelector);
-// export const useIsRegistered = () => useAuthStore(isRegisteredSelector);
-
-import { createStore } from "zustand/vanilla";
-import { devtools } from "zustand/middleware";
+import { createStore } from 'zustand/vanilla';
+import { devtools } from 'zustand/middleware';
 import { z } from "zod";
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from 'jwt-decode';
 import { useStoreWithEqualityFn } from "zustand/traditional";
-import { refreshAccessToken } from "@/services/authService";
+import { CookieService } from '@/services/cookieService';
+
+const ACCESS_TOKEN_KEY = 'accessToken';
 
 const TokenDataSchema = z.object({
-  email: z.string(),
-  role: z.string(),
+	email: z.string(),
+	role: z.string(),
   sub: z.number(),
-});
+})
 
 type TokenData = z.infer<typeof TokenDataSchema>;
 
 type AuthStore = {
   accessToken: string | undefined;
   accessTokenData: TokenData | undefined;
-  authChecked: boolean;
   isRegistered: boolean;
 
   actions: {
-    setAccessToken: (accessToken: string | undefined) => void;
-    setIsRegistered: () => void;
+		setAccessToken: (accessToken: string | undefined) => void;
+		setIsRegistered: () => void;
     setIsUnregistered: () => void;
-    init: () => Promise<void>;
-    clearTokens: () => Promise<void>;
-  };
+		init: () => void;
+		clearTokens: () => void;
+	}
 };
 
-export const decodeAccessToken = (accessToken: string) =>
-  TokenDataSchema.parse(jwtDecode<TokenData>(accessToken));
+export const decodeAccessToken = (accessToken: string) => TokenDataSchema.parse(jwtDecode<TokenData>(accessToken));
 
 export const authStore = createStore<AuthStore>()(
   devtools(
-    (set, get) => ({
-      accessToken: undefined,
-      accessTokenData: undefined,
-      isRegistered: false,
+      (set, get) => ({
+        accessToken: undefined,
+        accessTokenData: undefined,
+        isRegistered: false,
 
-      actions: {
-        setAccessToken: (accessToken) => {
-          const accessTokenData = (() => {
-            try {
-              return accessToken ? decodeAccessToken(accessToken) : undefined;
-            } catch (error) {
-              console.error(error);
-              return undefined;
+        actions: {
+          setAccessToken: (accessToken: string | undefined) => {
+            
+            console.log("Setting access token in auth store:", accessToken);
+
+            if (accessToken) {
+              CookieService.set(ACCESS_TOKEN_KEY, accessToken);
             }
-          })();
 
-          set({ accessToken, accessTokenData });
-        },
+            const accessTokenData = (() => {
+              try {
+                return accessToken ? decodeAccessToken(accessToken) : undefined;
+              } catch (error) {
+                console.error(error)
+                return undefined;
+              }
+            })();
 
-        setIsRegistered: () => set({ isRegistered: true }),
-        setIsUnregistered: () => set({ isRegistered: false }),
+            set({ accessToken, accessTokenData });
+          },
 
-        init: async () => {
-          const { setAccessToken } = get().actions;
+          setIsRegistered: () => {
+            set({ isRegistered : true });
+          },
 
-          try {
-            const token = await refreshAccessToken();
-            setAccessToken(token);
-          } catch {
-            setAccessToken(undefined);
-          } finally {
-            set({ authChecked: true });
-          }
-        },
+          setIsUnregistered: () => {
+            set({ isRegistered : false });
+          },
 
-        clearTokens: async () => {
-          // clears refresh cookie server-side (HttpOnly)
-          try {
-            await fetch("/auth/logout", {
-              method: "POST",
-              credentials: "include",
+          init: () => {
+            const {setAccessToken} = get().actions;
+            setAccessToken(CookieService.get(ACCESS_TOKEN_KEY));
+          },
+
+          clearTokens: () => {
+            CookieService.remove(ACCESS_TOKEN_KEY);
+
+            console.log("Clearing tokens from auth store");
+            set({
+              accessToken: undefined,
+              accessTokenData: undefined,
             });
-          } catch {
-            // ignore
-          } finally {
-            set({ accessToken: undefined, accessTokenData: undefined });
           }
-        },
-      },
+        }
     }),
-    { name: "auth-store", enabled: !import.meta.env.PROD }
+    {
+      name: 'auth-store',
+      enabled: !import.meta.env.PROD
+    }
   )
 );
 

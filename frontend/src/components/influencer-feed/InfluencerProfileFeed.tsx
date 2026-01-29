@@ -27,16 +27,38 @@ export default function InfluencerProfileFeed({ userId, influencer, isEditable =
       {isEditable && (
         <>
           <CreatePostCard />
-          <PostModal/>
+          <PostModal />
         </>
       )}
 
-      {data
-        ?.slice()
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-        .map((post) => (
-          <PostCard key={post.id} influencer={influencer} post={post} isEditable={isEditable} />
-        ))}
+      {(() => {
+        const sortedPosts =
+          data
+            ?.slice()
+            .sort(
+              (a, b) =>
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime()
+            ) ?? [];
+
+        if (sortedPosts.length === 0) {
+          return (
+            <div className="flex items-center justify-center py-20 text-muted-foreground text-lg">
+              No posts yet
+            </div>
+          );
+        }
+
+        return sortedPosts.map((post) => (
+          <PostCard
+            key={post.id}
+            influencer={influencer}
+            post={post}
+            isEditable={isEditable}
+          />
+        ));
+      })()}
     </div>
+
   );
 }

@@ -8,13 +8,14 @@ import { jwtConstants } from "./dto/credentials.dto";
 import { JwtStrategy } from "./jwt.strategy";
 import { JwtAuthGuard } from "./auth.guard";
 import { APP_GUARD } from "@nestjs/core";
-import { UsersRepository } from "src/data-access/users.repository";
 
 @Module({
   imports: [
     DataAccessModule,
     JwtModule.register({
-
+      global: true,
+      secret: jwtConstants.secret,
+      signOptions: { expiresIn: "1h" },
     }),
   ],
   controllers: [AuthController],

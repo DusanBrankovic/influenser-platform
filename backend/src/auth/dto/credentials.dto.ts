@@ -1,19 +1,13 @@
-import { IsBoolean, IsEmail, IsNotEmpty, IsString } from "class-validator";
-
+import { IsEmail, IsNotEmpty, IsString } from "class-validator";
 
 export class Credentials {
-  @IsNotEmpty()
   @IsEmail()
-  email: string;
-
   @IsString()
+  email: string;
   @IsNotEmpty()
+  @IsString()
   password: string;
-
-  @IsBoolean()
-  rememberMe: boolean;
 }
-
 
 export class JwtPayload {
   id: number;
@@ -22,5 +16,5 @@ export class JwtPayload {
 }
 
 export const jwtConstants = {
-  secret: process.env.JWT_ACCESS_SECRET || "",
+  secret: process.env.JWT_SECRET || "",
 };
