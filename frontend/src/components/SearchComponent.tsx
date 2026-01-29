@@ -78,47 +78,61 @@ export default function SearchComponent({
       <div className="mt-4 flex flex-wrap justify-evenly gap-3">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="secondary" className="rounded-lg px-4 flex items-center gap-5 bg-neutral-300">
-                {selectedValue ?? "Values"}
+              <Button variant="secondary" className="min-w-[200px] justify-between rounded-lg px-4 bg-neutral-300">
+                <span className="ps-2">{selectedValue ?? "Values"}</span>
                 <ChevronDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
+            <DropdownMenuContent className="w-[200px]">
               {valueEnumValues.map((opt) => (
                 <DropdownMenuItem
                   key={opt}
                   className="cursor-pointer"
-                  onSelect={(e) => {
-                    e.preventDefault();
+                  onSelect={() => {
                     setSelectedValue(opt);
                   }}
                 >
                   {opt}
                 </DropdownMenuItem>
               ))}
+              <DropdownMenuItem
+                className="cursor-pointer text-muted-foreground"
+                onSelect={() => {
+                  setSelectedValue(undefined);
+                }}
+              >
+                Clear selection
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="secondary" className="rounded-lg px-4 flex items-center gap-5 bg-neutral-300">
-                {selectedIndustry ?? "Industries"}
+              <Button variant="secondary" className="min-w-[200px] justify-between rounded-lg px-4 bg-neutral-300">
+                <span className="ps-2">{selectedIndustry ?? "Industries"}</span>
                 <ChevronDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
+            <DropdownMenuContent className="w-[200px]">
               {industryEnumValues.map((opt) => (
                 <DropdownMenuItem
                   key={opt}
                   className="cursor-pointer"
-                  onSelect={(e) => {
-                    e.preventDefault();
+                  onSelect={() => {
                     setSelectedIndustry(opt);
                   }}
                 >
                   {opt}
                 </DropdownMenuItem>
               ))}
+              <DropdownMenuItem
+                className="cursor-pointer text-muted-foreground"
+                onSelect={() => {
+                  setSelectedIndustry(undefined);
+                }}
+              >
+                Clear selection
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
