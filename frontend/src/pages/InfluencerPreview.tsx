@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import AvatarInitials from "@/components/AvatarInitials";
 import InfluencerContent from "@/components/InfluencerContent";
+import { IndustryLabels, ValueLabels } from "@/data/prettifyEnums";
 // import InfluencerContent from "@/components/InfluencerContent";
 
 // function Stars({ value = 4, outOf = 5 }: { value?: number; outOf?: number }) {
@@ -116,32 +117,33 @@ export default function InfluencerPreview() {
                 Categories
               </Label>
               <div className="flex flex-col gap-3 rounded-xl border border-black p-3">
-                <Label className="font-semibold text-black ps-2">
+<Label className="ps-2 font-semibold text-black">
                   Industries
                 </Label>
+
                 <div className="flex flex-wrap gap-2 ps-1">
-                  {influencer.industries.map((t) => (
+                  {(influencer.industries ?? []).map((t) => (
                     <Badge
                       key={t}
                       variant="secondary"
                       className="rounded-sm bg-[#8C8C8C] text-white"
                     >
-                      {t}
+                      {IndustryLabels[t as keyof typeof IndustryLabels]}
                     </Badge>
                   ))}
                 </div>
 
-                <Label className="font-semibold text-black ps-2">
-                  Values
-                </Label>
+
+                <Label className="ps-2 font-semibold text-black">Values</Label>
+
                 <div className="flex flex-wrap gap-2 ps-1">
-                  {influencer.values.map((t) => (
+                  {(influencer.values ?? []).map((t) => (
                     <Badge
                       key={t}
                       variant="secondary"
                       className="rounded-sm bg-black/20 text-black"
                     >
-                      {t}
+                      {ValueLabels[t]}
                     </Badge>
                   ))}
                 </div>
