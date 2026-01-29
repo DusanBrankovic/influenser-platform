@@ -12,6 +12,7 @@ import { Globe, Mail, MapPin, Pencil, Phone, Share2 } from "lucide-react";
 import React from "react";
 import { EditBioAndExperiencePopUp } from "@/components/EditBioAndExperiencePopUp"; // adjust path
 import type { UpdateInfluencerDto } from "@/types/influencer.types";
+import { IndustryLabels, ValueLabels } from "@/data/prettifyEnums";
 
 export default function ProfilePage() {
 
@@ -151,6 +152,7 @@ export default function ProfilePage() {
                 <Label className="ps-2 font-semibold text-black">
                   Industries
                 </Label>
+
                 <div className="flex flex-wrap gap-2 ps-1">
                   {(influencer.industries ?? []).map((t) => (
                     <Badge
@@ -158,12 +160,14 @@ export default function ProfilePage() {
                       variant="secondary"
                       className="rounded-sm bg-[#8C8C8C] text-white"
                     >
-                      {t}
+                      {IndustryLabels[t as keyof typeof IndustryLabels]}
                     </Badge>
                   ))}
                 </div>
 
+
                 <Label className="ps-2 font-semibold text-black">Values</Label>
+
                 <div className="flex flex-wrap gap-2 ps-1">
                   {(influencer.values ?? []).map((t) => (
                     <Badge
@@ -171,10 +175,11 @@ export default function ProfilePage() {
                       variant="secondary"
                       className="rounded-sm bg-black/20 text-black"
                     >
-                      {t}
+                      {ValueLabels[t]}
                     </Badge>
                   ))}
                 </div>
+
 
                 <Button
                   size="icon"
