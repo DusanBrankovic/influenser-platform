@@ -1,4 +1,4 @@
-import { IsEnum, IsOptional, IsString } from "class-validator";
+import { IsArray, IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
 import { Industry, Value } from "generated/prisma/enums";
 
 export class SearchQueryDto {
@@ -7,10 +7,12 @@ export class SearchQueryDto {
     readonly name?: string;
 
     @IsOptional()
-    @IsEnum(Industry)
-    readonly industry?: Industry;
+    @IsArray()
+    @IsEnum(Industry, {each:true})
+    readonly industry?: Industry[];
 
     @IsOptional()
-    @IsEnum(Value)
-    readonly value?: Value;
+    @IsArray()
+    @IsEnum(Value, {each:true})
+    readonly value?: Value[];
 }

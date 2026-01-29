@@ -56,25 +56,52 @@ export class InfluencersRepository {
   async findAll(searchQuery: SearchQueryDto) {
     const { name, industry, value } = searchQuery;
 
-    const filters: any = {};
+    const orFilters: any[] = [];
 
     if (name) {
-      filters.name = {
-        contains: name,
-        mode: "insensitive",
-      };
+      orFilters.push({
+        name: {
+          contains: name,
+          mode: "insensitive",
+        },
+      });
     }
 
     if (industry) {
-      filters.industries = {
-        has: industry,
-      };
+      if (Array.isArray(industry) && industry.length > 0) {
+        orFilters.push({
+          industries: {
+            hasSome: industry,
+          },
+        });
+      } else {
+        orFilters.push({
+          industries: {
+            has: industry,
+          },
+        });
+      }
     }
 
     if (value) {
-      filters.values = {
-        has: value,
-      };
+      if (Array.isArray(value) && value.length > 0) {
+        orFilters.push({
+          values: {
+            hasSome: value,
+          },
+        });
+      } else {
+        orFilters.push({
+          values: {
+            has: value,
+          },
+        });
+      }
+    }
+
+    const where: any = { isPrivate: false };
+    if (orFilters.length > 0) {
+      where.OR = orFilters;
     }
 
     return this.db.influencer.findMany({
@@ -86,13 +113,14 @@ export class InfluencersRepository {
         industries: true,
         values: true,
       },
-      where: { ...filters, isPrivate: false },
+      where,
     });
   }
 
+
   async findOne(id: number, onlyPublic: boolean = false) {
     return this.db.influencer.findUnique({
-      where: { userId: id }
+      where: { userId: id, ...(onlyPublic ? { isPrivate: false } : {}) }
     });
   }
 }
