@@ -1,5 +1,5 @@
 import { getAccessToken } from "@/auth/authStore";
-import type { Influencer, SearchQueryParams } from "@/types/influencer.types";
+import type { Influencer, SearchQueryParams, UpdateInfluencerDto } from "@/types/influencer.types";
 
 const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
@@ -40,6 +40,23 @@ export async function getLoggedInInfluencer(userId: number): Promise<Influencer>
         },
     });
     if (!res.ok) throw new Error("Failed to fetch influencers");
+    return res.json();
+}
+
+export async function updateInfluencer(updateInfluencerDto: UpdateInfluencerDto): Promise<{ updatedInfluencer: Influencer }> {
+
+    const res = await fetch(`${apiUrl}/influencers/me`, {
+        method: "PATCH",
+        headers: { 
+            "Content-Type": "application/json",
+            ...authHeaders(),
+        },
+        body: JSON.stringify(updateInfluencerDto),
+    });
+    if (!res.ok) {
+        console.error("Failed to update profile:", await res.text());
+        throw new Error("Failed to update profile");
+    }
     return res.json();
 }
 

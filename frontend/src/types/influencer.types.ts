@@ -10,6 +10,15 @@ export type Influencer = {
   values: string[];
 };
 
+export type UpdateInfluencerDto = {
+  headline?: string | null;
+  experience?: number | null;
+  profileUrl?: string | null;
+  profileImage?: string | null;
+  industries?: string[];
+  values?: string[];
+};
+
 export type SearchQueryParams = {
     name?: string;
     industry?: string;
