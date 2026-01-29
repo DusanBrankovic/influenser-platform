@@ -2,9 +2,8 @@ import * as React from "react";
 import InfluencerCard from "@/components/InfluencerCard";
 import SearchComponent from "@/components/SearchComponent";
 import type { Influencer } from "@/types/influencer.types";
-import { getAllInfluencers } from "@/services/influencerService";
 
-export default function InfluenserList({
+export default function GuestInfluencerList({
   influencers: initialInfluencers,
   valueEnumValues,
   industryEnumValues,
@@ -15,7 +14,6 @@ export default function InfluenserList({
 }) {
 
   const [influencers, setInfluencers] = React.useState<Influencer[]>(initialInfluencers);
-  const [loading, setLoading] = React.useState(false);
 
   return (
     <div className="w-full bg-muted/40">
@@ -32,14 +30,24 @@ export default function InfluenserList({
           <SearchComponent
             valueEnumValues={valueEnumValues}
             industryEnumValues={industryEnumValues}
-            onSearch={async (params) => {
-              setLoading(true)
-              try {
-                const data = await getAllInfluencers(params)
-                setInfluencers(data)
-              } finally {
-                setLoading(false)
-              }
+            onSearch={(params) => {
+                const filtered = initialInfluencers.filter((inf) => {
+                    const matchesName =
+                        !params.name ||
+                        inf.name.toLowerCase().includes(params.name.toLowerCase());
+
+                    const matchesValues =
+                        !params.value?.length ||
+                        inf.values.includes(params.value);
+
+                    const matchesIndustries =
+                        !params.industry?.length ||
+                        inf.industries.includes(params.industry);
+
+                return matchesName && matchesIndustries && matchesValues;
+                });
+
+                setInfluencers(filtered);
             }}
           />
         </div>
@@ -55,13 +63,9 @@ export default function InfluenserList({
             "
           >
             {influencers.map((influencer) => (
-              <InfluencerCard key={influencer.userId} influencer={influencer} />
+              <InfluencerCard key={influencer.userId} influencer={influencer} isGuest={true} />
             ))}
       </div>
-
-        {loading && (
-          <div className="text-sm text-muted-foreground">Učitavanje...</div>
-        )}
       </div>
     </div>
   );

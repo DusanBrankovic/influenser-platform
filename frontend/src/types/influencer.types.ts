@@ -5,6 +5,9 @@ export type Influencer = {
   experience: number | null;
   isPrivate: boolean;
   profileUrl: string | null;
+  profileImage: string | null;
+  industries: string[];
+  values: string[];
 };
 
 export type SearchQueryParams = {
@@ -12,3 +15,4 @@ export type SearchQueryParams = {
     industry?: string;
     value?: string;
 };
+

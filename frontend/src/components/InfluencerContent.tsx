@@ -1,12 +1,18 @@
 import { useState } from "react";
 import InfluencerProfileFeed from "./influencer-feed/InfluencerProfileFeed";
+import type { Influencer } from "@/types/influencer.types";
 
 type NavContent = {
   name: string;
   selected: boolean;
 };
 
-export default function InfluencerContent() {
+type InfluencerContentProps = {
+  influencer: Influencer;
+  isEditable?: boolean;
+};
+
+export default function InfluencerContent({ influencer, isEditable }: InfluencerContentProps) {
   const [navContent, setNavContent] = useState<NavContent[]>([
     { name: "Objave", selected: true },
     { name: "Kampanje", selected: false },
@@ -14,19 +20,41 @@ export default function InfluencerContent() {
     { name: "Pregled ocena i komentara", selected: false },
   ]);
 
-  const isSelectedItem = (name: string) => {
-    return navContent.find((item) => item.name === name)?.selected;
-  };
+  const isSelectedItem = (name: string) =>
+    navContent.find((item) => item.name === name)?.selected;
 
   return (
     <div>
       <div className="flex justify-between items-center rounded-xl">
         <ContentNavBar navContent={navContent} setNavContent={setNavContent} />
       </div>
-        {isSelectedItem("Objave") && <InfluencerProfileFeed />}
-        {isSelectedItem("Kampanje") && <InfluencerProfileFeed />}
-        {isSelectedItem("Sačuvane stavke") && <InfluencerProfileFeed />}
-        {isSelectedItem("Pregled ocena i komentara") && <InfluencerProfileFeed />}
+
+      {isSelectedItem("Objave") && (
+        <InfluencerProfileFeed
+          userId={influencer.userId}
+          influencer={influencer}
+          isEditable={isEditable}
+        />
+      )}
+
+      {isSelectedItem("Kampanje") && (<InfluencerProfileFeed
+          userId={influencer.userId}
+          influencer={influencer}
+          isEditable={isEditable}
+        />
+      )}
+      {isSelectedItem("Sačuvane stavke") && (<InfluencerProfileFeed
+          userId={influencer.userId}
+          influencer={influencer}
+          isEditable={isEditable}
+        />
+      )}
+      {isSelectedItem("Pregled ocena i komentara") && (<InfluencerProfileFeed
+          userId={influencer.userId}
+          influencer={influencer}
+          isEditable={isEditable}
+        />
+      )}
     </div>
   );
 }
@@ -38,11 +66,7 @@ function ContentNavBar({
   navContent: NavContent[];
   setNavContent: React.Dispatch<React.SetStateAction<NavContent[]>>;
 }) {
-  const calculateBorderClasses = (
-    idx: number,
-    length: number,
-    selected: boolean,
-  ) => {
+  const calculateBorderClasses = (idx: number, length: number, selected: boolean) => {
     const isFirst = idx === 0;
     const isLast = idx === length - 1;
     const isMiddle = idx > 0 && idx < length - 1;
@@ -65,7 +89,7 @@ function ContentNavBar({
       prev.map((item) => ({
         ...item,
         selected: item.name === name,
-      })),
+      }))
     );
   };
 
@@ -73,7 +97,7 @@ function ContentNavBar({
     <div
       key={idx}
       className={`bg-background w-full py-4 text-center cursor-pointer border-b border-primary hover:bg-white
-                ${calculateBorderClasses(idx, navContent.length, item.selected)}`}
+        ${calculateBorderClasses(idx, navContent.length, item.selected)}`}
       onClick={() => onSelect(item.name)}
     >
       {item.name}

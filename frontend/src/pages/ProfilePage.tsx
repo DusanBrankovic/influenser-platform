@@ -1,47 +1,18 @@
-import * as React from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Textarea } from "@/components/ui/textarea";
-import { Separator } from "@/components/ui/separator";
-
-import {
-  Pencil,
-  Star,
-  Phone,
-  Mail,
-  Globe,
-  MapPin,
-  Share2,
-} from "lucide-react";
-import { useRouteContext } from "@tanstack/react-router";
-import { togglePrivateProfile } from "@/services/influencerService";
-import { useState } from "react";
+import AvatarInitials from "@/components/AvatarInitials";
 import InfluencerContent from "@/components/InfluencerContent";
-import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import { togglePrivateProfile } from "@/services/influencerService";
+import { useRouteContext } from "@tanstack/react-router";
+import { Globe, Mail, MapPin, Pencil, Phone, Share2 } from "lucide-react";
+import React, { useState } from "react";
 
-function Stars({ value = 4, outOf = 5 }: { value?: number; outOf?: number }) {
-  const v = Math.max(0, Math.min(value, outOf));
-  return (
-    <div className="flex items-center gap-1">
-      {Array.from({ length: outOf }).map((_, i) => (
-        <Star
-          key={i}
-          className={`h-4 w-4 ${i < v ? "fill-black text-black" : "text-black/30"}`}
-        />
-      ))}
-    </div>
-  );
-}
-
-export default function InfluencerProfile() {
-
+export default function ProfilePage() {
   const [isToggled, setIsToggled] = useState(() => {
     if (typeof window !== "undefined") {
       const savedState = localStorage.getItem("isPublished");
@@ -59,20 +30,13 @@ export default function InfluencerProfile() {
     togglePrivateProfile(!checked);
   };
 
-  const [bio, setBio] = React.useState(
-    "U opisu profila influenser može ukratko da predstavi sebe, da naznači koji je njegov fokus i cilj sa budućim kampanjama. Trebalo bi navesti u par rečenica oko čega se bazira njegov sadržaj pre nego što pregledamo kompletan profil. Ovaj prozor može imati ograničenje u vidu maksimalnog broja simbola."
-  );
-
   const { influencer } = useRouteContext({
     from: "/_private/profile",
   });
 
-  const industries = ["Industrija 1", "Industrija 2", "Industrija 3"];
-  const values = ["Vrednosti 1", "Vrednosti 2", "Vrednosti 3", "Vrednosti 4"];
-
   return (
     <div className="min-h-screen bg-[#F3F3F3]">
-      <div className="relative h-44 sm:h-44 bg-[#9B9B9B]">
+      <div className="relative h-44 bg-[#9B9B9B]">
         <Button
           variant="secondary"
           size="icon"
@@ -82,98 +46,139 @@ export default function InfluencerProfile() {
           <Pencil className="h-5 w-5" />
         </Button>
 
-        <div className="absolute left-6 sm:left-12 -bottom-20">
-          <div className="relative h-20 w-20 sm:h-40 sm:w-40 rounded-full bg-white/80 p-2 shadow-sm">
-            <div className="h-full w-full rounded-full bg-white flex items-center justify-center border">
-              <Pencil className="h-6 w-6 text-black/60" />
-            </div>
+        <div className="absolute -bottom-20 left-6 z-20 h-20 w-20 sm:h-40 sm:w-40 rounded-full bg-white/80 p-2 shadow-sm">
+          <div className="h-full w-full overflow-hidden rounded-full flex items-center justify-center">
+            {influencer.profileImage ? (
+              <img
+                src={influencer.profileImage}
+                className="h-full w-full object-cover"
+                alt={`${influencer.name} profile`}
+              />
+            ) : (
+              <AvatarInitials name={influencer.name} size={145} />
+            )}
           </div>
         </div>
+        
       </div>
 
-      <div className="px-4 sm:px-10 pt-14 sm:pt-16">
-        <div className="mx-auto flex max-w-5xl items-center justify-end gap-3 sm:gap-x-3">
-              {isToggled == false && <Label htmlFor="publish">Unpublished</Label>}
-              {isToggled == true && <Label htmlFor="publish">Published</Label>}
-              <Switch id="publish" checked={isToggled} onCheckedChange={handleToggle} />
-        </div>
-      </div>
-
-      <div className="px-4 sm:px-8 pb-10 pt-4">
-        <Card className="mx-auto max-w-5xl rounded-2xl border border-black bg-white">
-          <CardHeader className="pb-3">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-              <div className="min-w-0">
-                <CardTitle className="text-xl sm:text-2xl">{influencer.name}</CardTitle>
-                <p className="text-sm text-black">@{influencer.userId}</p>
-              </div>
-
-              <div className="flex flex-col items-start sm:items-end gap-2">
-                <div className="flex items-center gap-2">
-                  <Badge className="rounded-full bg-white text-black border border-black">
-                    ocena
-                    <span className="mx-2 inline-flex items-center">
-                      <Stars value={4} outOf={5} />
-                    </span>
-                    <span className="font-semibold">4/5</span>
-                  </Badge>
+      <div className="px-4 sm:px-8 pb-10 pt-20">
+        <Card className="mx-auto max-w-5xl rounded-2xl border-none">
+          <CardHeader className="py-3 ps-15">
+            <div className="flex flex-row gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0">
+                  <CardTitle className="text-xl sm:text-2xl">
+                    {influencer.name}
+                  </CardTitle>
+                  <p className="text-sm text-black">@{influencer.userId}</p>
                 </div>
-                <div className="text-sm text-muted-foreground">
-                  <span className="font-semibold text-black">500k</span> pratilaca
+              </div>
+              <div className="px-4 sm:px-10 pt-8 sm:pt-5">
+                <div className="mx-auto flex max-w-5xl items-center justify-end gap-3 sm:gap-x-3">
+                      {isToggled == false && <Label htmlFor="publish">Unpublished</Label>}
+                      {isToggled == true && <Label htmlFor="publish">Published</Label>}
+                      <Switch id="publish" checked={isToggled} onCheckedChange={handleToggle} />
                 </div>
               </div>
             </div>
+            
           </CardHeader>
 
-          <CardContent className="space-y-6">
-            {/* 1) Bio */}
-            <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-start">
-              <div className="space-y-2">
+          <CardContent>
+            <div className="flex flex-col gap-2">
+              <Label className="font-semibold text-black ps-5">Bio</Label>
+
+              <div className="relative">
                 <Textarea
-                  value={bio}
-                  onChange={(e) => setBio(e.target.value)}
-                  className="min-h-23 resize-none rounded-xl bg-white/60 border border-black"
+                  value={influencer.headline ?? ""}
+                  placeholder="Headline will appear here..."
+                  disabled
+                  className="min-h-23 resize-none rounded-xl bg-white/60 border border-black disabled:cursor-default disabled:opacity-100 p-5 pr-5"
                 />
-                <Button variant="link" className="h-auto p-0 text-black/70">
-                  Pročitaj više
+
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="absolute bottom-3 right-3 h-8 w-8"
+                >
+                  <Pencil className="h-4 w-4" />
                 </Button>
               </div>
             </div>
 
-            {/* 2) Experience + tags */}
-            <div className="space-y-3">
-              <div className="text-sm font-semibold">3 godine iskustva</div>
+            <div className="flex flex-col gap-2 mt-6">
+              <Label className="font-semibold text-black ps-5">
+                Years of experience
+              </Label>
 
-              <div className="flex flex-wrap gap-2">
-                {industries.map((t) => (
-                  <Badge
-                    key={t}
-                    variant="secondary"
-                    className="rounded-md bg-black/20 text-black hover:bg-black/25"
-                  >
-                    {t}
-                  </Badge>
-                ))}
-              </div>
+              <div className="rounded-xl border border-black p-3">
+                <div className="relative">
+                  <Input
+                    className="p-0 ps-2 pr-12"
+                    value={influencer.experience ?? ""}
+                    placeholder="Experience will appear here..."
+                    disabled
+                  />
 
-              <div className="flex flex-wrap gap-2">
-                {values.map((t) => (
-                  <Badge
-                    key={t}
-                    variant="secondary"
-                    className="rounded-md bg-black/20 text-black hover:bg-black/25"
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="absolute right-0 top-1/2 -translate-y-1/2 h-8 w-8"
                   >
-                    {t}
-                  </Badge>
-                ))}
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             </div>
 
-            <Separator />
+            <div className="flex flex-col gap-2 mt-6">
+              <Label className="font-semibold text-black ps-5">Categories</Label>
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <Card className="rounded-xl border border-black bg-white">
-                <CardContent className="p-4">
+              <div className="relative flex flex-col gap-3 rounded-xl border border-black p-3 pb-5">
+                <Label className="font-semibold text-black ps-2">
+                  Industries
+                </Label>
+                <div className="flex flex-wrap gap-2 ps-1">
+                  {(influencer.industries ?? []).map((t) => (
+                    <Badge
+                      key={t}
+                      variant="secondary"
+                      className="rounded-sm bg-[#8C8C8C] text-white"
+                    >
+                      {t}
+                    </Badge>
+                  ))}
+                </div>
+
+                <Label className="font-semibold text-black ps-2">Values</Label>
+                <div className="flex flex-wrap gap-2 ps-1">
+                  {(influencer.values ?? []).map((t) => (
+                    <Badge
+                      key={t}
+                      variant="secondary"
+                      className="rounded-sm bg-black/20 text-black"
+                    >
+                      {t}
+                    </Badge>
+                  ))}
+                </div>
+
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="absolute bottom-3 right-3 h-8 w-8"
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2 mt-6">
+              <Label className="font-semibold text-black ps-5">Contact</Label>
+
+              <div className="relative flex flex-col gap-3 rounded-xl border border-black p-5 pb-5 mb-6">
+                <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-3 text-sm">
                     <div className="flex items-center gap-2">
                       <Phone className="h-4 w-4 text-black/70" />
@@ -196,14 +201,21 @@ export default function InfluencerProfile() {
                       <span>Društvene mreže</span>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
 
-              <div className="hidden md:block rounded-xl border border-dashed border-black/15 bg-transparent" />
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="absolute bottom-3 right-3 h-8 w-8"
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
-              <CardContent className="rounded-xl border border-black bg-white p-0">
-                <InfluencerContent />
-              </CardContent>
+
+            <CardContent className="rounded-xl border border-black bg-white p-0">
+              <InfluencerContent influencer={influencer} isEditable={true} />
+            </CardContent>
           </CardContent>
         </Card>
       </div>

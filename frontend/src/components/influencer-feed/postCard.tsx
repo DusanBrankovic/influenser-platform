@@ -8,17 +8,20 @@ import PostButtons from "./postButtons";
 type PostCardProps = {
   influencer: Influencer;
   post: Post;
+  isEditable?: boolean;
 }
 
 export default function PostCard({
   influencer,
   post,
+  isEditable = true
 }: PostCardProps) {
   return (
     <div className="border border-primary rounded-lg p-6 mb-16 bg-white">
       <PostHeader
         influencer={influencer}
         post={post}
+        isEditable={isEditable}
       />
       <div className="mb-4">{post.text}</div>
       {post.images.length > 0 && <PostGallery images={post.images} />}
