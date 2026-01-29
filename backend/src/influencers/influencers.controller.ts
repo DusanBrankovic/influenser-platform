@@ -124,7 +124,7 @@ export class InfluencersController {
       },
     },
   })
-  @Public()
+
   @Get()
   findAll(@Query() searchQuery: SearchQueryDto) {
     return this.influencersService.findAll(searchQuery);

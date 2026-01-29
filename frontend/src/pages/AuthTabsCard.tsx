@@ -3,12 +3,23 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import HourglassIcon from "../assets/icons/hourglass-triangle.svg";
 import SignIn from "@/components/SignIn";
 import Register from "@/components/Register";
-import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { Route } from "@/routes/auth";
 
 const AuthTabsCard: React.FC = () => {
-  const [tab, setTab] = useState<"signin" | "register">("signin");
+
   const navigate = useNavigate();
+  const { tab: searchTab } = Route.useSearch();
+
+  const tab = (searchTab ?? "signin") as "signin" | "register";
+
+  const setTab = (next: "signin" | "register") => {
+    navigate({
+      to: "/auth",
+      search: (prev) => ({ ...prev, tab: next }),
+      replace: true,
+    });
+  };
 
   const handleGuest = async () => {
     navigate({ to: "/guest" });

@@ -1,0 +1,112 @@
+[
+  {
+    "userId": 1,
+    "name": "Sophie Martinez",
+    "headline": "Travel & Lifestyle Content Creator",
+    "experience": 5,
+    "isPrivate": false,
+    "profileUrl": "https://instagram.com/sophiemtravels",
+    "profileImage": "https://picsum.photos/200?1",
+    "industries": ["Travel", "Lifestyle", "Photography"],
+    "values": ["Authenticity", "Creativity", "Adventure"]
+  },
+  {
+    "userId": 2,
+    "name": "Liam Chen",
+    "headline": "Tech Reviewer & Gadget Enthusiast",
+    "experience": 3,
+    "isPrivate": false,
+    "profileUrl": "https://youtube.com/@liamtech",
+    "profileImage": "https://picsum.photos/200?2",
+    "industries": ["Technology", "Gadgets", "AI"],
+    "values": ["Innovation", "Education", "Honesty"]
+  },
+  {
+    "userId": 3,
+    "name": "Emma Johansson",
+    "headline": "Fitness Coach & Wellness Advocate",
+    "experience": 7,
+    "isPrivate": false,
+    "profileUrl": "https://instagram.com/emmafitlife",
+    "profileImage": "https://picsum.photos/200?3",
+    "industries": ["Fitness", "Health", "Nutrition"],
+    "values": ["Discipline", "Motivation", "Health"]
+  },
+  {
+    "userId": 4,
+    "name": "Noah Patel",
+    "headline": null,
+    "experience": null,
+    "isPrivate": true,
+    "profileUrl": null,
+    "profileImage": null,
+    "industries": ["Gaming", "Streaming"],
+    "values": ["Fun", "Community"]
+  },
+  {
+    "userId": 5,
+    "name": "Olivia Brown",
+    "headline": "Fashion Stylist & Trend Hunter",
+    "experience": 4,
+    "isPrivate": false,
+    "profileUrl": "https://tiktok.com/@oliviastyle",
+    "profileImage": "https://picsum.photos/200?5",
+    "industries": ["Fashion", "Beauty"],
+    "values": ["Elegance", "Confidence", "Self-expression"]
+  },
+  {
+    "userId": 6,
+    "name": "Mateo Rossi",
+    "headline": "Food Blogger & Recipe Creator",
+    "experience": 6,
+    "isPrivate": false,
+    "profileUrl": "https://instagram.com/mateocooks",
+    "profileImage": "https://picsum.photos/200?6",
+    "industries": ["Food", "Cooking", "Hospitality"],
+    "values": ["Taste", "Creativity", "Tradition"]
+  },
+  {
+    "userId": 7,
+    "name": "Ava Wilson",
+    "headline": "Minimalist Living & Home Decor",
+    "experience": 2,
+    "isPrivate": false,
+    "profileUrl": "https://pinterest.com/avahome",
+    "profileImage": "https://picsum.photos/200?7",
+    "industries": ["Home Decor", "Lifestyle"],
+    "values": ["Simplicity", "Calm", "Mindfulness"]
+  },
+  {
+    "userId": 8,
+    "name": "Ethan Kim",
+    "headline": "Finance Tips & Investment Basics",
+    "experience": 8,
+    "isPrivate": false,
+    "profileUrl": "https://youtube.com/@ethanfinance",
+    "profileImage": "https://picsum.photos/200?8",
+    "industries": ["Finance", "Education"],
+    "values": ["Transparency", "Knowledge", "Security"]
+  },
+  {
+    "userId": 9,
+    "name": "Isabella Novak",
+    "headline": "Digital Artist & Illustrator",
+    "experience": 5,
+    "isPrivate": false,
+    "profileUrl": "https://instagram.com/isabelladraws",
+    "profileImage": "https://picsum.photos/200?9",
+    "industries": ["Art", "Design", "NFT"],
+    "values": ["Creativity", "Originality", "Passion"]
+  },
+  {
+    "userId": 10,
+    "name": "Lucas Meyer",
+    "headline": "Entrepreneurship & Startup Mentor",
+    "experience": 10,
+    "isPrivate": false,
+    "profileUrl": "https://linkedin.com/in/lucasmeyer",
+    "profileImage": "https://picsum.photos/200?10",
+    "industries": ["Business", "Startups", "Marketing"],
+    "values": ["Leadership", "Growth", "Strategy"]
+  }
+]
