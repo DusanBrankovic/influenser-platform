@@ -1,6 +1,6 @@
 import GuestInfluencerList from '@/pages/GuestInfluencerList';
 import { createFileRoute } from '@tanstack/react-router';
-import influencersData from "@/assets/guestInfluencers.json";
+import influencersData from "@/data/guestInfluencers.json";
 import type { Influencer } from '@/types/influencer.types';
 
 
