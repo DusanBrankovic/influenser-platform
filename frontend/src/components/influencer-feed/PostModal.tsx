@@ -8,6 +8,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Spinner from "../Spinner";
 import { insertAtCursor } from "@/utils/insertAtCursor";
 import { EmojiPickerButton } from "../EmojiButton";
+import AvatarInitials from "../AvatarInitials";
 
 
 export default function PostModal() {
@@ -53,14 +54,14 @@ const PostHeader = ({
 }) => {
   return (
     <div className="flex w-full items-center justify-start mb-4 gap-3">
+      {profileUrl ? (
       <img
-        src={
-          profileUrl ||
-          "https://plus.unsplash.com/premium_photo-1670282393309-70fd7f8eb1ef?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Z2lybHxlbnwwfHwwfHx8MA%3D%3D"
-        }
-        alt={name}
-        className="w-12 h-12 rounded-full object-cover"
+        src={profileUrl}
+        className="h-full w-full object-cover"
       />
+      ) : (
+        <AvatarInitials name={name} size={50} circle />
+      )}
       <h2 className="font-bold text-lg">{name}</h2>
     </div>
   );
