@@ -5,6 +5,7 @@ import { useNavigate } from "@tanstack/react-router";
 import AvatarInitials from "./AvatarInitials";
 import { Badge } from "./ui/badge";
 import GuestPopUp from "./GuestPopUp";
+import { IndustryLabels, ValueLabels } from "@/data/prettifyEnums";
 
 type ProfileCardProps = {
   influencer: Influencer;
@@ -71,10 +72,11 @@ export default function InfluencerCard({
                   variant="secondary"
                   className="rounded-md bg-[#8C8C8C] text-white"
                 >
-                  {t}
+                  {IndustryLabels[t as keyof typeof IndustryLabels]}
                 </Badge>
               ))}
             </div>
+
 
             <div className="flex flex-wrap gap-2">
               {influencer.values.slice(0, 3).map((t) => (
@@ -83,10 +85,11 @@ export default function InfluencerCard({
                   variant="secondary"
                   className="rounded-md bg-black/20 text-black"
                 >
-                  {t}
+                  {ValueLabels[t as keyof typeof ValueLabels]}
                 </Badge>
               ))}
             </div>
+
           </div>
         </CardContent>
       </Card>
