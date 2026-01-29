@@ -12,6 +12,7 @@ export const Route = createFileRoute("/_private/influensers")({
     
     return { influencers, valueEnumValues, industryEnumValues };
   },
+  shouldReload: () => true,
   component: InfluencersAuthedRoute,
 });
 

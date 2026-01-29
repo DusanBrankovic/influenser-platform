@@ -56,3 +56,16 @@ export async function togglePrivateProfile(isPrivate: boolean): Promise<{ messag
     if (!res.ok) throw new Error("Failed to publish profile");
     return res.json();
 }
+
+export async function isLoggedInUserPublished(): Promise<boolean> {
+
+    const res = await fetch(`${apiUrl}/influencers/privacy`, {
+        method: "GET",
+        headers: { 
+            "Content-Type": "application/json",
+            ...authHeaders(),
+        }
+    });
+    if (!res.ok) throw new Error("Failed to check profile publication status");
+    return res.json();
+}
