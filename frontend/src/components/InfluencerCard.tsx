@@ -56,7 +56,11 @@ export default function InfluencerCard({
               </h3>
 
               <p className="text-sm text-muted-foreground">
-                {influencer.experience} years
+                {influencer.experience? (
+                  <span>{influencer.experience} years</span>
+                ) : (
+                  ""
+                )}
               </p>
             </div>
 
