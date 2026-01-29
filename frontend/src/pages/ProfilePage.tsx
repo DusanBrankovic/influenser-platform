@@ -5,34 +5,25 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { togglePrivateProfile } from "@/services/influencerService";
 import { useRouteContext } from "@tanstack/react-router";
 import { Globe, Mail, MapPin, Pencil, Phone, Share2 } from "lucide-react";
-import React, { useState } from "react";
+import React from "react";
 
 export default function ProfilePage() {
-  const [isToggled, setIsToggled] = useState(() => {
-    if (typeof window !== "undefined") {
-      const savedState = localStorage.getItem("isPublished");
-      return savedState === "true" ? true : false;
-    }
-  return false;
+
+  const { influencer, isPublished } = useRouteContext({
+    from: "/_private/profile",
   });
 
-  React.useEffect(() => {
-    localStorage.setItem("isPublished", String(isToggled));
-  }, [isToggled]);
-  
+  const [isToggled, setIsToggled] = React.useState<boolean>(() => !isPublished);
+
+  console.log("isPublished:", isToggled);
   const handleToggle = (checked: boolean) => {
     setIsToggled(checked);
     togglePrivateProfile(!checked);
   };
-
-  const { influencer } = useRouteContext({
-    from: "/_private/profile",
-  });
 
   return (
     <div className="min-h-screen bg-[#F3F3F3]">
@@ -74,12 +65,36 @@ export default function ProfilePage() {
                   <p className="text-sm text-black">@{influencer.userId}</p>
                 </div>
               </div>
-              <div className="px-4 sm:px-10 pt-8 sm:pt-5">
-                <div className="mx-auto flex max-w-5xl items-center justify-end gap-3 sm:gap-x-3">
-                      {isToggled == false && <Label htmlFor="publish">Unpublished</Label>}
-                      {isToggled == true && <Label htmlFor="publish">Published</Label>}
-                      <Switch id="publish" checked={isToggled} onCheckedChange={handleToggle} />
-                </div>
+              <div className="px-4 sm:px-10">
+                <div className="mx-auto flex max-w-5xl justify-end">
+                  <div className="mx-auto flex max-w-5xl justify-end">
+                    <div className="relative flex items-center rounded-full bg-neutral-800 p-1 w-[200px] h-8">
+                      <div
+                        className={`absolute top-1 bottom-1 w-[48%] rounded-full bg-neutral-500 transition-all duration-300
+                          ${isToggled ? "left-1" : "left-1/2"}
+                        `}
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() => handleToggle(true)}
+                        className="relative z-10 w-1/2 text-center text-sm font-semibold text-white"
+                      >
+                        Publish
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleToggle(false)}
+                        className="relative z-10 w-1/2 text-center text-sm font-semibold text-white"
+                      >
+                        Unpublish
+                      </button>
+                    </div>
+                  </div>
+
+      </div>
+
               </div>
             </div>
             
