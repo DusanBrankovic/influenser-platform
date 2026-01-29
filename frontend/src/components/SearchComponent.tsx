@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { ChevronDown, Search, X } from "lucide-react";
+import { IndustryLabels, ValueLabels } from "@/data/prettifyEnums";
 
 type SearchParams = {
   name: string;
@@ -78,63 +79,73 @@ export default function SearchComponent({
       <div className="mt-4 flex flex-wrap justify-evenly gap-3">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="secondary" className="min-w-[200px] justify-between rounded-lg px-4 bg-neutral-300">
-                <span className="ps-2">{selectedValue ?? "Values"}</span>
+              <Button
+                variant="secondary"
+                className="min-w-[200px] justify-between rounded-lg px-4 bg-neutral-300"
+              >
+                <span className="ps-2">
+                  {selectedValue ? ValueLabels[selectedValue] : "Values"}
+                </span>
                 <ChevronDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-[200px]">
+
+            <DropdownMenuContent className="w-[240px] max-h-64 overflow-y-auto">
               {valueEnumValues.map((opt) => (
                 <DropdownMenuItem
                   key={opt}
                   className="cursor-pointer"
-                  onSelect={() => {
-                    setSelectedValue(opt);
-                  }}
+                  onSelect={() => setSelectedValue(opt)}
                 >
-                  {opt}
+                  {ValueLabels[opt]}
                 </DropdownMenuItem>
               ))}
+
               <DropdownMenuItem
                 className="cursor-pointer text-muted-foreground"
-                onSelect={() => {
-                  setSelectedValue(undefined);
-                }}
+                onSelect={() => setSelectedValue(undefined)}
               >
                 Clear selection
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="secondary" className="min-w-[200px] justify-between rounded-lg px-4 bg-neutral-300">
-                <span className="ps-2">{selectedIndustry ?? "Industries"}</span>
+              <Button
+                variant="secondary"
+                className="min-w-[200px] justify-between rounded-lg px-4 bg-neutral-300"
+              >
+                <span className="ps-2">
+                  {selectedIndustry
+                    ? IndustryLabels[selectedIndustry]
+                    : "Industries"}
+                </span>
                 <ChevronDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-[200px]">
+
+            <DropdownMenuContent className="w-[240px] max-h-64 overflow-y-auto">
               {industryEnumValues.map((opt) => (
                 <DropdownMenuItem
                   key={opt}
                   className="cursor-pointer"
-                  onSelect={() => {
-                    setSelectedIndustry(opt);
-                  }}
+                  onSelect={() => setSelectedIndustry(opt)}
                 >
-                  {opt}
+                  {IndustryLabels[opt]}
                 </DropdownMenuItem>
               ))}
+
               <DropdownMenuItem
                 className="cursor-pointer text-muted-foreground"
-                onSelect={() => {
-                  setSelectedIndustry(undefined);
-                }}
+                onSelect={() => setSelectedIndustry(undefined)}
               >
                 Clear selection
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
         </div>
     </form>
   );
