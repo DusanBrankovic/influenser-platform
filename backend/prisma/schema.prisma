@@ -95,6 +95,8 @@ model Influencer {
   isPrivate     Boolean  @default(true)
   industries     Industry[]
   values         Value[]
+  profilePicture String?
+  description    String?
 
   post       Post[]
 }
