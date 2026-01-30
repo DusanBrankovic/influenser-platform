@@ -1,0 +1,20 @@
+meta {
+  name: Update influencers profile picture
+  type: http
+  seq: 5
+}
+
+patch {
+  url: {{baseUrl}}/influencers/me/profile-picture
+  body: multipartForm
+  auth: inherit
+}
+
+body:multipart-form {
+  image: @file()
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -7,6 +7,8 @@ export type CreateInfluencer = Omit<User, "id"> & {
     headline?: string;
     values?: Value[];
     industries?: Industry[];
+  profilePicture?: string | null;
+  description?: string | null;
 };
 
 export type UpdateInfluencer = Partial<Omit<Influencer, 'userId'>>;
