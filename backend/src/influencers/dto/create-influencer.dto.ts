@@ -21,7 +21,7 @@ export class CreateInfluencerDto {
 
     @IsString()
     @IsOptional()
-    headline: string;
+    description: string;
 
     @IsOptional()
     @IsArray()

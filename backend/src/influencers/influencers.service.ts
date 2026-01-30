@@ -58,6 +58,10 @@ export class InfluencersService {
   findAll(searchQuery: SearchQueryDto) {
     return this.influencersRepository.findAll(searchQuery);
   }
+  
+  findAllOr(searchQuery: SearchQueryDto) {
+    return this.influencersRepository.findAllOr(searchQuery);
+  }
 
   async findOne(id: number, currentUser?: JwtPayload) {
     const isAdmin = currentUser?.role === 'ADMIN';
