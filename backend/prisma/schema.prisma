@@ -97,7 +97,11 @@ model Influencer {
   values         Value[]
   profilePicture String?
   description    String?
-
+  
+  nametag       String?  @unique
+  contactMail  String[]
+  contactPhone  String[]
+  
   post       Post[]
 }
 
