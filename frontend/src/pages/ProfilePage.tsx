@@ -13,6 +13,7 @@ import React from "react";
 import { EditBioAndExperiencePopUp } from "@/components/EditBioAndExperiencePopUp"; // adjust path
 import type { UpdateInfluencerDto } from "@/types/influencer.types";
 import { IndustryLabels, ValueLabels } from "@/data/prettifyEnums";
+import Spinner from "@/components/Spinner";
 
 export default function ProfilePage() {
 
@@ -32,7 +33,8 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F3F3F3]">
+    <div className="min-h-screen bg-[#F3F3F3] relative">
+      <Spinner />
       <div className="relative h-44 bg-[#9B9B9B]">
         <Button
           variant="secondary"
@@ -245,7 +247,7 @@ export default function ProfilePage() {
           experience: String(influencer.experience ?? ""),
         }}
         onSave={async (vals) => {
-          var updateInfluencerDto: UpdateInfluencerDto = {
+          const updateInfluencerDto: UpdateInfluencerDto = {
             headline: vals.headline,
             experience: Number(vals.experience)
           }

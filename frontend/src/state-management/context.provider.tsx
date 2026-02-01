@@ -7,6 +7,7 @@ export function ContextProvider({ children }: { children: ReactNode }) {
   const [selectedPostId, setSelectedPostId] = useState<number | null>(null)
   const [images, setImages] = useState<ImageType[]>([])
   const [postText, setPostText] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
 
   return (
     <Context.Provider
@@ -34,6 +35,8 @@ export function ContextProvider({ children }: { children: ReactNode }) {
         setIsPostEditMode,
         selectedPostId,
         setSelectedPostId,
+        isLoading,
+        setIsLoading,
       }}
     >
       {children}

@@ -4,6 +4,11 @@ import { ThumbsUp } from "lucide-react";
 import PostHeader from "./postHeader";
 import PostGallery from "./postGallery";
 import PostButtons from "./postButtons";
+import { useQuery } from "@tanstack/react-query";
+import type { CommentDto } from "@/types/comment.types";
+import { getCommentsForPost } from "@/services/commentService";
+import CommentsSection from "../CommentsSection";
+import { useState } from "react";
 
 type PostCardProps = {
   influencer: Influencer;
@@ -16,6 +21,13 @@ export default function PostCard({
   post,
   isEditable = true
 }: PostCardProps) {
+  const [ showCommentsSection, setShowCommentsSection ] = useState(false);
+  const { data } = useQuery<CommentDto[]>({
+    queryKey: ["comments", post.id],
+    queryFn: () => getCommentsForPost(post.id),
+    enabled: !!post.id,
+  });
+
   return (
     <div className="border border-primary rounded-lg p-6 mb-16 bg-white">
       <PostHeader
@@ -29,14 +41,15 @@ export default function PostCard({
         <div className="flex gap-1 items-center">
           <ThumbsUp className="w-5 h-5" /> {post.numLikes ?? 0}
         </div>
-        <button className="text-gray-500 hover:text-gray-800 cursor-pointer">
-            {post.numComments ?? 0} komentara
+        <button className="text-gray-500 hover:text-gray-800 cursor-pointer" onClick={() => setShowCommentsSection(!showCommentsSection)}>
+             {data?.length ?? 0} komentara
         </button>
       </div>
 
       <hr className="my-5 border-primary" />
 
-      <PostButtons postId={post.id} likedByLoggedUser={post.likedByLoggedUser} savedByLoggedUser={post.savedByLoggedUser} />
+      <PostButtons postId={post.id} likedByLoggedUser={post.likedByLoggedUser} savedByLoggedUser={post.savedByLoggedUser} toggleComments={() => setShowCommentsSection(!showCommentsSection)} />
+      {showCommentsSection && <CommentsSection postId={post.id} comments={data ?? []} influencer={influencer} />}
     </div>
   );
 };

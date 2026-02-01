@@ -14,10 +14,10 @@ type InfluencerContentProps = {
 
 export default function InfluencerContent({ influencer, isEditable }: InfluencerContentProps) {
   const [navContent, setNavContent] = useState<NavContent[]>([
-    { name: "Objave", selected: true },
-    { name: "Kampanje", selected: false },
-    { name: "Sačuvane stavke", selected: false },
-    { name: "Pregled ocena i komentara", selected: false },
+    { name: "Posts", selected: true },
+    { name: "Campaigns", selected: false },
+    { name: "Saved Items", selected: false },
+    { name: "Reviews", selected: false },
   ]);
 
   const isSelectedItem = (name: string) =>
@@ -29,7 +29,7 @@ export default function InfluencerContent({ influencer, isEditable }: Influencer
         <ContentNavBar navContent={navContent} setNavContent={setNavContent} />
       </div>
 
-      {isSelectedItem("Objave") && (
+      {isSelectedItem("Posts") && (
         <InfluencerProfileFeed
           userId={influencer.userId}
           influencer={influencer}
@@ -37,19 +37,19 @@ export default function InfluencerContent({ influencer, isEditable }: Influencer
         />
       )}
 
-      {isSelectedItem("Kampanje") && (<InfluencerProfileFeed
+      {isSelectedItem("Campaigns") && (<InfluencerProfileFeed
           userId={influencer.userId}
           influencer={influencer}
           isEditable={isEditable}
         />
       )}
-      {isSelectedItem("Sačuvane stavke") && (<InfluencerProfileFeed
+      {isSelectedItem("Saved Items") && (<InfluencerProfileFeed
           userId={influencer.userId}
           influencer={influencer}
           isEditable={isEditable}
         />
       )}
-      {isSelectedItem("Pregled ocena i komentara") && (<InfluencerProfileFeed
+      {isSelectedItem("Reviews") && (<InfluencerProfileFeed
           userId={influencer.userId}
           influencer={influencer}
           isEditable={isEditable}

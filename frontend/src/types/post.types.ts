@@ -5,7 +5,6 @@ export type Post = {
   images: string[];
   createdAt: string;
   numLikes: number;
-  numComments: number;
   likedByLoggedUser: boolean;
   savedByLoggedUser: boolean;
 };
