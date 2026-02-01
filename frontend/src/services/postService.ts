@@ -60,3 +60,25 @@ export async function editPost(formData: FormData): Promise<Post> {
     if (!res.ok) throw new Error("Failed to edit post");
     return res.json();
 }
+
+export async function likePost(postId: number): Promise<void> {
+    const res = await fetch(`${apiUrl}/posts/${postId}/like`, {
+        method: "POST",
+        headers: {
+            ...authHeaders(),
+        },
+    });
+
+    if (!res.ok) throw new Error("Failed to like post");
+}
+
+export async function savePost(postId: number): Promise<void> {
+    const res = await fetch(`${apiUrl}/posts/${postId}/save`, {
+        method: "POST",
+        headers: {
+            ...authHeaders(),
+        },
+    });
+
+    if (!res.ok) throw new Error("Failed to save post");
+}

@@ -7,16 +7,16 @@ import PostModal from "./PostModal";
 import type { Influencer } from "@/types/influencer.types";
 
 type Props = {
-  userId: number;
+  userId?: number;
   influencer: Influencer;
   isEditable?: boolean;
 };
 
-export default function InfluencerProfileFeed({ userId, influencer, isEditable = true }: Props) {
+export default function InfluencerProfileFeed({ influencer, isEditable = true }: Props) {
   const { data, isLoading, error } = useQuery<Post[]>({
-    queryKey: ["posts", userId],
-    queryFn: () => getInfluencerPosts(userId),
-    enabled: !!userId,
+    queryKey: ["posts", influencer.userId],
+    queryFn: () => getInfluencerPosts(influencer.userId),
+    enabled: !!influencer.userId,
   });
 
   if (isLoading) return <div className="mt-10 p-10 px-20 text-center">Loading posts...</div>;

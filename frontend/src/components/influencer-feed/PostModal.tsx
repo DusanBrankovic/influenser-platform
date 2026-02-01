@@ -8,6 +8,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { insertAtCursor } from "@/utils/insertAtCursor";
 import { EmojiPickerButton } from "../EmojiButton";
 import UserHeader from "../UserHeader";
+import { getUserIdFromToken } from "@/auth/authStore";
 
 
 export default function PostModal() {
@@ -38,7 +39,7 @@ export default function PostModal() {
           profileUrl={influencer.profileUrl}
         />
         <PostContent />
-        <PostFooter influencerId={influencer.userId} isEditMode={isPostEditMode} postId={selectedPostId || 0} />
+        <PostFooter isEditMode={isPostEditMode} postId={selectedPostId || 0} />
       </div>
     </div>
   );
@@ -114,15 +115,16 @@ const PostContent = () => {
   );
 };
 
-const PostFooter = ({ influencerId, isEditMode, postId }: { influencerId: number, isEditMode: boolean, postId: number }) => {
+const PostFooter = ({ isEditMode, postId }: { isEditMode: boolean, postId: number }) => {
   const { closePostModal } = useCustomContext();
   const { images, postText, addImages, resetPost, setIsLoading } = useCustomContext();
+    const userId = getUserIdFromToken();
 
   const createPostMutation = useMutation({
     mutationFn: createPost,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["posts", influencerId],
+        queryKey: ["posts", userId],
       });
 
       closePostModal();
@@ -137,7 +139,7 @@ const PostFooter = ({ influencerId, isEditMode, postId }: { influencerId: number
     mutationFn: editPost,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["posts", influencerId],
+        queryKey: ["posts", userId],
       });
 
       closePostModal();

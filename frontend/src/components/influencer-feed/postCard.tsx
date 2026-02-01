@@ -39,7 +39,7 @@ export default function PostCard({
       {post.images.length > 0 && <PostGallery images={post.images} />}
       <div className="flex items-center justify-between text-gray-600 text-sm cursor-default">
         <div className="flex gap-1 items-center">
-          <ThumbsUp className="w-5 h-5" /> {post.numLikes ?? 0}
+          <ThumbsUp className="w-5 h-5" /> {post.numOfLikes ?? 0}
         </div>
         <button className="text-gray-500 hover:text-gray-800 cursor-pointer" onClick={() => setShowCommentsSection(!showCommentsSection)}>
              {data?.length ?? 0} komentara
@@ -48,7 +48,7 @@ export default function PostCard({
 
       <hr className="my-5 border-primary" />
 
-      <PostButtons postId={post.id} likedByLoggedUser={post.likedByLoggedUser} savedByLoggedUser={post.savedByLoggedUser} toggleComments={() => setShowCommentsSection(!showCommentsSection)} />
+      <PostButtons influencerId={influencer.userId} postId={post.id} likedByLoggedUser={post.isLikedByUser} savedByLoggedUser={post.isSavedByUser} toggleComments={() => setShowCommentsSection(!showCommentsSection)} />
       {showCommentsSection && <CommentsSection postId={post.id} comments={data ?? []} influencer={influencer} />}
     </div>
   );

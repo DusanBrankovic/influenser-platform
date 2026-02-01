@@ -4,7 +4,7 @@ export type Post = {
   text: string;
   images: string[];
   createdAt: string;
-  numLikes: number;
-  likedByLoggedUser: boolean;
-  savedByLoggedUser: boolean;
+  numOfLikes: number;
+  isLikedByUser: boolean;
+  isSavedByUser: boolean;
 };

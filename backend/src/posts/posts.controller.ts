@@ -17,9 +17,8 @@ import { GetUser } from "src/auth/get-user.decorator";
 import { JwtPayload } from "src/auth/dto/credentials.dto";
 import { ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { PostSchema } from "./schemas/post.schema";
-import { Role } from "generated/prisma/enums";
+import { PostAction, Role } from "generated/prisma/enums";
 import { Roles } from "src/auth/roles.decorator";
-import { Public } from "src/auth/public.decorator";
 
 @Controller("posts")
 export class PostsController {
@@ -65,10 +64,9 @@ export class PostsController {
       },
     },
   })
-  @Public()
   @Get("/influencer/:id")
-  findAllForUser(@Param("id") id: string) {
-    return this.postsService.findAllForUser(+id);
+  findAllForUser(@Param("id") id: string, @GetUser() user: JwtPayload) {
+    return this.postsService.findAllForUser(+id, +user.id);
   }
 
   @ApiOperation({
@@ -84,11 +82,49 @@ export class PostsController {
       },
     },
   })
-  @Public()
   @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.postsService.findOne(+id);
+  findOne(@Param("id") id: string, @GetUser() user: JwtPayload) {
+    return this.postsService.findOne(+id, +user.id);
   }
+
+
+  @ApiOperation({
+    summary: "Like post",
+    description: "This endpoint allows a user to like a post.",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Successfully liked the post",
+    content: {
+      "application/json": {
+        schema: PostSchema,
+      },
+    },
+  })
+  @Post(":id/like")
+  likePost(@Param("id") id: string, @GetUser() user: JwtPayload) {
+    return this.postsService.postAction(+id, +user.id, PostAction.LIKE);
+  }
+
+  @ApiOperation({
+    summary: "Save post",
+    description: "This endpoint allows a user to save post.",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Successfully saved post",
+    content: {
+      "application/json": {
+        schema: PostSchema,
+      },
+    },
+  })
+  @Post(":id/save")
+  savePost(@Param("id") id: string, @GetUser() user: JwtPayload) {
+    return this.postsService.postAction(+id, +user.id, PostAction.SAVE);
+  }
+
+
 
   @ApiOperation({
     summary: "Edit post",

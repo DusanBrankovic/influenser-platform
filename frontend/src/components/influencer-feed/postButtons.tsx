@@ -1,24 +1,56 @@
+import { likePost, savePost } from "@/services/postService";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { MessageSquareText, ThumbsUp } from "lucide-react";
 import { IoMdThumbsUp } from "react-icons/io";
 import { TbCopyPlusFilled, TbCopyPlus } from "react-icons/tb";
+import { toast } from "react-toastify";
 
 type PostButtonsProps = {
+  influencerId: number;
   postId: number;
   likedByLoggedUser: boolean;
   savedByLoggedUser: boolean;
   toggleComments: () => void;
 };
 
-export default function PostButtons({ postId, likedByLoggedUser, savedByLoggedUser, toggleComments }: PostButtonsProps) {
+export default function PostButtons({ influencerId, postId, likedByLoggedUser, savedByLoggedUser, toggleComments }: PostButtonsProps) {
+  const queryClient = useQueryClient();
+  const likePostMutation = useMutation({
+    mutationFn: likePost,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["posts", influencerId],
+      });
+    },
+    onError: () => {
+      toast("Failed to like post. Please try again.", { type: "error" });
+    },
+  });
+
+  const savePostMutation = useMutation({
+    mutationFn: savePost,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["posts", influencerId],
+      });
+    },
+    onError: () => {
+      toast("Failed to save post. Please try again.", { type: "error" });
+    },
+  });
+  
   const handleLikePost = (id: number) => {
-    console.log(`Like post with ID: ${id}`);
+    likePostMutation.mutate(id);
   };
+
   const handleCommentPost = () => {
     toggleComments();
   };
+
   const handleSavePost = (id: number) => {
-    console.log(`Share post with ID: ${id}`);
+    savePostMutation.mutate(id);
   };
+
   return (
     <div className="flex justify-around px-[20%]">
       <button

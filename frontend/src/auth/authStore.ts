@@ -107,6 +107,10 @@ export const getAccessToken = () => accessTokenSelector(authStore.getState());
 export const getAccessTokenData = () => accessTokenDataSelector(authStore.getState());
 export const getActions = () => actionsSelector(authStore.getState());
 export const getIsRegistered = () => isRegisteredSelector(authStore.getState());
+export const getUserIdFromToken = () => {
+  const tokenData = getAccessTokenData();
+  return tokenData ? tokenData.sub : undefined;
+}
 
 export function useAuthStore<U>(
   selector: (s: ExtractState<typeof authStore>) => U,

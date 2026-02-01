@@ -31,14 +31,12 @@ export default function InfluencerContent({ influencer, isEditable }: Influencer
 
       {isSelectedItem("Posts") && (
         <InfluencerProfileFeed
-          userId={influencer.userId}
           influencer={influencer}
           isEditable={isEditable}
         />
       )}
 
       {isSelectedItem("Campaigns") && (<InfluencerProfileFeed
-          userId={influencer.userId}
           influencer={influencer}
           isEditable={isEditable}
         />

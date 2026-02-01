@@ -26,11 +26,11 @@ export default function CommentsSection({
     <div className="mt-10">
         <ToastContainer />
       <AddCommentSection postId={postId} influencer={influencer} />
-      <ul className="p-6">
+      <div className="p-6 flex flex-col gap-6">
         {comments.map((comment) => (
           <CommentCard key={comment.id} comment={comment} />
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
