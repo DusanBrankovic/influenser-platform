@@ -6,14 +6,15 @@ type PostButtonsProps = {
   postId: number;
   likedByLoggedUser: boolean;
   savedByLoggedUser: boolean;
+  toggleComments: () => void;
 };
 
-export default function PostButtons({ postId, likedByLoggedUser, savedByLoggedUser }: PostButtonsProps) {
+export default function PostButtons({ postId, likedByLoggedUser, savedByLoggedUser, toggleComments }: PostButtonsProps) {
   const handleLikePost = (id: number) => {
     console.log(`Like post with ID: ${id}`);
   };
-  const handleCommentPost = (id: number) => {
-    console.log(`Comment on post with ID: ${id}`);
+  const handleCommentPost = () => {
+    toggleComments();
   };
   const handleSavePost = (id: number) => {
     console.log(`Share post with ID: ${id}`);
@@ -28,7 +29,7 @@ export default function PostButtons({ postId, likedByLoggedUser, savedByLoggedUs
         {likedByLoggedUser && <IoMdThumbsUp className='w-8 h-8' fill="#1e85ff"/>}
       </button>
       <button
-        onClick={() => handleCommentPost(postId)}
+        onClick={() => handleCommentPost()}
         className="flex gap-2 items-center text-gray-600 hover:text-gray-800 cursor-pointer"
       >
         <MessageSquareText className="w-7 h-7" />

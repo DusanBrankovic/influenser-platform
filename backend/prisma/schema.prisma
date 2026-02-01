@@ -99,6 +99,7 @@ model Influencer {
   description    String?
 
   post       Post[]
+  comments   Comment[]
 }
 
 model Post {
@@ -109,9 +110,22 @@ model Post {
   images      String[]
   createdAt   DateTime
   updatedAt   DateTime?
+
+  comments   Comment[]
 }
+
 model Business {
   userId         Int  @id
   business       User @relation(fields: [userId], references: [id], onDelete: Cascade)
   name           String
+}
+
+model Comment {
+  id          Int           @id @default(autoincrement())
+  postId      Int
+  post        Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId      Int 
+  user        Influencer    @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  content     String
+  createdAt   DateTime
 }

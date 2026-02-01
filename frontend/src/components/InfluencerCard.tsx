@@ -36,7 +36,7 @@ export default function InfluencerCard({
     <>
       <Card
         onClick={handleClick}
-        className="w-full max-w-[270px] max-h-[600px] overflow-hidden rounded-2xl bg-white shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+        className="w-full max-w-67.5 max-h-150 overflow-hidden rounded-2xl bg-white shadow-sm cursor-pointer hover:shadow-md transition-shadow"
       >
         <CardContent className="p-4">
           <div className="w-full overflow-hidden rounded-2xl flex items-center justify-center">

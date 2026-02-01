@@ -3,40 +3,25 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
+  ParseIntPipe,
 } from "@nestjs/common";
 import { CommentsService } from "./comments.service";
 import { CreateCommentDto } from "./dto/create-comment.dto";
-import { UpdateCommentDto } from "./dto/update-comment.dto";
+import { JwtPayload } from "src/auth/dto/credentials.dto";
+import { GetUser } from "src/auth/get-user.decorator";
 
 @Controller("comments")
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
-  @Post()
-  create(@Body() createCommentDto: CreateCommentDto) {
-    return this.commentsService.create(createCommentDto);
+  @Post("/:postId")
+  create(@Param("postId", ParseIntPipe) postId: number, @GetUser() user: JwtPayload, @Body() createCommentDto: CreateCommentDto) {
+    return this.commentsService.create(postId, user.id, createCommentDto);
   }
 
-  @Get()
-  findAll() {
-    return this.commentsService.findAll();
-  }
-
-  @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.commentsService.findOne(+id);
-  }
-
-  @Patch(":id")
-  update(@Param("id") id: string, @Body() updateCommentDto: UpdateCommentDto) {
-    return this.commentsService.update(+id, updateCommentDto);
-  }
-
-  @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.commentsService.remove(+id);
+  @Get(":postId")
+  findAllByPostId(@Param("postId", ParseIntPipe) postId: number) {
+    return this.commentsService.findAllByPostId(postId);
   }
 }
