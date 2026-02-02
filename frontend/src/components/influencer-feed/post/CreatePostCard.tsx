@@ -1,6 +1,6 @@
+import UserHeader from "@/components/UserHeader";
 import { useCustomContext } from "@/state-management/useContextHook";
 import { useRouteContext } from "@tanstack/react-router";
-import UserHeader from "../UserHeader";
 
 export default function CreatePostCard() {
   const { openPostModal, setIsPostEditMode, setSelectedPostId } =
