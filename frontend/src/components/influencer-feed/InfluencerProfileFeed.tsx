@@ -1,9 +1,9 @@
 import { getInfluencerPosts } from "@/services/postService";
 import type { Post } from "@/types/post.types";
 import { useQuery } from "@tanstack/react-query";
-import PostCard from "./postCard";
-import CreatePostCard from "./CreatePostCard";
-import PostModal from "./PostModal";
+import PostCard from "./post/postCard";
+import CreatePostCard from "./post/CreatePostCard";
+import PostModal from "./post/PostModal";
 import type { Influencer } from "@/types/influencer.types";
 
 type Props = {

@@ -6,9 +6,9 @@ import { LuImagePlus } from "react-icons/lu";
 import { ToastContainer, toast } from "react-toastify";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { insertAtCursor } from "@/utils/insertAtCursor";
-import { EmojiPickerButton } from "../EmojiButton";
-import UserHeader from "../UserHeader";
 import { getUserIdFromToken } from "@/auth/authStore";
+import UserHeader from "@/components/UserHeader";
+import { EmojiPickerButton } from "@/components/EmojiButton";
 
 
 export default function PostModal() {

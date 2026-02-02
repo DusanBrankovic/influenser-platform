@@ -82,3 +82,21 @@ export async function savePost(postId: number): Promise<void> {
 
     if (!res.ok) throw new Error("Failed to save post");
 }
+
+export async function getPostById(postId: number): Promise<Post | null> {
+    const res = await fetch(`${apiUrl}/posts/${postId}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            ...authHeaders(),
+        },
+    });
+
+    if (res.status === 404) {
+        return null;
+    }
+
+    if (!res.ok) throw new Error("Failed to fetch post");
+
+    return res.json();
+}

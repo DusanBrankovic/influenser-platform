@@ -100,7 +100,7 @@ function AddCommentSection({
         value={comment}
         onChange={(e) => setComment(e.target.value)}
       />
-      <div className="absolute top-10 right-[11%]">
+      <div className="absolute top-10 right-[12%]">
         <EmojiPickerButton onSelect={handleEmoji} />
       </div>
       <SendIcon onClick={addAComment} />

@@ -1,13 +1,15 @@
 import { deletePost } from "@/services/postService";
 import type { Influencer } from "@/types/influencer.types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import ConfirmModal from "../ConfirmModal";
+
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useCustomContext } from "@/state-management/useContextHook";
 import type { Post } from "@/types/post.types";
 import { transformToFormat } from "@/utils/transformDate";
-import UserHeader from "../UserHeader";
+import ConfirmModal from "@/components/ConfirmModal";
+import UserHeader from "@/components/UserHeader";
+
 
 type PostHeaderProps = {
   influencer?: Influencer;
