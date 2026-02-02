@@ -1,0 +1,20 @@
+meta {
+  name: Update influencers cover photo
+  type: http
+  seq: 5
+}
+
+patch {
+  url: {{baseUrl}}/influencers/me/cover-photo
+  body: multipartForm
+  auth: inherit
+}
+
+body:multipart-form {
+  image: @file()
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
