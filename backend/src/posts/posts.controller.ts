@@ -8,6 +8,7 @@ import {
   UseInterceptors,
   UploadedFiles,
   Put,
+  ParseIntPipe,
 } from "@nestjs/common";
 import { PostsService } from "./posts.service";
 import { CreatePostDto } from "./dto/create-post.dto";
@@ -49,6 +50,29 @@ export class PostsController {
   }
 
   @ApiOperation({
+    summary: "Get saved post",
+    description: "This endpoint retrieves a saved post by logged user.",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Successfully retrieved",
+    content: {
+      "application/json": {
+        schema: {
+          type: "object",
+          properties: {
+            message: { type: "string", example: "Post deleted successfully." },
+          },
+        },
+      },
+    },
+  })
+  @Get("/saved")
+  getSavedPosts(@GetUser() user: JwtPayload) {
+    return this.postsService.getSavedPosts(+user.id);
+  }
+
+  @ApiOperation({
     summary: "Get all posts for the user",
     description: "This endpoint retrieves all posts created by the user.",
   })
@@ -83,8 +107,8 @@ export class PostsController {
     },
   })
   @Get(":id")
-  findOne(@Param("id") id: string, @GetUser() user: JwtPayload) {
-    return this.postsService.findOne(+id, +user.id);
+  findOne(@Param("id", ParseIntPipe) id: number, @GetUser() user: JwtPayload) {
+    return this.postsService.findOne(id, +user.id);
   }
 
 
@@ -123,8 +147,6 @@ export class PostsController {
   savePost(@Param("id") id: string, @GetUser() user: JwtPayload) {
     return this.postsService.postAction(+id, +user.id, PostAction.SAVE);
   }
-
-
 
   @ApiOperation({
     summary: "Edit post",

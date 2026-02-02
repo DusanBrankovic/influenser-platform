@@ -232,7 +232,7 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            <CardContent className="rounded-xl border border-black bg-white p-0">
+            <CardContent className="rounded-xl border border-black bg-white p-0 mb-20">
               <InfluencerContent influencer={influencer} isEditable />
             </CardContent>
           </CardContent>

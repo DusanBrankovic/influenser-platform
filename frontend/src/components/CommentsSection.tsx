@@ -1,7 +1,6 @@
 import type { CommentDto } from "@/types/comment.types";
 import { transformToFormat } from "@/utils/transformDate";
 import UserHeader from "./UserHeader";
-import type { Influencer } from "@/types/influencer.types";
 import { useEffect, useRef, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { EmojiPickerButton } from "./EmojiButton";
@@ -12,7 +11,7 @@ import { addComment } from "@/services/commentService";
 import { useCustomContext } from "@/state-management/useContextHook";
 
 type CommentsSectionProps = {
-  influencer: Influencer;
+  influencer: {name: string; profileUrl: string; userId: number};
   postId: number;
   comments: CommentDto[];
 };
@@ -40,7 +39,7 @@ function AddCommentSection({
   influencer,
 }: {
   postId: number;
-  influencer: Influencer;
+  influencer: {name: string; profileUrl: string; userId: number};
 }) {
   const [comment, setComment] = useState("");
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -87,7 +86,7 @@ function AddCommentSection({
     >
       <UserHeader
         name={influencer?.name}
-        profileUrl={influencer?.profileImage}
+        profileUrl={influencer?.profileUrl}
         displayName={false}
       />
 

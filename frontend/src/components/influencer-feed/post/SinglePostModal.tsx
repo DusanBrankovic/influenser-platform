@@ -2,7 +2,6 @@ import type { Post } from "@/types/post.types";
 import { MdClose } from "react-icons/md";
 import { useEffect, useState } from "react";
 import UserHeader from "@/components/UserHeader";
-import type { Influencer } from "@/types/influencer.types";
 import type { CommentDto } from "@/types/comment.types";
 import { transformToFormat } from "@/utils/transformDate";
 import CommentsSection from "@/components/CommentsSection";
@@ -10,7 +9,7 @@ import PostButtons from "./postButtons";
 import { ThumbsUp } from "lucide-react";
 
 type PostProps = {
-  influencer: Influencer;
+  influencer: {name: string; profileUrl: string; userId: number};
   comments: CommentDto[];
   post: Post;
   openedPost: boolean;
@@ -45,6 +44,7 @@ export default function SinglePostModal({
     return URL.createObjectURL(image);
   };
   if (!openedPost) return null;
+  if (!post) return null;
   return (
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center bg-white w-screen h-screen p-10 ${openedPost ? "" : "hidden"}`}
