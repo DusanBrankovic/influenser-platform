@@ -166,6 +166,28 @@ export class InfluencersController {
   findAll(@Query() searchQuery: SearchQueryDto) {
     return this.influencersService.findAll(searchQuery);
   }
+  
+  
+  /////
+  @ApiOperation({
+    summary: "Search all influencers",
+    description: "This endpoint retrieves a list of all influencers.",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Successfully retrieved",
+    content: {
+      "application/json": {
+        schema: GetInfluencerSchema,
+      },
+    },
+  })
+  @Public()
+  @Get("/or")
+  findAllOr(@Query() searchQuery: SearchQueryDto) {
+    return this.influencersService.findAllOr(searchQuery);
+  }
+  /////
 
   @ApiOperation({
     summary: "Search one influencer",
