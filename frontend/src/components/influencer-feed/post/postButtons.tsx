@@ -1,3 +1,4 @@
+import { getUserIdFromToken } from "@/auth/authStore";
 import { likePost, savePost } from "@/services/postService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { MessageSquareText, ThumbsUp } from "lucide-react";
@@ -13,13 +14,22 @@ type PostButtonsProps = {
   toggleComments: () => void;
 };
 
-export default function PostButtons({ influencerId, postId, likedByLoggedUser, savedByLoggedUser, toggleComments }: PostButtonsProps) {
+export default function PostButtons({
+  influencerId,
+  postId,
+  likedByLoggedUser,
+  savedByLoggedUser,
+  toggleComments,
+}: PostButtonsProps) {
   const queryClient = useQueryClient();
   const likePostMutation = useMutation({
     mutationFn: likePost,
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["posts", influencerId],
+      });
+       queryClient.invalidateQueries({
+        queryKey: ["savedPosts", getUserIdFromToken()],
       });
     },
     onError: () => {
@@ -33,12 +43,15 @@ export default function PostButtons({ influencerId, postId, likedByLoggedUser, s
       queryClient.invalidateQueries({
         queryKey: ["posts", influencerId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["savedPosts", getUserIdFromToken()],
+      });
     },
     onError: () => {
       toast("Failed to save post. Please try again.", { type: "error" });
     },
   });
-  
+
   const handleLikePost = (id: number) => {
     likePostMutation.mutate(id);
   };
@@ -57,8 +70,10 @@ export default function PostButtons({ influencerId, postId, likedByLoggedUser, s
         onClick={() => handleLikePost(postId)}
         className="flex gap-2 items-center text-gray-600 hover:text-gray-800 cursor-pointer"
       >
-        {!likedByLoggedUser && <ThumbsUp className='w-7 h-7' />}
-        {likedByLoggedUser && <IoMdThumbsUp className='w-8 h-8' fill="#1e85ff"/>}
+        {!likedByLoggedUser && <ThumbsUp className="w-7 h-7" />}
+        {likedByLoggedUser && (
+          <IoMdThumbsUp className="w-8 h-8" fill="#1e85ff" />
+        )}
       </button>
       <button
         onClick={() => handleCommentPost()}
@@ -70,9 +85,11 @@ export default function PostButtons({ influencerId, postId, likedByLoggedUser, s
         onClick={() => handleSavePost(postId)}
         className="flex gap-2 items-center text-gray-600 hover:text-gray-800 cursor-pointer"
       >
-        {!savedByLoggedUser &&<TbCopyPlus className='w-8 h-8' />}
-        {savedByLoggedUser &&<TbCopyPlusFilled className='w-8 h-8' fill="#ffb732"/>}
+        {!savedByLoggedUser && <TbCopyPlus className="w-8 h-8" />}
+        {savedByLoggedUser && (
+          <TbCopyPlusFilled className="w-8 h-8" fill="#ffb732" />
+        )}
       </button>
     </div>
   );
-};
+}

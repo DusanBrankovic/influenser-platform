@@ -1,10 +1,13 @@
 import { useState } from "react";
 import InfluencerProfileFeed from "./influencer-feed/InfluencerProfileFeed";
 import type { Influencer } from "@/types/influencer.types";
+import SavedPostsFeed from "./infuencer-saved-posts/SavedPostsFeed";
+import { getUserIdFromToken } from "@/auth/authStore";
 
 type NavContent = {
   name: string;
   selected: boolean;
+  display: boolean;
 };
 
 type InfluencerContentProps = {
@@ -13,12 +16,19 @@ type InfluencerContentProps = {
 };
 
 export default function InfluencerContent({ influencer, isEditable }: InfluencerContentProps) {
+  const userId = getUserIdFromToken();
   const [navContent, setNavContent] = useState<NavContent[]>([
-    { name: "Posts", selected: true },
-    { name: "Campaigns", selected: false },
-    { name: "Saved Items", selected: false },
-    { name: "Reviews", selected: false },
+    { name: "Posts", selected: true, display: true },
+    { name: "Campaigns", selected: false , display: true },
+    { name: "Saved Items", selected: false, display:  influencer.userId === userId },
+    { name: "Reviews", selected: false, display: true },
   ]);
+
+  const filteredNavContent = navContent.filter(item => item.display);
+
+  if (filteredNavContent.length !== navContent.length) {
+    setNavContent(filteredNavContent);
+  }
 
   const isSelectedItem = (name: string) =>
     navContent.find((item) => item.name === name)?.selected;
@@ -26,7 +36,7 @@ export default function InfluencerContent({ influencer, isEditable }: Influencer
   return (
     <div>
       <div className="flex justify-between items-center rounded-xl">
-        <ContentNavBar navContent={navContent} setNavContent={setNavContent} />
+        <ContentNavBar navContent={filteredNavContent} setNavContent={setNavContent} />
       </div>
 
       {isSelectedItem("Posts") && (
@@ -41,11 +51,7 @@ export default function InfluencerContent({ influencer, isEditable }: Influencer
           isEditable={isEditable}
         />
       )}
-      {isSelectedItem("Saved Items") && (<InfluencerProfileFeed
-          userId={influencer.userId}
-          influencer={influencer}
-          isEditable={isEditable}
-        />
+      {isSelectedItem("Saved Items") && (<SavedPostsFeed/>
       )}
       {isSelectedItem("Reviews") && (<InfluencerProfileFeed
           userId={influencer.userId}

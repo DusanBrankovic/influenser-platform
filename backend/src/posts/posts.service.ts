@@ -139,4 +139,14 @@ export class PostsService {
 
     return this.findOne(postId, userId);
   }
+
+  async getSavedPosts(loggedUserId: number) {
+    const posts = await this.postRepository.findSavedPostsByUserId(loggedUserId);
+    for (const post of posts) {
+      post.images = await Promise.all(
+        post.images.map((dbUrl) => this.bucketService.getFile(dbUrl, 60 * 60))
+      );
+    }
+    return posts;
+  }
 }
