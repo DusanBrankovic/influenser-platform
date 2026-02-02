@@ -146,8 +146,22 @@ async updateInfluencerPhoto(userId: number, file: Express.Multer.File, what: "pr
       return { ...updated, [what]: signedUrl };
     }
 
-  
-  remove(id: number) {
-    return `This action removes a #${id} influencer`;
+
+  async remove(id: number) {
+    try{
+      const influencer = await this.influencersRepository.findOne(id);
+    
+      if (!influencer) {
+        throw new NotFoundException(`Influencer sa ID-jem ${id} nije pronađen.`);
+      }
+      const isDeleted = true;
+      await this.influencersRepository.update(id, {isDeleted});
+      return {message: "Deleted successfuly"}
+      
+    }
+    catch(err){
+      console.log("problem u inf servisu 163")
+      return 'Something bad happened';
+    }
   }
 }

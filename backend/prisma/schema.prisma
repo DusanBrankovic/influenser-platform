@@ -111,6 +111,8 @@ model Influencer {
   post       Post[]
   comments   Comment[]
   interactions PostInteraction[]
+
+  isDeleted    Boolean? @default(false)
 }
 
 model Post {
