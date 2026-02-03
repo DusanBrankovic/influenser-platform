@@ -6,9 +6,3 @@ export class ApiError extends Error {
     this.status = status;
   }
 }
-
-export type RegisterResponse = {
-  id: string;
-  email: string;
-  username: string;
-};
