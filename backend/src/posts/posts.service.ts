@@ -5,6 +5,7 @@ import { BACKBLAZE } from "src/data-access/bucket/consts";
 import { BucketService } from "src/data-access/bucket/bucket.service";
 import { CreatePost } from "./types/post.type";
 import { PostRepository } from "src/data-access/post.repository";
+import { PostAction } from "generated/prisma/enums";
 
 @Injectable()
 export class PostsService {
@@ -37,8 +38,8 @@ export class PostsService {
     }
   }
 
-  async findAllForUser(userId: number) {
-    const posts = await this.postRepository.findPostsByUserId(userId);
+  async findAllForUser(userId: number, loggedUserId: number) {
+    const posts = await this.postRepository.findPostsByUserId(userId, loggedUserId);
     for (const post of posts) {
       post.images = await Promise.all(
         post.images.map((dbUrl) => this.bucketService.getFile(dbUrl, 60 * 60))
@@ -47,8 +48,8 @@ export class PostsService {
     return posts;
   }
 
-  async findOne(id: number) {
-    const post = await this.postRepository.findPostById(id);
+  async findOne(id: number, loggedUserId: number) {
+    const post = await this.postRepository.findPostById(id, loggedUserId);
     if (!post) {
       throw new NotFoundException(`Post with ID ${id} not found`);
     }
@@ -67,11 +68,6 @@ export class PostsService {
     if (!post) {
       throw new NotFoundException(`Post with ID ${id} not found`);
     }
-
-    const imageNames = post.images.map((dbUrl) => {
-      const parts = dbUrl.split("/");
-      return parts[parts.length - 1];
-    });
   
     if (updatePostDto.existingImageUrls) {
       const imagesToDelete = post.images.filter((dbUrl) => {
@@ -114,5 +110,43 @@ export class PostsService {
 
     await this.postRepository.deletePostById(userId, id);
     return { message: `Post with ID ${id} deleted successfully` };
+  }
+
+  async postAction(postId: number, userId: number, action: PostAction) {
+    const post = await this.postRepository.findPostById(postId, userId);
+    if (!post) {
+      throw new NotFoundException(`Post with ID ${postId} not found`);
+    }
+
+    switch (action) {
+      case PostAction.LIKE:
+        if (post.isLikedByUser) {
+          await this.postRepository.deleteAction(userId, postId, PostAction.LIKE);
+        } else {
+          await this.postRepository.addAction(userId, postId, PostAction.LIKE);
+        }
+        break;
+      case PostAction.SAVE:
+        if (post.isSavedByUser) {
+          await this.postRepository.deleteAction(userId, postId, PostAction.SAVE);
+        } else {
+          await this.postRepository.addAction(userId, postId, PostAction.SAVE);
+        }
+        break;
+      default:
+        throw new BadRequestException("Invalid action");
+    }
+
+    return this.findOne(postId, userId);
+  }
+
+  async getSavedPosts(loggedUserId: number) {
+    const posts = await this.postRepository.findSavedPostsByUserId(loggedUserId);
+    for (const post of posts) {
+      post.images = await Promise.all(
+        post.images.map((dbUrl) => this.bucketService.getFile(dbUrl, 60 * 60))
+      );
+    }
+    return posts;
   }
 }

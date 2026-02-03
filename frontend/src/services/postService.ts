@@ -1,5 +1,5 @@
 import { getAccessToken } from "@/auth/authStore";
-import type { Post } from "@/types/post.types";
+import type { Post, SavedPost } from "@/types/post.types";
 
 const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
@@ -58,5 +58,57 @@ export async function editPost(formData: FormData): Promise<Post> {
     });
 
     if (!res.ok) throw new Error("Failed to edit post");
+    return res.json();
+}
+
+export async function likePost(postId: number): Promise<void> {
+    const res = await fetch(`${apiUrl}/posts/${postId}/like`, {
+        method: "POST",
+        headers: {
+            ...authHeaders(),
+        },
+    });
+
+    if (!res.ok) throw new Error("Failed to like post");
+}
+
+export async function savePost(postId: number): Promise<void> {
+    const res = await fetch(`${apiUrl}/posts/${postId}/save`, {
+        method: "POST",
+        headers: {
+            ...authHeaders(),
+        },
+    });
+
+    if (!res.ok) throw new Error("Failed to save post");
+}
+
+export async function getPostById(postId: number): Promise<Post | null> {
+    const res = await fetch(`${apiUrl}/posts/${postId}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            ...authHeaders(),
+        },
+    });
+
+    if (res.status === 404) {
+        return null;
+    }
+
+    if (!res.ok) throw new Error("Failed to fetch post");
+
+    return res.json();
+}
+
+export async function getSavedPosts(): Promise<SavedPost[]> {
+    const res = await fetch(`${apiUrl}/posts/saved`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            ...authHeaders(),
+        },
+    });
+    if (!res.ok) throw new Error("Failed to fetch saved posts");
     return res.json();
 }
