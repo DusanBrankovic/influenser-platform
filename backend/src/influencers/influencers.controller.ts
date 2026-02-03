@@ -166,6 +166,28 @@ export class InfluencersController {
   findAll(@Query() searchQuery: SearchQueryDto) {
     return this.influencersService.findAll(searchQuery);
   }
+  
+  
+  /////
+  @ApiOperation({
+    summary: "Search all influencers",
+    description: "This endpoint retrieves a list of all influencers.",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Successfully retrieved",
+    content: {
+      "application/json": {
+        schema: GetInfluencerSchema,
+      },
+    },
+  })
+  @Public()
+  @Get("/or")
+  findAllOr(@Query() searchQuery: SearchQueryDto) {
+    return this.influencersService.findAllOr(searchQuery);
+  }
+  /////
 
   @ApiOperation({
     summary: "Search one influencer",
@@ -207,11 +229,46 @@ export class InfluencersController {
     @UploadedFile() image: Express.Multer.File,
   ) {
     // console.log("###############: ", image?.originalname, "type", image.mimetype, " size: ", image.size)
-    return this.influencersService.updateProfilePicture(+user.id, image);
+    return this.influencersService.updateInfluencerPhoto(+user.id, image, "profilePicture");
   }
 
+
+   @ApiOperation({
+    summary: "Update INFLUENCER coverPhoto",
+    description: "This endpoint updates INFLUENCER coverPhoto.",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Successfully updated",
+    content: {
+      "application/json": {
+        schema: ProfilePictureSchema,
+      },
+    },
+  })
+  @Roles("INFLUENCER")
+  @Patch("me/cover-photo")
+  @HttpCode(HttpStatus.OK)
+  @UseInterceptors(FileInterceptor("image"))
+  async updateCoverPhoto(
+    @GetUser() user: JwtPayload,
+    @UploadedFile() image: Express.Multer.File,
+  ) {
+    return this.influencersService.updateInfluencerPhoto(+user.id, image, "coverPhoto");
+  }
+
+   @ApiOperation({
+    summary: "delete influencer",
+    description: "This endpoint deletes INFLUENCER.",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Successfully deleted",
+  })
+  @Roles("INFLUENCER", "ADMIN")
+  @HttpCode(HttpStatus.OK)
   @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.influencersService.remove(+id);
+  remove(@GetUser() user: JwtPayload) {
+    return this.influencersService.remove(+user.id);
   }
 }

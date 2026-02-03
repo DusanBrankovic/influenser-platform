@@ -52,47 +52,98 @@ export class InfluencersRepository {
       data: data,
     });
   }
-
+  
   async findAll(searchQuery: SearchQueryDto) {
-    const { name, industry, value } = searchQuery;
-
+    const { name, industry, value, experience_range } = searchQuery;
+  
     const filters: any = {};
-
+  
     if (name) {
       filters.name = {
         contains: name,
         mode: "insensitive",
       };
     }
-
+  
     if (industry) {
-      filters.industries = {
-        has: industry,
-      };
+      
+      filters.industries = Array.isArray(industry) 
+        ? { hasSome: industry } 
+        : { has: industry };
     }
-
+  
     if (value) {
-      filters.values = {
-        has: value,
-      };
+      filters.values = Array.isArray(value) 
+        ? { hasSome: value } 
+        : { has: value };
     }
-
+  
+    if (experience_range) {
+        const exp = Number(experience_range);
+        filters.experience = {
+          gte: exp - 1, 
+          lte: exp,     
+        };
+      }
+  
     return this.db.influencer.findMany({
       select: {
         userId: true,
         name: true,
-        headline: true,
+        description: true,
         experience: true,
         industries: true,
         values: true,
       },
-      where: { ...filters, isPrivate: false },
+      where: { ...filters, isPrivate: false, isDeleted: false  },
+    });
+  }
+  
+  
+  async findAllOr(searchQuery: SearchQueryDto) {
+    const { name, industry, value, experience_range } = searchQuery; // Pazi na 'e'
+    const orFilters: any[] = [];
+  
+    if (name) {
+      orFilters.push({ name: { contains: name, mode: "insensitive" } });
+    }
+  
+    // Koristimo hasSome za nizove jer je fleksibilniji
+    if (industry && Array.isArray(industry) && industry.length > 0) {
+      orFilters.push({ industries: { hasSome: industry } });
+    }
+  
+    if (value && Array.isArray(value) && value.length > 0) {
+      orFilters.push({ values: { hasSome: value } });
+    }
+  
+    if (experience_range) {
+      const exp = Number(experience_range);
+      orFilters.push({
+        experience: { gte: exp - 1, lte: exp }
+      });
+    }
+  
+    return this.db.influencer.findMany({
+      where: {
+        isPrivate: false,
+        isDeleted: false ,
+        ...(orFilters.length > 0 ? { OR: orFilters } : {}),
+      },
+      select: {
+        userId: true,
+        name: true,
+        experience: true,
+        industries: true,
+        values: true,
+      },
     });
   }
 
+
   async findOne(id: number, onlyPublic: boolean = false) {
     return this.db.influencer.findUnique({
-      where: { userId: id }
+      where: { userId: id, isDeleted: false, ...(onlyPublic ? { isPrivate: false } : {})},
     });
   }
 }

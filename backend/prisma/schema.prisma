@@ -95,17 +95,24 @@ model Influencer {
   userId         Int  @id
   user           User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   name           String
-  headline       String?
   experience     Int?
-  isPrivate     Boolean  @default(true)
+  isPrivate      Boolean  @default(true)
   industries     Industry[]
   values         Value[]
   profilePicture String?
+  coverPhoto     String?
   description    String?
-
+  
+  nametag       String?  @unique
+  contactMail   String[]
+  contactPhone  String[]
+  links         String[]
+  
   post       Post[]
   comments   Comment[]
   interactions PostInteraction[]
+
+  isDeleted    Boolean? @default(false)
 }
 
 model Post {
