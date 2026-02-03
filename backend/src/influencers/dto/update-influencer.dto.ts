@@ -24,5 +24,9 @@ export class UpdateInfluencerDto {
   @IsArray()
   @IsEnum(Industry, {each: true})
   industries?: Industry[];
+  
+  @IsOptional()
+  @IsString()
+  description?: string;
 }
 

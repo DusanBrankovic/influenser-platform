@@ -117,7 +117,7 @@ export const getIsRegistered = () => isRegisteredSelector(authStore.getState());
 export const getUserIdFromToken = () => {
   const tokenData = getAccessTokenData();
   return tokenData ? tokenData.sub : undefined;
-};
+}
 
 export function useAuthStore<U>(
   selector: (s: ExtractState<typeof authStore>) => U,

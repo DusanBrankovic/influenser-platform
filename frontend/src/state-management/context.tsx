@@ -16,7 +16,9 @@ type ContextType = {
   isPostEditMode: boolean
   setIsPostEditMode: (isEditMode: boolean) => void
   selectedPostId: number | null
-  setSelectedPostId: (postId: number | null) => void
+  setSelectedPostId: (postId: number | null) => void,
+  isLoading: boolean
+  setIsLoading: (loading: boolean) => void
 }
 
 export const Context = createContext<ContextType | undefined>(

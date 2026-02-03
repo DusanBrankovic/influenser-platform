@@ -8,6 +8,7 @@ import {
   UseInterceptors,
   UploadedFiles,
   Put,
+  ParseIntPipe,
 } from "@nestjs/common";
 import { PostsService } from "./posts.service";
 import { CreatePostDto } from "./dto/create-post.dto";
@@ -17,9 +18,8 @@ import { GetUser } from "src/auth/get-user.decorator";
 import { JwtPayload } from "src/auth/dto/credentials.dto";
 import { ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { PostSchema } from "./schemas/post.schema";
-import { Role } from "generated/prisma/enums";
+import { PostAction, Role } from "generated/prisma/enums";
 import { Roles } from "src/auth/roles.decorator";
-import { Public } from "src/auth/public.decorator";
 
 @Controller("posts")
 export class PostsController {
@@ -50,6 +50,29 @@ export class PostsController {
   }
 
   @ApiOperation({
+    summary: "Get saved post",
+    description: "This endpoint retrieves a saved post by logged user.",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Successfully retrieved",
+    content: {
+      "application/json": {
+        schema: {
+          type: "object",
+          properties: {
+            message: { type: "string", example: "Post deleted successfully." },
+          },
+        },
+      },
+    },
+  })
+  @Get("/saved")
+  getSavedPosts(@GetUser() user: JwtPayload) {
+    return this.postsService.getSavedPosts(+user.id);
+  }
+
+  @ApiOperation({
     summary: "Get all posts for the user",
     description: "This endpoint retrieves all posts created by the user.",
   })
@@ -65,10 +88,9 @@ export class PostsController {
       },
     },
   })
-  @Public()
   @Get("/influencer/:id")
-  findAllForUser(@Param("id") id: string) {
-    return this.postsService.findAllForUser(+id);
+  findAllForUser(@Param("id") id: string, @GetUser() user: JwtPayload) {
+    return this.postsService.findAllForUser(+id, +user.id);
   }
 
   @ApiOperation({
@@ -84,10 +106,46 @@ export class PostsController {
       },
     },
   })
-  @Public()
   @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.postsService.findOne(+id);
+  findOne(@Param("id", ParseIntPipe) id: number, @GetUser() user: JwtPayload) {
+    return this.postsService.findOne(id, +user.id);
+  }
+
+
+  @ApiOperation({
+    summary: "Like post",
+    description: "This endpoint allows a user to like a post.",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Successfully liked the post",
+    content: {
+      "application/json": {
+        schema: PostSchema,
+      },
+    },
+  })
+  @Post(":id/like")
+  likePost(@Param("id") id: string, @GetUser() user: JwtPayload) {
+    return this.postsService.postAction(+id, +user.id, PostAction.LIKE);
+  }
+
+  @ApiOperation({
+    summary: "Save post",
+    description: "This endpoint allows a user to save post.",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Successfully saved post",
+    content: {
+      "application/json": {
+        schema: PostSchema,
+      },
+    },
+  })
+  @Post(":id/save")
+  savePost(@Param("id") id: string, @GetUser() user: JwtPayload) {
+    return this.postsService.postAction(+id, +user.id, PostAction.SAVE);
   }
 
   @ApiOperation({

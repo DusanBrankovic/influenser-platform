@@ -7,6 +7,7 @@ import { BackBlazeService } from "./bucket/backblaze.service";
 import { PostRepository } from "./post.repository";
 import { BusinessRepository } from "./businesses.repository";
 import { DataRepository } from "./data.repository";
+import { CommentsRepository } from "./comments.repository";
 
 @Module({
   providers: [
@@ -16,11 +17,20 @@ import { DataRepository } from "./data.repository";
     BusinessRepository,
     DataRepository,
     PostRepository,
+    CommentsRepository,
     {
       provide: BACKBLAZE,
       useClass: BackBlazeService,
     },
   ],
-  exports: [BACKBLAZE, InfluencersRepository, UsersRepository, PostRepository, BusinessRepository, DataRepository],
+  exports: [
+    BACKBLAZE,
+    InfluencersRepository,
+    UsersRepository,
+    PostRepository,
+    BusinessRepository,
+    DataRepository,
+    CommentsRepository,
+  ],
 })
 export class DataAccessModule {}

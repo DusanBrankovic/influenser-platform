@@ -5,10 +5,10 @@ import { useEffect, useRef, useState } from "react";
 import { LuImagePlus } from "react-icons/lu";
 import { ToastContainer, toast } from "react-toastify";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import Spinner from "../Spinner";
 import { insertAtCursor } from "@/utils/insertAtCursor";
-import { EmojiPickerButton } from "../EmojiButton";
-import AvatarInitials from "../AvatarInitials";
+import { getUserIdFromToken } from "@/auth/authStore";
+import UserHeader from "@/components/UserHeader";
+import { EmojiPickerButton } from "@/components/EmojiButton";
 
 
 export default function PostModal() {
@@ -34,38 +34,16 @@ export default function PostModal() {
     >
       <ToastContainer />
       <div className="bg-white rounded-lg shadow-md w-1/3 h-[80%] p-10 flex flex-col">
-        <PostHeader
+        <UserHeader
           name={influencer.name}
           profileUrl={influencer.profileUrl}
         />
         <PostContent />
-        <PostFooter influencerId={influencer.userId} isEditMode={isPostEditMode} postId={selectedPostId || 0} />
+        <PostFooter isEditMode={isPostEditMode} postId={selectedPostId || 0} />
       </div>
     </div>
   );
 }
-
-const PostHeader = ({
-  name,
-  profileUrl,
-}: {
-  name: string;
-  profileUrl: string | null;
-}) => {
-  return (
-    <div className="flex w-full items-center justify-start mb-4 gap-3">
-      {profileUrl ? (
-      <img
-        src={profileUrl}
-        className="h-full w-full object-cover"
-      />
-      ) : (
-        <AvatarInitials name={name} size={50} circle />
-      )}
-      <h2 className="font-bold text-lg">{name}</h2>
-    </div>
-  );
-};
 
 const PostContent = () => {
   const { images, removeImage, postText, setPostText } = useCustomContext();
@@ -137,17 +115,16 @@ const PostContent = () => {
   );
 };
 
-const PostFooter = ({ influencerId, isEditMode, postId }: { influencerId: number, isEditMode: boolean, postId: number }) => {
+const PostFooter = ({ isEditMode, postId }: { isEditMode: boolean, postId: number }) => {
   const { closePostModal } = useCustomContext();
-  const { images, postText, addImages, resetPost } = useCustomContext();
-
-  const queryClient = useQueryClient();
+  const { images, postText, addImages, resetPost, setIsLoading } = useCustomContext();
+    const userId = getUserIdFromToken();
 
   const createPostMutation = useMutation({
     mutationFn: createPost,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["posts", influencerId],
+        queryKey: ["posts", userId],
       });
 
       closePostModal();
@@ -162,7 +139,7 @@ const PostFooter = ({ influencerId, isEditMode, postId }: { influencerId: number
     mutationFn: editPost,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["posts", influencerId],
+        queryKey: ["posts", userId],
       });
 
       closePostModal();
@@ -172,6 +149,14 @@ const PostFooter = ({ influencerId, isEditMode, postId }: { influencerId: number
       toast("Failed to edit post. Please try again.", { type: "error" });
     },
   });
+
+  const isLoading = createPostMutation.isPending || editPostMutation.isPending;
+
+  useEffect(() => {
+    setIsLoading(isLoading);
+  }, [isLoading, setIsLoading]);
+
+  const queryClient = useQueryClient();
 
   const uploadImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const target = event.target as HTMLInputElement;
@@ -225,11 +210,6 @@ const PostFooter = ({ influencerId, isEditMode, postId }: { influencerId: number
 
   return (
     <div className="w-full flex items-center justify-between mt-6">
-      {createPostMutation.isPending || editPostMutation.isPending && (
-        <div className="absolute inset-0 bg-black/30 flex items-center justify-center rounded-xl">
-          <Spinner />
-        </div>
-      )}
       <div className="relative">
         <button className="bg-primary text-white px-4 py-2 rounded-lg cursor-pointer">
           <LuImagePlus className="w-5 h-5 mx-5" />
