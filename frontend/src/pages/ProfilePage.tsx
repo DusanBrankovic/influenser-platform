@@ -75,7 +75,7 @@ export default function ProfilePage() {
               </div>
               <CanAccess roles={["INFLUENCER"]}>
                 <div className="flex items-center">
-                  <div className="relative flex h-8 w-[200px] items-center rounded-full bg-neutral-800 p-1">
+                  <div className="relative flex h-8 w-50 items-center rounded-full bg-neutral-800 p-1">
                     <div
                       className={`absolute top-1 bottom-1 w-[48%] rounded-full bg-neutral-500 transition-all duration-300 ${
                         isToggled ? "left-1" : "left-1/2"

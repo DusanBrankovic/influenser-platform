@@ -7,7 +7,7 @@ import { CookieService } from "@/services/cookieService";
 import type { AppRole } from "@/types/auth.types";
 
 const ACCESS_TOKEN_KEY = "accessToken";
-const RoleSchema = z.enum(["BUSINESS", "INFLUENCER"]);
+const RoleSchema = z.enum(["BUSINESS", "INFLUENCER", "GUEST"]);
 
 const TokenDataSchema = z.object({
   email: z.string(),
