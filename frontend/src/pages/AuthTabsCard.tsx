@@ -1,17 +1,28 @@
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Card, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import HourglassIcon from "../assets/icons/hourglass-triangle.svg";
 import SignIn from "@/components/SignIn";
 import Register from "@/components/Register";
-import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { Route } from "@/routes/auth";
 
 const AuthTabsCard: React.FC = () => {
-  const [tab, setTab] = useState<"signin" | "register">("signin");
+
   const navigate = useNavigate();
+  const { tab: searchTab } = Route.useSearch();
+
+  const tab = (searchTab ?? "signin") as "signin" | "register";
+
+  const setTab = (next: "signin" | "register") => {
+    navigate({
+      to: "/auth",
+      search: (prev) => ({ ...prev, tab: next }),
+      replace: true,
+    });
+  };
 
   const handleGuest = async () => {
-    navigate({ to: "/" });
+    navigate({ to: "/guest" });
   };
 
   return (
@@ -23,9 +34,6 @@ const AuthTabsCard: React.FC = () => {
           </div>
           <div className="flex flex-col w-full max-w-xs rounded-3xl px-5 border border-white/10 items-center justify-center">
             <CardTitle className="text-xl">Design in progress</CardTitle>
-            <CardContent className="flex flex-1 items-center justify-center text-sm lowercase text-primary sm:text-wrap">
-              Ovde bi trebalo da dođe neki kreirani baner
-            </CardContent>
           </div>
         </Card>
       </div>
@@ -51,7 +59,7 @@ const AuthTabsCard: React.FC = () => {
                     transition-all duration-200
                   "
             >
-              Prijava
+              Sign In
             </TabsTrigger>
 
             <TabsTrigger
@@ -69,7 +77,7 @@ const AuthTabsCard: React.FC = () => {
                     transition-all duration-200
                   "
             >
-              Registracija
+              Register
             </TabsTrigger>
           </TabsList>
 

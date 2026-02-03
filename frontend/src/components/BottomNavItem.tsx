@@ -68,6 +68,7 @@ export function BottomNavItem({ item, heightPx }: Props) {
           isActive && "bg-primary text-primary-foreground"
         )}
         aria-label={item.ariaLabel ?? item.label}
+        onClick={item.onClick}
       >
         <GoogleFontIcon icon={item.icon} />
         <span className="text-[12px] leading-none whitespace-nowrap">

@@ -14,7 +14,6 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       connectionString,
     });
 
-    // In Prisma 7 you must pass adapter (or accelerateUrl)
     super({ adapter });
   }
 

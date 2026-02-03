@@ -83,6 +83,39 @@ export class InfluencersController {
     return this.influencersService.setIsPrivate(user.id, isPrivate);
   }
 
+   @ApiOperation({
+    summary: "Is profile published",
+    description:
+      "This endpoint checks if the influencer profile is published.",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Successfully checked publication status",
+    content: {
+      "application/json": {
+        schema: {
+          type: "object",
+          properties: {
+            message: {
+              type: "string",
+              example: "Successfully checked publication status.",
+            },
+          },
+        },
+      },
+    },
+  })
+  @Roles("INFLUENCER", "ADMIN")
+  @Get("/privacy")
+  @HttpCode(HttpStatus.OK)
+  isPublished(
+    @GetUser() user: JwtPayload
+  ) {
+    return this.influencersService.getIsPrivate(user.id);
+  }
+
+  
+
   @ApiOperation({
     summary: "Update my influencer profile",
     description:
@@ -124,7 +157,7 @@ export class InfluencersController {
       },
     },
   })
-  @Public()
+
   @Get()
   findAll(@Query() searchQuery: SearchQueryDto) {
     return this.influencersService.findAll(searchQuery);

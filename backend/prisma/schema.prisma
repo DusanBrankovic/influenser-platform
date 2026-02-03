@@ -20,25 +20,60 @@ enum Role {
 }
 
 enum Industry {
-  Fitness
-  Tech
-  Fashion
-  Beauty
-  Lifestyle
-  Travel
-  FoodAndCooking
-  Gaming
-  ParentingAndFamily
-  BusinessAndFinance
+  BEAUTY_PERSONAL_CARE
+  FASHION_STYLE
+  HEALTH_WELLNESS
+  LIFESTYLE
+  FOOD_DRINK
+  TRAVEL_HOSPITALITY
+  PARENTING_FAMILY
+  TECH_DIGITAL
+  EDUCATION_KNOWLEDGE
+  BUSINESS_ENTREPRENEURSHIP
+  FINANCE_INVESTING
+  GAMING_ESPORTS
+  ENTERTAINMENT_MEDIA
+  ART_CREATIVITY
+  SPORTS
+  SUSTAINABILITY_ETHICS
+  PETS_ANIMALS
+  AUTOMOTIVE_MOBILITY
+  HOME_REAL_ESTATE
+  OTHER
 }
 
 enum Value {
-  Authenticity
-  Transparency
-  Creativity
-  Inclusivity
-  BodyPositivity
-  MentalHealthAwareness
+  AUTHENTICITY
+  TRANSPARENCY
+  QUALITY
+  HONESTY
+  PROFESSIONALISM
+  CREATIVITY
+  EDUCATION
+  KNOWLEDGE_SHARING
+  SUSTAINABILITY
+  ETHICS
+  RESPONSIBILITY
+  MENTAL_HEALTH_BALANCE
+  SELF_CONFIDENCE
+  PERSONAL_GROWTH
+  INCLUSIVITY
+  DIVERSITY
+  BODY_POSITIVITY
+  NATURAL_BEAUTY
+  INNOVATION
+  LONG_TERM_PARTNERSHIPS
+  COMMUNITY
+  SUPPORT
+  COMMITMENT
+  CONSISTENCY
+  SOCIAL_RESPONSIBILITY
+  WORK_LIFE_BALANCE
+  PREMIUM_STANDARDS
+  ACCESSIBILITY
+  SUPPORTING_LOCAL_BRANDS
+  EMPATHY
+  OTHER
 }
 
 model User {
@@ -53,17 +88,28 @@ model User {
 
 model Influencer {
   userId         Int  @id
-  user           User    @relation(fields: [userId], references: [id])
+  user           User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   name           String
   headline       String?
   experience     Int?
   isPrivate     Boolean  @default(true)
   industries     Industry[]
   values         Value[]
+
+  post       Post[]
 }
 
+model Post {
+  id          Int   @id @default(autoincrement())
+  userId      Int 
+  user        Influencer    @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  text        String?
+  images      String[]
+  createdAt   DateTime
+  updatedAt   DateTime?
+}
 model Business {
   userId         Int  @id
-  business       User @relation(fields: [userId], references: [id])
+  business       User @relation(fields: [userId], references: [id], onDelete: Cascade)
   name           String
 }

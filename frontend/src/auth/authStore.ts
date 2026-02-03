@@ -2,8 +2,8 @@ import { createStore } from "zustand/vanilla";
 import { devtools } from "zustand/middleware";
 import { z } from "zod";
 import { jwtDecode } from "jwt-decode";
-import { CookieService } from "../services/cookieService";
 import { useStoreWithEqualityFn } from "zustand/traditional";
+import { CookieService } from "@/services/cookieService";
 import type { AppRole } from "@/types/auth.types";
 
 const ACCESS_TOKEN_KEY = "accessToken";
@@ -43,6 +43,8 @@ export const authStore = createStore<AuthStore>()(
 
       actions: {
         setAccessToken: (accessToken: string | undefined) => {
+          console.log("Setting access token in auth store:", accessToken);
+
           if (accessToken) {
             CookieService.set(ACCESS_TOKEN_KEY, accessToken);
           }
@@ -112,6 +114,10 @@ export const getAccessTokenData = () =>
   accessTokenDataSelector(authStore.getState());
 export const getActions = () => actionsSelector(authStore.getState());
 export const getIsRegistered = () => isRegisteredSelector(authStore.getState());
+export const getUserIdFromToken = () => {
+  const tokenData = getAccessTokenData();
+  return tokenData ? tokenData.sub : undefined;
+};
 
 export function useAuthStore<U>(
   selector: (s: ExtractState<typeof authStore>) => U,

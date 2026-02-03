@@ -10,7 +10,7 @@ import { JwtPayload } from "src/auth/dto/credentials.dto";
 export class InfluencersService {
   constructor(
     private influencersRepository: InfluencersRepository,
-    private passwordService: PasswordService
+    private passwordService: PasswordService,
   ) { }
   async create(createInfluencerDto: CreateInfluencerDto) {
     const hashedPassword = await this.passwordService.hash(
@@ -38,6 +38,17 @@ export class InfluencersService {
     } catch (error) {
       throw new InternalServerErrorException(
         "Failed to update influencer profile privacy."
+      );
+    }
+  }
+
+  async getIsPrivate(id: number) {
+    try {
+      const influencer = await this.influencersRepository.findOne(id);
+      return influencer!.isPrivate;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        "Influencer not found."
       );
     }
   }

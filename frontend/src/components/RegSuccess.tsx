@@ -18,24 +18,23 @@ const RegSuccessScreen = ({
             <GoogleFontIcon size={64} fill="filled" icon="check_circle" />
           </span>
           <p className="text-3xl font-bold">
-            Uspe&scaron;no ste kreirali nalog&#x21;
+            Your account has been successfully created!
           </p>
           <p className="w-2/3 p-2.5 text-base text-primary text-center">
-            Nakon &scaron;to ste uneli osnovne podatke prijavite se na nalog
-            kako bi mogli da ure&#273;ujete Va&scaron; profil influensera&#x21;
+            After entering your basic information, sign in to your account so
+            you can start editing your influencer profile!
           </p>
           <div className="w-full flex flex-row flex-1 gap-8 justify-center items-center">
             <Button
               type="button"
               onClick={() => {
-                  onSwitchToSignIn();
-                  setIsUnregistered();
-                }
-              }
+                onSwitchToSignIn();
+                setIsUnregistered();
+              }}
               className="outline-none w-full"
               size="lg"
             >
-              Prijavite se
+              Sign In
             </Button>
           </div>
         </div>

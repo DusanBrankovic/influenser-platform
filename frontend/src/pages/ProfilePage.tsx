@@ -1,59 +1,44 @@
-import * as React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import AvatarInitials from "@/components/AvatarInitials";
+import InfluencerContent from "@/components/InfluencerContent";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Separator } from "@/components/ui/separator";
-
 import {
-  Pencil,
-  Plus,
-  X,
-  Star,
-  Phone,
-  Mail,
-  Globe,
-  MapPin,
-  Share2,
-} from "lucide-react";
-import { useRouteContext } from "@tanstack/react-router";
-import { togglePrivateProfile } from "@/services/influencerService";
-import { useState } from "react";
+  togglePrivateProfile,
+  updateInfluencer,
+} from "@/services/influencerService";
+import { useRouteContext, useRouter } from "@tanstack/react-router";
+import { Globe, Mail, MapPin, Pencil, Phone, Share2 } from "lucide-react";
+import React from "react";
+import { EditBioAndExperiencePopUp } from "@/components/EditBioAndExperiencePopUp"; // adjust path
+import type { UpdateInfluencerDto } from "@/types/influencer.types";
+import { IndustryLabels, ValueLabels } from "@/data/prettifyEnums";
+import Spinner from "@/components/Spinner";
 import { CanAccess } from "@/auth/CanAccess";
 
-function Stars({ value = 4, outOf = 5 }: { value?: number; outOf?: number }) {
-  const v = Math.max(0, Math.min(value, outOf));
-  return (
-    <div className="flex items-center gap-1">
-      {Array.from({ length: outOf }).map((_, i) => (
-        <Star
-          key={i}
-          className={`h-4 w-4 ${i < v ? "fill-black text-black" : "text-black/30"}`}
-        />
-      ))}
-    </div>
-  );
-}
-
-export default function InfluencerProfile() {
-  const [lastAction, setLastAction] = useState<
-    "published" | "unpublished" | null
-  >(null);
-
-  const [bio, setBio] = React.useState(
-    "U opisu profila influenser može ukratko da predstavi sebe, da naznači koji je njegov fokus i cilj sa budućim kampanjama. Trebalo bi navesti u par rečenica oko čega se bazira njegov sadržaj pre nego što pregledamo kompletan profil. Ovaj prozor može imati ograničenje u vidu maksimalnog broja simbola.",
-  );
-
-  const { influencer } = useRouteContext({
+export default function ProfilePage() {
+  const { influencer, isPublished } = useRouteContext({
     from: "/_private/profile",
   });
 
-  const industries = ["Industrija 1", "Industrija 2", "Industrija 3"];
-  const values = ["Vrednosti 1", "Vrednosti 2", "Vrednosti 3", "Vrednosti 4"];
+  const router = useRouter();
+
+  const [isToggled, setIsToggled] = React.useState<boolean>(() => !isPublished);
+
+  const [editOpen, setEditOpen] = React.useState(false);
+
+  const handleToggle = (checked: boolean) => {
+    setIsToggled(checked);
+    togglePrivateProfile(!checked);
+  };
 
   return (
-    <div className="min-h-screen bg-[#F3F3F3]">
-      <div className="relative h-44 sm:h-44 bg-[#9B9B9B]">
+    <div className="min-h-screen bg-[#F3F3F3] relative">
+      <Spinner />
+      <div className="relative h-44 bg-[#9B9B9B]">
         <Button
           variant="secondary"
           size="icon"
@@ -63,61 +48,25 @@ export default function InfluencerProfile() {
           <Pencil className="h-5 w-5" />
         </Button>
 
-        <div className="absolute left-6 sm:left-12 -bottom-20">
-          <div className="relative h-20 w-20 sm:h-40 sm:w-40 rounded-full bg-white/80 p-2 shadow-sm">
-            <div className="h-full w-full rounded-full bg-white flex items-center justify-center border">
-              <Pencil className="h-6 w-6 text-black/60" />
-            </div>
+        <div className="absolute -bottom-20 left-6 z-20 h-20 w-20 sm:h-40 sm:w-40 rounded-full bg-white/80 p-2 shadow-sm">
+          <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-full">
+            {influencer.profileImage ? (
+              <img
+                src={influencer.profileImage}
+                className="h-full w-full object-cover"
+                alt={`${influencer.name} profile`}
+              />
+            ) : (
+              <AvatarInitials name={influencer.name} size={145} />
+            )}
           </div>
         </div>
       </div>
-      <CanAccess roles={["INFLUENCER"]}>
-        <div className="px-4 sm:px-10 pt-14 sm:pt-16">
-          <div className="mx-auto flex max-w-5xl items-center justify-end gap-2 sm:gap-3">
-            <div className="min-h-[20px] text-sm">
-              {lastAction === "published" && (
-                <span className="rounded-full bg-green-100 px-3 py-1 text-green-700">
-                  Profile published
-                </span>
-              )}
 
-              {lastAction === "unpublished" && (
-                <span className="rounded-full bg-yellow-100 px-3 py-1 text-yellow-800">
-                  Profile unpublished
-                </span>
-              )}
-            </div>
-
-            <Button
-              className="rounded-full"
-              size="sm"
-              onClick={() => {
-                togglePrivateProfile(false);
-                setLastAction("published");
-              }}
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Publish
-            </Button>
-            <Button
-              variant="outline"
-              className="rounded-full"
-              size="sm"
-              onClick={() => {
-                togglePrivateProfile(true);
-                setLastAction("unpublished");
-              }}
-            >
-              <X className="mr-2 h-4 w-4" />
-              Unpublish
-            </Button>
-          </div>
-        </div>
-      </CanAccess>
-      <div className="px-4 sm:px-8 pb-10 pt-4">
-        <Card className="mx-auto max-w-5xl rounded-2xl border border-black bg-white">
-          <CardHeader className="pb-3">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+      <div className="px-4 pb-10 pt-20 sm:px-8">
+        <Card className="mx-auto max-w-5xl rounded-2xl border-none">
+          <CardHeader className="py-3 ps-15">
+            <div className="flex flex-row justify-between gap-3">
               <div className="min-w-0">
                 <CardTitle className="text-xl sm:text-2xl">
                   {influencer.name}
@@ -125,106 +74,200 @@ export default function InfluencerProfile() {
                 <p className="text-sm text-black">@{influencer.userId}</p>
               </div>
               <CanAccess roles={["INFLUENCER"]}>
-                <div className="flex flex-col items-start sm:items-end gap-2">
-                  <div className="flex items-center gap-2">
-                    <Badge className="rounded-full bg-white text-black border border-black">
-                      ocena
-                      <span className="mx-2 inline-flex items-center">
-                        <Stars value={4} outOf={5} />
-                      </span>
-                      <span className="font-semibold">4/5</span>
-                    </Badge>
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    <span className="font-semibold text-black">500k</span>{" "}
-                    pratilaca
+                <div className="flex items-center">
+                  <div className="relative flex h-8 w-[200px] items-center rounded-full bg-neutral-800 p-1">
+                    <div
+                      className={`absolute top-1 bottom-1 w-[48%] rounded-full bg-neutral-500 transition-all duration-300 ${
+                        isToggled ? "left-1" : "left-1/2"
+                      }`}
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => handleToggle(true)}
+                      className="relative z-10 w-1/2 text-center text-sm font-semibold text-white"
+                    >
+                      Publish
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleToggle(false)}
+                      className="relative z-10 w-1/2 text-center text-sm font-semibold text-white"
+                    >
+                      Unpublish
+                    </button>
                   </div>
                 </div>
               </CanAccess>
             </div>
           </CardHeader>
 
-          <CardContent className="space-y-6">
-            {/* 1) Bio */}
-            <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-start">
-              <div className="space-y-2">
+          <CardContent>
+            <div className="flex flex-col gap-2">
+              <Label className="ps-5 font-semibold text-black">Bio</Label>
+
+              <div className="relative">
                 <Textarea
-                  value={bio}
-                  onChange={(e) => setBio(e.target.value)}
-                  className="min-h-[92px] resize-none rounded-xl bg-white/60 border border-black"
+                  value={influencer.headline ?? ""}
+                  disabled
+                  placeholder="Headline will appear here..."
+                  className="min-h-23 resize-none rounded-xl border border-black bg-white/60 p-5 disabled:cursor-default disabled:opacity-100"
                 />
-                <CanAccess roles={["INFLUENCER"]}>
-                  <Button variant="link" className="h-auto p-0 text-black/70">
-                    Pročitaj više
-                  </Button>
-                </CanAccess>
+
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="absolute bottom-3 right-3 h-8 w-8"
+                  onClick={() => setEditOpen(true)}
+                  type="button"
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
               </div>
             </div>
             <CanAccess roles={["INFLUENCER"]}>
-              {/* 2) Experience + tags */}
-              <div className="space-y-3">
-                <div className="text-sm font-semibold">3 godine iskustva</div>
+              <div className="mt-6 flex flex-col gap-2">
+                <Label className="ps-5 font-semibold text-black">
+                  Years of experience
+                </Label>
 
-                <div className="flex flex-wrap gap-2">
-                  {industries.map((t) => (
-                    <Badge
-                      key={t}
-                      variant="secondary"
-                      className="rounded-md bg-black/20 text-black hover:bg-black/25"
-                    >
-                      {t}
-                    </Badge>
-                  ))}
-                </div>
+                <div className="relative rounded-xl border border-black p-3">
+                  <Input
+                    className="p-0 ps-2 pr-12"
+                    value={influencer.experience ?? ""}
+                    disabled
+                  />
 
-                <div className="flex flex-wrap gap-2">
-                  {values.map((t) => (
-                    <Badge
-                      key={t}
-                      variant="secondary"
-                      className="rounded-md bg-black/20 text-black hover:bg-black/25"
-                    >
-                      {t}
-                    </Badge>
-                  ))}
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => setEditOpen(true)}
+                    className="absolute right-2.5 top-1/2 h-8 w-8 -translate-y-1/2"
+                    type="button"
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
             </CanAccess>
-            <Separator />
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <Card className="rounded-xl border border-black bg-white">
-                <CardContent className="p-4">
-                  <div className="space-y-3 text-sm">
+            <CanAccess roles={["INFLUENCER"]}>
+              <div className="mt-6 flex flex-col gap-2">
+                <Label className="ps-5 font-semibold text-black">
+                  Categories
+                </Label>
+
+                <div className="relative flex flex-col gap-3 rounded-xl border border-black p-3 pb-5">
+                  <Label className="ps-2 font-semibold text-black">
+                    Industries
+                  </Label>
+
+                  <div className="flex flex-wrap gap-2 ps-1">
+                    {(influencer.industries ?? []).map((t) => (
+                      <Badge
+                        key={t}
+                        variant="secondary"
+                        className="rounded-sm bg-[#8C8C8C] text-white"
+                      >
+                        {IndustryLabels[t as keyof typeof IndustryLabels]}
+                      </Badge>
+                    ))}
+                  </div>
+
+                  <Label className="ps-2 font-semibold text-black">
+                    Values
+                  </Label>
+
+                  <div className="flex flex-wrap gap-2 ps-1">
+                    {(influencer.values ?? []).map((t) => (
+                      <Badge
+                        key={t}
+                        variant="secondary"
+                        className="rounded-sm bg-black/20 text-black"
+                      >
+                        {ValueLabels[t]}
+                      </Badge>
+                    ))}
+                  </div>
+
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="absolute bottom-3 right-3 h-8 w-8"
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </CanAccess>
+            <div className="mt-6 flex flex-col gap-2 pb-5">
+              <Label className="ps-5 font-semibold text-black">Contact</Label>
+
+              <div className="relative flex flex-col gap-3 rounded-xl border border-black p-5 pb-5">
+                <div className="grid gap-4 md:grid-cols-2 text-sm">
+                  <div className="space-y-3">
                     <div className="flex items-center gap-2">
                       <Phone className="h-4 w-4 text-black/70" />
-                      <span>064 123 123</span>
+                      <span>Placeholder</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Mail className="h-4 w-4 text-black/70" />
-                      <span>imeprezime123@gmail.com</span>
+                      <span>Placeholder</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Globe className="h-4 w-4 text-black/70" />
-                      <span>www.influenser123.com</span>
+                      <span>Placeholder</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <MapPin className="h-4 w-4 text-black/70" />
-                      <span>Beograd</span>
+                      <span>Placeholder</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Share2 className="h-4 w-4 text-black/70" />
-                      <span>Društvene mreže</span>
+                      <span>Placeholder</span>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
 
-              <div className="hidden md:block rounded-xl border border-dashed border-black/15 bg-transparent" />
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="absolute bottom-3 right-3 h-8 w-8"
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
+            <CanAccess roles={["INFLUENCER"]}>
+              <CardContent className="rounded-xl border border-black bg-white p-0 mb-20">
+                <InfluencerContent influencer={influencer} isEditable />
+              </CardContent>
+            </CanAccess>
           </CardContent>
         </Card>
       </div>
+
+      <EditBioAndExperiencePopUp
+        open={editOpen}
+        onOpenChange={setEditOpen}
+        initialValues={{
+          headline: influencer.headline ?? "",
+          experience: String(influencer.experience ?? ""),
+        }}
+        onSave={async (vals) => {
+          const updateInfluencerDto: UpdateInfluencerDto = {
+            headline: vals.headline,
+            experience: Number(vals.experience),
+          };
+          await updateInfluencer(updateInfluencerDto);
+          await router.invalidate({
+            filter: (match) => match.routeId === "/_private/profile",
+          });
+          setEditOpen(false);
+        }}
+        onCancel={() => setEditOpen(false)}
+      />
     </div>
   );
 }

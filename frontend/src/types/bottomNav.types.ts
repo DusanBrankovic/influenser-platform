@@ -17,6 +17,7 @@ export type NavRouteItem = {
   icon: IconName;
   ariaLabel?: string;
   fuzzy?: boolean;
+  onClick?: () => void;
 };
 
 export type NavProfileItem = {

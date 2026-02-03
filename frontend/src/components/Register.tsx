@@ -14,8 +14,9 @@ import FormField from "./FormField";
 import { registerApi } from "@/services/authService";
 import RegSuccessScreen from "./RegSuccess";
 import { getActions, useIsRegistered } from "@/auth/authStore";
-import { UserRole, type RegisterPayload } from "@/types/auth.types";
+import type { RegisterPayload } from "@/types/auth.types";
 import { SelectAccountView } from "./SelectAccountVIew";
+import { UserRole } from "@/types/auth.types";
 import { useState } from "react";
 
 const { setIsRegistered } = getActions();
@@ -25,21 +26,22 @@ const roleSchema = z
   .refine((r) => r !== UserRole.NOT_SELECTED, {
     message: "Morate izabrati tip naloga.",
   });
+
 const passwordSchema = z
   .string()
-  .min(8, { message: "Lozinka mora imati najmanje 8 karaktera." })
-  .max(32, { message: "Lozinka može imati najviše 32 karaktera." })
+  .min(8, { message: "Password must be at least 8 characters long." })
+  .max(32, { message: "Password can be at most 32 characters long." })
   .refine((password) => /[A-Z]/.test(password), {
-    message: "Lozinka mora sadržati bar jedno veliko slovo.",
+    message: "Password must contain at least one uppercase letter.",
   })
   .refine((password) => /[a-z]/.test(password), {
-    message: "Lozinka mora sadržati bar jedno malo slovo.",
+    message: "Password must contain at least one lowercase letter.",
   })
   .refine((password) => /[0-9]/.test(password), {
-    message: "Lozinka mora sadržati bar jedan broj.",
+    message: "Password must contain at least one number.",
   })
   .refine((password) => /[!@#$%^&*()_+={}[\]|:;"'<>,.?/-]/.test(password), {
-    message: "Lozinka mora sadržati bar jedan specijalni karakter.",
+    message: "Password must contain at least one special character.",
   });
 
 const passwordConfirmationSchema = z
@@ -48,32 +50,33 @@ const passwordConfirmationSchema = z
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Lozinke se ne poklapaju.",
+    message: "Passwords do not match.",
     path: ["confirmPassword"],
   });
 
 const formSchema = z.object({
   username: z
     .string()
-    .min(5, "Korisničko ime mora imati najmanje 5 karaktera.")
-    .max(12, "Korisničko ime može imati najviše 12 karaktera."),
+    .min(5, "Username must be at least 5 characters long.")
+    .max(12, "Username can be at most 12 characters long."),
   fullname: z
     .string()
-    .min(5, "Ime i prezime mora imati najmanje 5 karaktera.")
-    .max(100, "Ime i prezime može imati najviše 100 karaktera.")
-    .includes(" ", { message: "Unesite ime i prezime (sa razmakom)." }),
+    .min(5, "Full name must be at least 5 characters long.")
+    .max(100, "Full name can be at most 100 characters long.")
+    .includes(" ", {
+      message: "Please enter both first and last name (with a space).",
+    }),
   email: z
-    .email({ message: "Unesite ispravnu e-mail adresu." })
-    .min(5, "E-mail adresa mora imati najmanje 5 karaktera.")
-    .max(32, "E-mail adresa može imati najviše 32 karaktera."),
+    .email({ message: "Please enter a valid email address." })
+    .min(5, "Email must be at least 5 characters long.")
+    .max(32, "Email can be at most 32 characters long."),
   termsAccepted: z.boolean().refine((val) => val === true, {
-    message: "Morate prihvatiti uslove korišćenja.",
+    message: "You must accept the terms of service.",
   }),
-  rememberMe: z.boolean().refine((val) => val === true, {
-    message: "Morate potvrditi da želite da zapamtite lozinku.",
-  }),
+  rememberMe: z.boolean(),
   role: roleSchema,
 });
+
 const combinedSchema = formSchema.merge(passwordConfirmationSchema);
 
 const Register = ({ onSwitchToSignIn }: { onSwitchToSignIn: () => void }) => {
@@ -119,13 +122,13 @@ const Register = ({ onSwitchToSignIn }: { onSwitchToSignIn: () => void }) => {
     {
       name: "fullname",
       icon: "person",
-      placeholder: "Ime i Prezime",
+      placeholder: "Full Name",
       type: "text",
     },
     {
       name: "username",
       icon: "alternate_email",
-      placeholder: "Korisnicko ime",
+      placeholder: "Username",
       type: "text",
     },
     {
@@ -137,13 +140,13 @@ const Register = ({ onSwitchToSignIn }: { onSwitchToSignIn: () => void }) => {
     {
       name: "password",
       icon: "lock",
-      placeholder: "Lozinka",
+      placeholder: "Password",
       type: "password",
     },
     {
       name: "confirmPassword",
       icon: "lock",
-      placeholder: "Potvrdi lozinku",
+      placeholder: "Confirm password",
       type: "password",
     },
   ];
@@ -152,121 +155,141 @@ const Register = ({ onSwitchToSignIn }: { onSwitchToSignIn: () => void }) => {
 
   return (
     <div className="w-full flex flex-col justify-start items-center">
-      <div className="">
-        {isRegistered ? (
-          <RegSuccessScreen onSwitchToSignIn={onSwitchToSignIn} />
-        ) : (
-          <Card className="w-full">
-            <CardHeader></CardHeader>
-            <CardContent className="w-100%">
-              <form
-                id="sign-up-form"
-                className="flex flex-col gap-4"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  form.handleSubmit();
-                }}
+      {isRegistered ? (
+        <RegSuccessScreen onSwitchToSignIn={onSwitchToSignIn} />
+      ) : (
+        <Card className="w-full">
+          <CardHeader></CardHeader>
+          <CardContent className="w-100%">
+            <form
+              id="sign-up-form"
+              className="flex flex-col gap-4"
+              onSubmit={(e) => {
+                e.preventDefault();
+                form.handleSubmit();
+              }}
+            >
+              <div
+                className={`${currentSelectedRole === UserRole.NOT_SELECTED ? "" : "hidden"}`}
               >
-                <div
-                  className={`${currentSelectedRole === UserRole.NOT_SELECTED ? "" : "hidden"}`}
-                >
-                  <SelectAccountView
-                    onRoleChange={(field, value) => {
-                      form.setFieldValue(field as "role", value);
-                      setCurrentSelectedRole(value as UserRole);
-                    }}
-                  />
-                </div>
-                <div
-                  className={`${currentSelectedRole !== UserRole.NOT_SELECTED ? "" : "hidden"}`}
-                >
-                  <FieldGroup>
-                    {formFieldsArr.map(({ name, icon, placeholder, type }) => (
-                      <form.Field
-                        name={name}
-                        key={name}
-                        children={(field) => {
-                          const isInvalid =
-                            field.state.meta.isTouched &&
-                            !field.state.meta.isValid;
-                          return (
-                            <FormField
-                              field={field}
-                              name={field.name}
-                              icon={icon}
-                              inputType={type}
-                              isInvalid={isInvalid}
-                              placeholder={placeholder}
-                              key={name}
+                <SelectAccountView
+                  onRoleChange={(field, value) => {
+                    form.setFieldValue(field as "role", value);
+                    setCurrentSelectedRole(value as UserRole);
+                  }}
+                />
+              </div>
+              <div
+                className={`${currentSelectedRole !== UserRole.NOT_SELECTED ? "" : "hidden"}`}
+              >
+                <FieldGroup>
+                  {formFieldsArr.map(({ name, icon, placeholder, type }) => (
+                    <form.Field
+                      name={name}
+                      key={name}
+                      children={(field) => {
+                        const isInvalid =
+                          field.state.meta.isTouched &&
+                          !field.state.meta.isValid;
+                        return (
+                          <FormField
+                            field={field}
+                            name={field.name}
+                            icon={icon}
+                            inputType={type}
+                            isInvalid={isInvalid}
+                            placeholder={placeholder}
+                            key={name}
+                          />
+                        );
+                      }}
+                    />
+                  ))}
+                </FieldGroup>
+
+                <FieldGroup className="flex flex-col gap-2.5 py-5">
+                  <form.Field name="rememberMe">
+                    {(field) => (
+                      <div className="flex items-center gap-3">
+                        <Checkbox
+                          id="rememberMe"
+                          checked={field.state.value ?? false}
+                          onCheckedChange={(val) => field.handleChange(!!val)}
+                        />
+                        <Label htmlFor="rememberMe">Remember me</Label>
+                      </div>
+                    )}
+                  </form.Field>
+
+                  <form.Field name="termsAccepted">
+                    {(field) => {
+                      const showError =
+                        (form.state.submissionAttempts > 0 ||
+                          field.state.meta.isTouched) &&
+                        !field.state.meta.isValid;
+
+                      return (
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center gap-3">
+                            <Checkbox
+                              id="termsAccepted"
+                              checked={field.state.value}
+                              onCheckedChange={(val) =>
+                                field.handleChange(!!val)
+                              }
+                              onBlur={field.handleBlur} // important
                             />
-                          );
-                        }}
-                      />
-                    ))}
-                  </FieldGroup>
-                  <FieldGroup className="flex flex-col gap-2.5 py-5">
-                    <form.Field name="rememberMe">
-                      {(field) => (
-                        <div className="flex items-center gap-3">
-                          <Checkbox
-                            id="rememberMe"
-                            checked={field.state.value ?? false}
-                            onCheckedChange={(val) => field.handleChange(!!val)}
-                          />
-                          <Label htmlFor="rememberMe">Zapamti me</Label>
+                            <Label htmlFor="termsAccepted">
+                              I accept the terms of service
+                            </Label>
+                          </div>
+
+                          {showError && (
+                            <p className="text-sm text-destructive">
+                              {field.state.meta.errors?.[0]?.message}
+                            </p>
+                          )}
                         </div>
-                      )}
-                    </form.Field>
-                    <form.Field name="termsAccepted">
-                      {(field) => (
-                        <div className="flex items-center gap-3">
-                          <Checkbox
-                            id="termsAccepted"
-                            checked={field.state.value}
-                            onCheckedChange={(val) => field.handleChange(!!val)}
-                          />
-                          <Label htmlFor="termsAccepted">
-                            Prihvatam uslove koriscenja
-                          </Label>
-                        </div>
-                      )}
-                    </form.Field>
-                  </FieldGroup>
-                  <Field orientation="horizontal">
-                    <Button
-                      type="submit"
-                      className="w-full outline-none"
-                      size="lg"
-                    >
-                      Registrujte se
-                    </Button>
-                  </Field>
-                </div>
-              </form>
-            </CardContent>
-            <CardFooter>
-              <div className="flex flex-col w-full">
-                <Field
-                  className="flex flex-row flex-1 justify-center items-center gap-2"
-                  orientation="horizontal"
-                >
-                  <p className="mt-4 text-sm text-primary">
-                    Vec imate nalog?
-                    <Button
-                      type="button"
-                      variant="link"
-                      className="pl-2 align-baseline text-primary font-extrabold underline"
-                      onClick={onSwitchToSignIn}
-                    >
-                      Ulogujte se
-                    </Button>
-                  </p>
+                      );
+                    }}
+                  </form.Field>
+                </FieldGroup>
+
+                <Field orientation="horizontal">
+                  <Button
+                    type="submit"
+                    className="w-full outline-none"
+                    size="lg"
+                  >
+                    Register
+                  </Button>
                 </Field>
               </div>
-            </CardFooter>
-          </Card>
-        )}
-      </div>
+            </form>
+          </CardContent>
+
+          <CardFooter>
+            <div className="flex flex-col w-full">
+              <Field
+                className="flex flex-row flex-1 justify-center items-center gap-2"
+                orientation="horizontal"
+              >
+                <p className="mt-4 text-sm text-primary">
+                  Already have an account?
+                  <Button
+                    type="button"
+                    variant="link"
+                    className="pl-2 align-baseline text-primary font-extrabold underline"
+                    onClick={onSwitchToSignIn}
+                  >
+                    Sign in
+                  </Button>
+                </p>
+              </Field>
+            </div>
+          </CardFooter>
+        </Card>
+      )}
     </div>
   );
 };
