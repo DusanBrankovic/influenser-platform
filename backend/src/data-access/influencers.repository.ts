@@ -95,7 +95,7 @@ export class InfluencersRepository {
         industries: true,
         values: true,
       },
-      where: { ...filters, isPrivate: false },
+      where: { ...filters, isPrivate: false, isDeleted: false  },
     });
   }
   
@@ -127,6 +127,7 @@ export class InfluencersRepository {
     return this.db.influencer.findMany({
       where: {
         isPrivate: false,
+        isDeleted: false ,
         ...(orFilters.length > 0 ? { OR: orFilters } : {}),
       },
       select: {
@@ -142,7 +143,7 @@ export class InfluencersRepository {
 
   async findOne(id: number, onlyPublic: boolean = false) {
     return this.db.influencer.findUnique({
-      where: { userId: id, ...(onlyPublic ? { isPrivate: false } : {}) },
+      where: { userId: id, isDeleted: false, ...(onlyPublic ? { isPrivate: false } : {})},
     });
   }
 }
