@@ -1,7 +1,12 @@
 import { useForm } from "@tanstack/react-form";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -10,8 +15,17 @@ import { registerApi } from "@/services/authService";
 import RegSuccessScreen from "./RegSuccess";
 import { getActions, useIsRegistered } from "@/auth/authStore";
 import type { RegisterPayload } from "@/types/auth.types";
+import { SelectAccountView } from "./SelectAccountVIew";
+import { UserRole } from "@/types/auth.types";
+import { useState } from "react";
 
 const { setIsRegistered } = getActions();
+
+const roleSchema = z
+  .enum([UserRole.NOT_SELECTED, UserRole.BUSINESS, UserRole.INFLUENCER])
+  .refine((r) => r !== UserRole.NOT_SELECTED, {
+    message: "Morate izabrati tip naloga.",
+  });
 
 const passwordSchema = z
   .string()
@@ -49,7 +63,9 @@ const formSchema = z.object({
     .string()
     .min(5, "Full name must be at least 5 characters long.")
     .max(100, "Full name can be at most 100 characters long.")
-    .includes(" ", { message: "Please enter both first and last name (with a space)." }),
+    .includes(" ", {
+      message: "Please enter both first and last name (with a space).",
+    }),
   email: z
     .email({ message: "Please enter a valid email address." })
     .min(5, "Email must be at least 5 characters long.")
@@ -58,17 +74,18 @@ const formSchema = z.object({
     message: "You must accept the terms of service.",
   }),
   rememberMe: z.boolean(),
+  role: roleSchema,
 });
 
 const combinedSchema = formSchema.merge(passwordConfirmationSchema);
 
-const Register = ({
-  onSwitchToSignIn,
-}: {
-  onSwitchToSignIn: () => void;
-}) => {
+const Register = ({ onSwitchToSignIn }: { onSwitchToSignIn: () => void }) => {
+  const [currentSelectedRole, setCurrentSelectedRole] = useState<UserRole>(
+    UserRole.NOT_SELECTED,
+  );
   const form = useForm({
     defaultValues: {
+      role: UserRole.NOT_SELECTED as UserRole,
       fullname: "",
       email: "",
       username: "",
@@ -86,7 +103,7 @@ const Register = ({
         email: value.email,
         name: value.fullname,
         password: value.password,
-        role: "INFLUENCER",
+        role: value.role,
       };
 
       console.log("Registering user:", user);
@@ -152,81 +169,102 @@ const Register = ({
                 form.handleSubmit();
               }}
             >
-              <FieldGroup>
-                {formFieldsArr.map(({ name, icon, placeholder, type }) => (
-                  <form.Field
-                    name={name}
-                    key={name}
-                    children={(field) => {
-                      const isInvalid =
-                        field.state.meta.isTouched && !field.state.meta.isValid;
-                      return (
-                        <FormField
-                          field={field}
-                          name={field.name}
-                          icon={icon}
-                          inputType={type}
-                          isInvalid={isInvalid}
-                          placeholder={placeholder}
-                          key={name}
+              <div
+                className={`${currentSelectedRole === UserRole.NOT_SELECTED ? "" : "hidden"}`}
+              >
+                <SelectAccountView
+                  onRoleChange={(field, value) => {
+                    form.setFieldValue(field as "role", value);
+                    setCurrentSelectedRole(value as UserRole);
+                  }}
+                />
+              </div>
+              <div
+                className={`${currentSelectedRole !== UserRole.NOT_SELECTED ? "" : "hidden"}`}
+              >
+                <FieldGroup>
+                  {formFieldsArr.map(({ name, icon, placeholder, type }) => (
+                    <form.Field
+                      name={name}
+                      key={name}
+                      children={(field) => {
+                        const isInvalid =
+                          field.state.meta.isTouched &&
+                          !field.state.meta.isValid;
+                        return (
+                          <FormField
+                            field={field}
+                            name={field.name}
+                            icon={icon}
+                            inputType={type}
+                            isInvalid={isInvalid}
+                            placeholder={placeholder}
+                            key={name}
+                          />
+                        );
+                      }}
+                    />
+                  ))}
+                </FieldGroup>
+
+                <FieldGroup className="flex flex-col gap-2.5 py-5">
+                  <form.Field name="rememberMe">
+                    {(field) => (
+                      <div className="flex items-center gap-3">
+                        <Checkbox
+                          id="rememberMe"
+                          checked={field.state.value ?? false}
+                          onCheckedChange={(val) => field.handleChange(!!val)}
                         />
+                        <Label htmlFor="rememberMe">Remember me</Label>
+                      </div>
+                    )}
+                  </form.Field>
+
+                  <form.Field name="termsAccepted">
+                    {(field) => {
+                      const showError =
+                        (form.state.submissionAttempts > 0 ||
+                          field.state.meta.isTouched) &&
+                        !field.state.meta.isValid;
+
+                      return (
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center gap-3">
+                            <Checkbox
+                              id="termsAccepted"
+                              checked={field.state.value}
+                              onCheckedChange={(val) =>
+                                field.handleChange(!!val)
+                              }
+                              onBlur={field.handleBlur} // important
+                            />
+                            <Label htmlFor="termsAccepted">
+                              I accept the terms of service
+                            </Label>
+                          </div>
+
+                          {showError && (
+                            <p className="text-sm text-destructive">
+                              {field.state.meta.errors?.[0]?.message}
+                            </p>
+                          )}
+                        </div>
                       );
                     }}
-                  />
-                ))}
-              </FieldGroup>
+                  </form.Field>
+                </FieldGroup>
 
-              <FieldGroup className="flex flex-col gap-2.5 py-5">
-                <form.Field name="rememberMe">
-                  {(field) => (
-                    <div className="flex items-center gap-3">
-                      <Checkbox
-                        id="rememberMe"
-                        checked={field.state.value ?? false}
-                        onCheckedChange={(val) => field.handleChange(!!val)}
-                      />
-                      <Label htmlFor="rememberMe">Remember me</Label>
-                    </div>
-                  )}
-                </form.Field>
-
-                <form.Field name="termsAccepted">
-                  {(field) => {
-                    const showError =
-                      (form.state.submissionAttempts > 0 ||
-                        field.state.meta.isTouched) &&
-                      !field.state.meta.isValid;
-
-                    return (
-                      <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-3">
-                          <Checkbox
-                            id="termsAccepted"
-                            checked={field.state.value}
-                            onCheckedChange={(val) => field.handleChange(!!val)}
-                            onBlur={field.handleBlur} // important
-                          />
-                          <Label htmlFor="termsAccepted">
-                            I accept the terms of service
-                          </Label>
-                        </div>
-
-                        {showError && (
-                          <p className="text-sm text-destructive">
-                            {field.state.meta.errors?.[0]?.message}
-                          </p>
-                        )}
-                      </div>
-                    );
-                  }}
-                </form.Field>
-              </FieldGroup>
-
-              <Field orientation="horizontal">
-                <Button type="submit" className="w-full outline-none" size="lg">
-                  Register
-                </Button>
-              </Field>
+                <Field orientation="horizontal">
+                  <Button
+                    type="submit"
+                    className="w-full outline-none"
+                    size="lg"
+                  >
+                    Register
+                  </Button>
+                </Field>
+              </div>
             </form>
           </CardContent>
 
