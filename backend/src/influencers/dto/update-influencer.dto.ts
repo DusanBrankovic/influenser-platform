@@ -7,9 +7,6 @@ export class UpdateInfluencerDto {
   @IsString()
   name?: string;
 
-  @IsOptional()
-  @IsString()
-  headline?: string;
 
   @IsOptional()
   @IsNumber()
@@ -42,5 +39,11 @@ export class UpdateInfluencerDto {
   @IsArray()
   @IsPhoneNumber(undefined, { each: true })
   contactPhone?: string[];
+  
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  links?: string[]
+  
 }
 
