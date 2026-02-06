@@ -3,6 +3,7 @@ import InfluencerProfileFeed from "./influencer-feed/InfluencerProfileFeed";
 import type { Influencer } from "@/types/influencer.types";
 import SavedPostsFeed from "./infuencer-saved-posts/SavedPostsFeed";
 import { getUserIdFromToken } from "@/auth/authStore";
+import { ReviewFeed } from "./influencer-reviewa/ReviewFeed";
 
 type NavContent = {
   name: string;
@@ -15,16 +16,23 @@ type InfluencerContentProps = {
   isEditable?: boolean;
 };
 
-export default function InfluencerContent({ influencer, isEditable }: InfluencerContentProps) {
+export default function InfluencerContent({
+  influencer,
+  isEditable,
+}: InfluencerContentProps) {
   const userId = getUserIdFromToken();
   const [navContent, setNavContent] = useState<NavContent[]>([
     { name: "Posts", selected: true, display: true },
-    { name: "Campaigns", selected: false , display: true },
-    { name: "Saved Items", selected: false, display:  influencer.userId === userId },
+    { name: "Campaigns", selected: false, display: false },
+    {
+      name: "Saved Items",
+      selected: false,
+      display: influencer.userId === userId,
+    },
     { name: "Reviews", selected: false, display: true },
   ]);
 
-  const filteredNavContent = navContent.filter(item => item.display);
+  const filteredNavContent = navContent.filter((item) => item.display);
 
   if (filteredNavContent.length !== navContent.length) {
     setNavContent(filteredNavContent);
@@ -36,7 +44,10 @@ export default function InfluencerContent({ influencer, isEditable }: Influencer
   return (
     <div>
       <div className="flex justify-between items-center rounded-xl">
-        <ContentNavBar navContent={filteredNavContent} setNavContent={setNavContent} />
+        <ContentNavBar
+          navContent={filteredNavContent}
+          setNavContent={setNavContent}
+        />
       </div>
 
       {isSelectedItem("Posts") && (
@@ -46,19 +57,14 @@ export default function InfluencerContent({ influencer, isEditable }: Influencer
         />
       )}
 
-      {isSelectedItem("Campaigns") && (<InfluencerProfileFeed
+      {isSelectedItem("Campaigns") && (
+        <InfluencerProfileFeed
           influencer={influencer}
           isEditable={isEditable}
         />
       )}
-      {isSelectedItem("Saved Items") && (<SavedPostsFeed/>
-      )}
-      {isSelectedItem("Reviews") && (<InfluencerProfileFeed
-          userId={influencer.userId}
-          influencer={influencer}
-          isEditable={isEditable}
-        />
-      )}
+      {isSelectedItem("Saved Items") && <SavedPostsFeed />}
+      {isSelectedItem("Reviews") && <ReviewFeed influencer={influencer} />}
     </div>
   );
 }
@@ -70,7 +76,11 @@ function ContentNavBar({
   navContent: NavContent[];
   setNavContent: React.Dispatch<React.SetStateAction<NavContent[]>>;
 }) {
-  const calculateBorderClasses = (idx: number, length: number, selected: boolean) => {
+  const calculateBorderClasses = (
+    idx: number,
+    length: number,
+    selected: boolean,
+  ) => {
     const isFirst = idx === 0;
     const isLast = idx === length - 1;
     const isMiddle = idx > 0 && idx < length - 1;
@@ -93,7 +103,7 @@ function ContentNavBar({
       prev.map((item) => ({
         ...item,
         selected: item.name === name,
-      }))
+      })),
     );
   };
 

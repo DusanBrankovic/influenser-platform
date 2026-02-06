@@ -8,6 +8,7 @@ import { PostRepository } from "./post.repository";
 import { BusinessRepository } from "./businesses.repository";
 import { DataRepository } from "./data.repository";
 import { CommentsRepository } from "./comments.repository";
+import { ReviewsRepository } from "./reviews.repository";
 
 @Module({
   providers: [
@@ -18,6 +19,7 @@ import { CommentsRepository } from "./comments.repository";
     DataRepository,
     PostRepository,
     CommentsRepository,
+    ReviewsRepository,
     {
       provide: BACKBLAZE,
       useClass: BackBlazeService,
@@ -31,6 +33,7 @@ import { CommentsRepository } from "./comments.repository";
     BusinessRepository,
     DataRepository,
     CommentsRepository,
+    ReviewsRepository,
   ],
 })
 export class DataAccessModule {}

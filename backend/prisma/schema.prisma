@@ -87,8 +87,10 @@ model User {
   password    String
   role        Role
 
-  influencer Influencer?
-  business Business?
+  influencer  Influencer?
+  business    Business?
+  reviews     Review[]        @relation("ReviewedUser")
+  reviewsGiven Review[]       @relation("ReviewerUser")
 }
 
 model Influencer {
@@ -126,6 +128,7 @@ model Post {
 
   comments   Comment[]
   interactions PostInteraction[]
+
 }
 
 model Business {
@@ -151,4 +154,15 @@ model PostInteraction {
   postId      Int
   post        Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
   action      PostAction
+}
+
+model Review { 
+  id           Int @id @default(autoincrement()) 
+  userId       Int 
+  user         User @relation("ReviewedUser", fields: [userId], references: [id], onDelete: Cascade) 
+  reviewerId   Int 
+  reviewer     User @relation("ReviewerUser", fields: [reviewerId], references: [id], onDelete: Cascade) 
+  rating       Int 
+  comment      String 
+  createdAt    DateTime 
 }

@@ -3,40 +3,25 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
+  ParseIntPipe,
 } from "@nestjs/common";
 import { ReviewsService } from "./reviews.service";
 import { CreateReviewDto } from "./dto/create-review.dto";
-import { UpdateReviewDto } from "./dto/update-review.dto";
+import { JwtPayload } from "src/auth/dto/credentials.dto";
+import { GetUser } from "src/auth/get-user.decorator";
 
 @Controller("reviews")
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
-  @Post()
-  create(@Body() createReviewDto: CreateReviewDto) {
-    return this.reviewsService.create(createReviewDto);
+  @Post("/:userId")
+  create(@Param("userId", ParseIntPipe) userId: number, @GetUser() user: JwtPayload, @Body() createReviewDto: CreateReviewDto) {
+    return this.reviewsService.create(userId, user.id, createReviewDto);
   }
 
-  @Get()
-  findAll() {
-    return this.reviewsService.findAll();
-  }
-
-  @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.reviewsService.findOne(+id);
-  }
-
-  @Patch(":id")
-  update(@Param("id") id: string, @Body() updateReviewDto: UpdateReviewDto) {
-    return this.reviewsService.update(+id, updateReviewDto);
-  }
-
-  @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.reviewsService.remove(+id);
+  @Get("/:userId")
+  findAllForUser(@Param("userId", ParseIntPipe) userId: number) {
+    return this.reviewsService.findAllForUser(userId);
   }
 }
