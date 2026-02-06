@@ -102,27 +102,50 @@ export class InfluencersService {
  
 
   
-  async updateProfilePicture(userId: number, file: Express.Multer.File) {
+  // async updateProfilePicture(userId: number, file: Express.Multer.File) {
+  //     if (!file) throw new BadRequestException("No file uploaded");
+  //     if (!file.mimetype?.startsWith("image/")) throw new BadRequestException("Only image files are allowed");
+      
+  //     const [uploadResult] = await this.bucketService.uploadFiles([file], userId);
+  //     const { dbUrl, signedUrl } = uploadResult;
+
+  //     const existing = await this.influencersRepository.findOne(userId);
+  //     if (existing?.profilePicture) {
+  //       try {
+  //         await this.bucketService.deleteFile(existing.profilePicture);
+  //       } catch (err) {
+  //         console.error("Failed to delete old profile picture", err);
+  //       }
+  //     }
+  
+  //     const updated = await this.influencersRepository.update(userId, { profilePicture: dbUrl });
+  
+  //     return { ...updated, profilePicture: signedUrl };
+  //   }
+  
+
+async updateInfluencerPhoto(userId: number, file: Express.Multer.File, what: "profilePicture" | "coverPhoto") {
       if (!file) throw new BadRequestException("No file uploaded");
       if (!file.mimetype?.startsWith("image/")) throw new BadRequestException("Only image files are allowed");
       
+
       const [uploadResult] = await this.bucketService.uploadFiles([file], userId);
       const { dbUrl, signedUrl } = uploadResult;
 
       const existing = await this.influencersRepository.findOne(userId);
-      if (existing?.profilePicture) {
+      if (existing?.[what] && existing[what] !== dbUrl) {
         try {
-          await this.bucketService.deleteFile(existing.profilePicture);
+          await this.bucketService.deleteFile(existing[what]);
         } catch (err) {
           console.error("Failed to delete old profile picture", err);
         }
       }
   
-      const updated = await this.influencersRepository.update(userId, { profilePicture: dbUrl });
+      const updated = await this.influencersRepository.update(userId, { [what]: dbUrl });
   
-      return { ...updated, profilePicture: signedUrl };
+      return { ...updated, [what]: signedUrl };
     }
-  
+
   
   remove(id: number) {
     return `This action removes a #${id} influencer`;

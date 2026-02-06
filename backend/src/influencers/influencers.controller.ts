@@ -229,7 +229,32 @@ export class InfluencersController {
     @UploadedFile() image: Express.Multer.File,
   ) {
     // console.log("###############: ", image?.originalname, "type", image.mimetype, " size: ", image.size)
-    return this.influencersService.updateProfilePicture(+user.id, image);
+    return this.influencersService.updateInfluencerPhoto(+user.id, image, "profilePicture");
+  }
+
+
+   @ApiOperation({
+    summary: "Update INFLUENCER coverPhoto",
+    description: "This endpoint updates INFLUENCER coverPhoto.",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Successfully updated",
+    content: {
+      "application/json": {
+        schema: ProfilePictureSchema,
+      },
+    },
+  })
+  @Roles("INFLUENCER")
+  @Patch("me/cover-photo")
+  @HttpCode(HttpStatus.OK)
+  @UseInterceptors(FileInterceptor("image"))
+  async updateCoverPhoto(
+    @GetUser() user: JwtPayload,
+    @UploadedFile() image: Express.Multer.File,
+  ) {
+    return this.influencersService.updateInfluencerPhoto(+user.id, image, "coverPhoto");
   }
 
   @Delete(":id")
