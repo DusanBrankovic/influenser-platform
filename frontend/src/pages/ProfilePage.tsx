@@ -9,15 +9,24 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   togglePrivateProfile,
   updateInfluencer,
+  deleteInfluencer,
 } from "@/services/influencerService";
 import { useRouteContext, useRouter } from "@tanstack/react-router";
-import { Globe, Mail, MapPin, Pencil, Phone, Share2 } from "lucide-react";
+import { Globe, Mail, MapPin, Pencil, Phone, Share2, Settings, LogOut, Trash2 } from "lucide-react";
 import React from "react";
 import { EditBioAndExperiencePopUp } from "@/components/EditBioAndExperiencePopUp"; // adjust path
 import type { UpdateInfluencerDto } from "@/types/influencer.types";
 import { IndustryLabels, ValueLabels } from "@/data/prettifyEnums";
 import Spinner from "@/components/Spinner";
 import { CanAccess } from "@/auth/CanAccess";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
+import { getActions } from "@/auth/authStore";
+import ConfirmModal from "@/components/ConfirmModal";
 
 export default function ProfilePage() {
   const { influencer, isPublished } = useRouteContext({
@@ -29,10 +38,30 @@ export default function ProfilePage() {
   const [isToggled, setIsToggled] = React.useState<boolean>(() => !isPublished);
 
   const [editOpen, setEditOpen] = React.useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = React.useState(false);
+
+  const { clearTokens, setIsUnregistered } = getActions();
 
   const handleToggle = (checked: boolean) => {
     setIsToggled(checked);
     togglePrivateProfile(!checked);
+  };
+
+  const handleLogout = () => {
+    setIsUnregistered();
+    clearTokens();
+    router.navigate({ to: "/auth", replace: true });
+  };
+
+  const handleDeleteProfile = async () => {
+    try {
+      await deleteInfluencer(influencer.userId);
+      setIsUnregistered();
+      clearTokens();
+      router.navigate({ to: "/auth", replace: true });
+    } catch (error) {
+      console.error("Failed to delete profile:", error);
+    }
   };
 
   return (
@@ -74,14 +103,13 @@ export default function ProfilePage() {
                 <p className="text-sm text-black">@{influencer.userId}</p>
               </div>
               <CanAccess roles={["INFLUENCER"]}>
-                <div className="flex items-center">
-                  <div className="relative flex h-8 w-50 items-center rounded-full bg-neutral-800 p-1">
+                <div className="flex items-center gap-2 sm:gap-3 pr-2 sm:pr-5">
+                  
+                  <div className="relative flex h-8 w-44 sm:w-50 items-center rounded-full bg-neutral-800 p-1">
                     <div
-                      className={`absolute top-1 bottom-1 w-[48%] rounded-full bg-neutral-500 transition-all duration-300 ${
-                        isToggled ? "left-1" : "left-1/2"
-                      }`}
+                      className={`absolute top-1 bottom-1 w-[48%] rounded-full bg-neutral-500 transition-all duration-300 ${isToggled ? "left-1" : "left-1/2"
+                        }`}
                     />
-
                     <button
                       type="button"
                       onClick={() => handleToggle(true)}
@@ -89,7 +117,6 @@ export default function ProfilePage() {
                     >
                       Publish
                     </button>
-
                     <button
                       type="button"
                       onClick={() => handleToggle(false)}
@@ -98,6 +125,35 @@ export default function ProfilePage() {
                       Unpublish
                     </button>
                   </div>
+                  
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        className="h-9 w-9 sm:h-10 sm:w-10 rounded-lg border-black/10 bg-white/50 hover:bg-white shrink-0"
+                      >
+                        <Settings className="h-5 w-5 text-black" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48 rounded-xl border-black/10 p-2">
+                      <DropdownMenuItem
+                        onClick={handleLogout}
+                        className="flex items-center gap-2 cursor-pointer rounded-lg text-black hover:bg-black/5"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        <span>Izloguj se</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => setIsConfirmOpen(true)}
+                        className="flex items-center gap-2 cursor-pointer rounded-lg text-red-600 focus:text-red-600 focus:bg-red-50"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        <span>Obriši profil</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </CanAccess>
             </div>
@@ -267,6 +323,13 @@ export default function ProfilePage() {
           setEditOpen(false);
         }}
         onCancel={() => setEditOpen(false)}
+      />
+
+      <ConfirmModal
+        isOpen={isConfirmOpen}
+        onClose={() => setIsConfirmOpen(false)}
+        onConfirm={handleDeleteProfile}
+        text="Da li ste sigurni da želite da obrišete profil? Ova akcija je povratna?"
       />
     </div>
   );

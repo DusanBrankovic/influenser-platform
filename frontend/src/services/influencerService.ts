@@ -86,3 +86,13 @@ export async function isLoggedInUserPublished(): Promise<boolean> {
     if (!res.ok) throw new Error("Failed to check profile publication status");
     return res.json();
 }
+
+export async function deleteInfluencer(userId: number) {
+    await fetch(`${apiUrl}/influencers/${userId}`, {
+        method: "DELETE",
+        headers: { 
+            "Content-Type": "application/json",
+            ...authHeaders(),
+        }
+    });
+}

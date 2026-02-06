@@ -257,8 +257,18 @@ export class InfluencersController {
     return this.influencersService.updateInfluencerPhoto(+user.id, image, "coverPhoto");
   }
 
+   @ApiOperation({
+    summary: "delete influencer",
+    description: "This endpoint deletes INFLUENCER.",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Successfully deleted",
+  })
+  @Roles("INFLUENCER", "ADMIN")
+  @HttpCode(HttpStatus.OK)
   @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.influencersService.remove(+id);
+  remove(@GetUser() user: JwtPayload) {
+    return this.influencersService.remove(+user.id);
   }
 }
