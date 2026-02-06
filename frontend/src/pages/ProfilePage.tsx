@@ -329,7 +329,7 @@ export default function ProfilePage() {
         isOpen={isConfirmOpen}
         onClose={() => setIsConfirmOpen(false)}
         onConfirm={handleDeleteProfile}
-        text="Da li ste sigurni da želite da obrišete profil? Ova akcija je povratna?"
+        text="Da li ste sigurni da želite da obrišete profil?"
       />
     </div>
   );
