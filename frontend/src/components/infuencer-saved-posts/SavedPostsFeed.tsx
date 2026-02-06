@@ -21,24 +21,37 @@ export default function SavedPostsFeed() {
   const onOpenModal = (postId: number) => {
     setSelectedPostId(postId);
     setOpenSinglePostModal(true);
-  }
+  };
 
   const onCloseModal = () => {
     setSelectedPostId(null);
     setOpenSinglePostModal(false);
-  } 
+  };
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error fetching saved posts</div>;
   return (
     <div className="flex flex-col p-10 gap-6">
-        {selectedPostId !== null && (<SinglePostModal
-            influencer={data?.find(post => post.id === selectedPostId)?.user as SavedPost["user"]}
-            post={data?.find(post => post.id === selectedPostId) as SavedPost}
-            openedPost={openSinglePostModal}
-            closeModal={() => onCloseModal()}
-            comments={data?.find(post => post.id === selectedPostId)?.comments as CommentDto[]}
-          />)}
+      {data?.length === 0 && (
+        <div className="flex items-center justify-center py-20 text-muted-foreground text-lg">
+          No saved posts yet
+        </div>
+      )}
+      {selectedPostId !== null && (
+        <SinglePostModal
+          influencer={
+            data?.find((post) => post.id === selectedPostId)
+              ?.user as SavedPost["user"]
+          }
+          post={data?.find((post) => post.id === selectedPostId) as SavedPost}
+          openedPost={openSinglePostModal}
+          closeModal={() => onCloseModal()}
+          comments={
+            data?.find((post) => post.id === selectedPostId)
+              ?.comments as CommentDto[]
+          }
+        />
+      )}
       {data?.map((post) => (
         <div
           key={post.id}

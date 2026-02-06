@@ -1,26 +1,16 @@
 import { Injectable } from "@nestjs/common";
 import { CreateReviewDto } from "./dto/create-review.dto";
-import { UpdateReviewDto } from "./dto/update-review.dto";
+import { ReviewsRepository } from "src/data-access/reviews.repository";
 
 @Injectable()
 export class ReviewsService {
-  create(createReviewDto: CreateReviewDto) {
-    return "This action adds a new review";
+  constructor(private reviewsRepository: ReviewsRepository) {}
+
+  create(userId: number, reviewerId: number, createReviewDto: CreateReviewDto) {
+    return this.reviewsRepository.createReview(userId, reviewerId, createReviewDto);
   }
 
-  findAll() {
-    return `This action returns all reviews`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} review`;
-  }
-
-  update(id: number, updateReviewDto: UpdateReviewDto) {
-    return `This action updates a #${id} review`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} review`;
+  findAllForUser(userId: number) {
+    return this.reviewsRepository.getAllReviewsForUser(userId);
   }
 }
