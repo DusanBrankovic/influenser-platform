@@ -9,6 +9,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useAccessTokenData } from "@/auth/authStore";
 
 type EditProfilePopupValues = {
   headline: string;
@@ -35,6 +36,9 @@ export function EditBioAndExperiencePopUp({
   onCancel,
   saving = false,
 }: EditBioAndExperiencePopUpProps) {
+  const accessTokenData = useAccessTokenData();
+  const isBusiness = accessTokenData?.role === "BUSINESS";
+
   const [description, setDescription] = React.useState(
     initialValues?.headline ?? ""
   );
@@ -96,26 +100,27 @@ export function EditBioAndExperiencePopUp({
                 </div>
 
 
-            <div className="space-y-2">
-              <Label className="font-semibold">Godine iskustva</Label>
-              <Input
-                value={yearsOfExperience}
-                onChange={(e) => {
-                    const cleaned = e.target.value.replace(/\D/g, "");
-                    setYearsOfExperience(cleaned);
-                }}
-                onKeyDown={(e) => {
-                    if (["e", "E", "+", "-", "."].includes(e.key)) {
-                    e.preventDefault();
-                    }
-                }}
-                placeholder="Years of experience..."
-                className="h-11 rounded-xl border border-black/70 bg-white"
-                inputMode="numeric"
-                maxLength={3}
-                />
-
-            </div>
+            {!isBusiness && (
+              <div className="space-y-2">
+                <Label className="font-semibold">Godine iskustva</Label>
+                <Input
+                  value={yearsOfExperience}
+                  onChange={(e) => {
+                      const cleaned = e.target.value.replace(/\D/g, "");
+                      setYearsOfExperience(cleaned);
+                  }}
+                  onKeyDown={(e) => {
+                      if (["e", "E", "+", "-", "."].includes(e.key)) {
+                      e.preventDefault();
+                      }
+                  }}
+                  placeholder="Years of experience..."
+                  className="h-11 rounded-xl border border-black/70 bg-white"
+                  inputMode="numeric"
+                  maxLength={3}
+                  />
+              </div>
+            )}
 
             <div className="flex justify-end gap-4 pt-2">
               <Button
