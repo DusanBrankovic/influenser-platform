@@ -19,6 +19,10 @@ export class CreateInfluencerDto {
     @IsString()
     name: string;
 
+    @IsNotEmpty()
+    @IsString()
+    nametag: string;
+
     @IsString()
     @IsOptional()
     description: string;

@@ -19,7 +19,13 @@ export async function getAllInfluencers(
   params?.value?.forEach((v) => qs.append("value", v));
   params?.industry?.forEach((i) => qs.append("industry", i));
 
+  if (params?.experience_range !== undefined) {
+    qs.set("experience_range", String(params.experience_range));
+  }
+
   const url = `${apiUrl}/influencers${qs.toString() ? `?${qs.toString()}` : ""}`;
+
+  console.log("Fetching influencers with URL:", url);
 
   const res = await fetch(url, {
     method: "GET",

@@ -10,10 +10,26 @@ import {
 import { ChevronDown, Search, X } from "lucide-react";
 import { IndustryLabels, ValueLabels } from "@/data/prettifyEnums";
 
+type ExperienceOption = {
+  label: string;
+  max?: number;
+};
+
+const EXPERIENCE_OPTIONS: ExperienceOption[] = [
+  { label: "Experience" },
+  { label: "< 1", max: 1 },
+  { label: "1 - 2", max: 2 },
+  { label: "2 – 3", max: 3 },
+  { label: "3 – 4", max: 4 },
+  { label: "4 – 5", max: 5 },
+  { label: "> 5", max: 100 },
+];
+
 type SearchParams = {
   name: string;
   value?: string[];
   industry?: string[];
+  experience_range?: number;
 };
 
 type SearchComponentProps = {
@@ -34,14 +50,21 @@ export default function SearchComponent({
     [],
   );
 
+  const [experience_range, setExperienceRange] = React.useState<number | undefined>(
+    undefined,
+  );
+
   const [valuesOpen, setValuesOpen] = React.useState(false);
   const [industriesOpen, setIndustriesOpen] = React.useState(false);
+  const [experienceOpen, setExperienceOpen] = React.useState(false);
 
   const runSearch = (next?: Partial<SearchParams>) => {
     onSearch({
       name: next?.name ?? name.trim(),
       value: next?.value ?? selectedValues,
       industry: next?.industry ?? selectedIndustries,
+      experience_range:
+        "experience_range" in (next ?? {}) ? next?.experience_range : experience_range,
     });
   };
 
@@ -61,6 +84,12 @@ export default function SearchComponent({
       : selectedIndustries.length === 1
         ? IndustryLabels[selectedIndustries[0]]
         : `${selectedIndustries.length} industries`;
+
+  const experienceLabel = (() => {
+    if (experience_range == null) return "Experience";
+    const opt = EXPERIENCE_OPTIONS.find((o) => o.max === experience_range);
+    return opt?.label ?? "Experience";
+  })();
 
   return (
     <form
@@ -111,7 +140,7 @@ export default function SearchComponent({
       </div>
 
       <div className="mt-4 flex flex-wrap justify-evenly gap-3">
-
+        {/* Values */}
         <DropdownMenu open={valuesOpen} onOpenChange={setValuesOpen}>
           <DropdownMenuTrigger asChild>
             <Button
@@ -134,10 +163,9 @@ export default function SearchComponent({
                   className="cursor-pointer flex items-center justify-between"
                   onSelect={(e) => {
                     e.preventDefault();
-
                     const next = toggleInArray(selectedValues, opt);
                     setSelectedValues(next);
-                    runSearch({ value: next }); 
+                    runSearch({ value: next });
                   }}
                 >
                   <span>{ValueLabels[opt]}</span>
@@ -159,6 +187,7 @@ export default function SearchComponent({
           </DropdownMenuContent>
         </DropdownMenu>
 
+        {/* Industries */}
         <DropdownMenu open={industriesOpen} onOpenChange={setIndustriesOpen}>
           <DropdownMenuTrigger asChild>
             <Button
@@ -181,7 +210,6 @@ export default function SearchComponent({
                   className="cursor-pointer flex items-center justify-between"
                   onSelect={(e) => {
                     e.preventDefault();
-
                     const next = toggleInArray(selectedIndustries, opt);
                     setSelectedIndustries(next);
                     runSearch({ industry: next });
@@ -199,6 +227,52 @@ export default function SearchComponent({
                 e.preventDefault();
                 setSelectedIndustries([]);
                 runSearch({ industry: [] });
+              }}
+            >
+              Clear selection
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {/* Experience (single select, max only) */}
+        <DropdownMenu open={experienceOpen} onOpenChange={setExperienceOpen}>
+          <DropdownMenuTrigger asChild>
+            <Button
+              type="button"
+              variant="secondary"
+              className="min-w-[200px] justify-between rounded-lg px-4 bg-neutral-300"
+            >
+              <span className="ps-2">{experienceLabel}</span>
+              <ChevronDown className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent className="w-[240px] max-h-64 overflow-y-auto">
+            {EXPERIENCE_OPTIONS.slice(1).map((opt) => {
+              const isSelected = experience_range === opt.max;
+
+              return (
+                <DropdownMenuItem
+                  key={opt.label}
+                  className="cursor-pointer flex items-center justify-between"
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    setExperienceRange(opt.max);
+                    runSearch({ experience_range: opt.max });
+                  }}
+                >
+                  <span>{opt.label}</span>
+                  {isSelected ? <span className="text-xs">✓</span> : null}
+                </DropdownMenuItem>
+              );
+            })}
+
+            <DropdownMenuItem
+              className="cursor-pointer text-muted-foreground"
+              onSelect={(e) => {
+                e.preventDefault();
+                setExperienceRange(undefined);
+                runSearch({ experience_range: undefined });
               }}
             >
               Clear selection
