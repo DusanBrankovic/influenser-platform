@@ -15,7 +15,12 @@ const RegSuccessScreen = ({
       <CardContent>
         <div className="flex flex-col w-full gap-8 justify-center items-center">
           <span className="text-muted-foreground">
-            <GoogleFontIcon size={64} fill="filled" icon="check_circle" />
+            <GoogleFontIcon
+              size={64}
+              icon="check_circle"
+              variant="rounded"
+              filled
+            />
           </span>
           <p className="text-3xl font-bold">
             Your account has been successfully created!

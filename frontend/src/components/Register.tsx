@@ -102,6 +102,7 @@ const Register = ({ onSwitchToSignIn }: { onSwitchToSignIn: () => void }) => {
       const user: RegisterPayload = {
         email: value.email,
         name: value.fullname,
+        nametag: value.username,
         password: value.password,
         role: value.role,
       };

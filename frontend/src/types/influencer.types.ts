@@ -1,7 +1,8 @@
 export type Influencer = {
   userId: number;
   name: string;
-  headline: string | null;
+  description: string | null;
+  nametag: string | null;
   experience: number | null;
   isPrivate: boolean;
   profileUrl: string | null;
@@ -11,17 +12,22 @@ export type Influencer = {
 };
 
 export type UpdateInfluencerDto = {
-  headline?: string | null;
+  name?: string | null;
   experience?: number | null;
-  profileUrl?: string | null;
-  profileImage?: string | null;
   industries?: string[];
   values?: string[];
+  description?: string;
+  nametag?: string;
+  contactMail?: string[];
+  contactPhone?: string[];
+  links?: string[]
 };
 
 export type SearchQueryParams = {
-    name?: string;
-    industry?: string;
-    value?: string;
+  name?: string;
+  value?: string[];
+  industry?: string[];
+  experience_range?: number;
 };
+
 

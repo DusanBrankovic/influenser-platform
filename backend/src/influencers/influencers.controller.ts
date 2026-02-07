@@ -80,7 +80,7 @@ export class InfluencersController {
       },
     },
   })
-  @Roles("INFLUENCER", "ADMIN")
+  @Roles("INFLUENCER", "BUSINESS", "ADMIN")
   @Post("/privacy")
   @HttpCode(HttpStatus.OK)
   publish(@GetUser() user: JwtPayload, @Body("isPrivate") isPrivate: boolean) {
@@ -109,7 +109,7 @@ export class InfluencersController {
       },
     },
   })
-  @Roles("INFLUENCER", "ADMIN")
+  @Roles("INFLUENCER", "BUSINESS", "ADMIN")
   @Get("/privacy")
   @HttpCode(HttpStatus.OK)
   isPublished(
@@ -130,7 +130,7 @@ export class InfluencersController {
     description: "Successfully updated profile",
     type: "InfluencerSchema",
   })
-  @Roles("INFLUENCER", "ADMIN")
+  @Roles("INFLUENCER", "BUSINESS", "ADMIN")
   @Patch("me")
   @HttpCode(HttpStatus.OK)
   @UsePipes(
@@ -220,7 +220,7 @@ export class InfluencersController {
       },
     },
   })
-  @Roles("INFLUENCER")
+  @Roles("INFLUENCER", "BUSINESS")
   @Patch("me/profile-picture")
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(FileInterceptor("image"))
@@ -246,7 +246,7 @@ export class InfluencersController {
       },
     },
   })
-  @Roles("INFLUENCER")
+  @Roles("INFLUENCER", "BUSINESS")
   @Patch("me/cover-photo")
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(FileInterceptor("image"))

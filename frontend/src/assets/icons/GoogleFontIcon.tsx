@@ -1,26 +1,26 @@
 interface GoogleFontIconProps {
   icon: string;
-  fill?: "outlined" | "filled" | "rounded";
+  variant?: "outlined" | "rounded" | "sharp";
+  filled?: boolean;
   size?: number;
   weight?: 100 | 500;
 }
 
 export const GoogleFontIcon = ({
   icon,
-  fill = "outlined",
+  variant = "outlined",
+  filled = false,
   size = 24,
   weight = 100,
 }: GoogleFontIconProps) => {
-  const fillValue = fill === "filled" || fill === "rounded" ? 1 : 0;
   return (
     <span
-      className={`material-symbols-${fill}`}
+      className={`material-symbols-${variant}`}
       style={{
         fontSize: `${size}px`,
         lineHeight: 1,
-        fontVariationSettings: `'FILL' ${fillValue}, 'wght' ${weight}, 'GRAD' 0, 'opsz' ${size}`,
+        fontVariationSettings: `'FILL' ${filled ? 1 : 0}, 'wght' ${weight}, 'GRAD' 0, 'opsz' ${size}`,
       }}
-      id={icon}
     >
       {icon}
     </span>
