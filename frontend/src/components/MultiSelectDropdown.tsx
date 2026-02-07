@@ -1,8 +1,13 @@
-import { Check, ChevronDown } from "lucide-react";
-import { Button } from "./ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { ChevronDown, Check } from "lucide-react";
 
-type MultiSelectDropdownProps = {
+export type MultiSelectDropdownProps = {
   open: boolean;
   onOpenChange: (v: boolean) => void;
   triggerLabel: string;
@@ -52,13 +57,11 @@ export default function MultiSelectDropdown({
                 onChange(toggle(opt));
               }}
             >
-              <span className="flex h-4 w-4 items-center justify-center rounded-[3px] border border-neutral-500 bg-transparent">
+              <span className="flex h-4 w-4 items-center justify-center rounded-[3px] border border-neutral-500">
                 {isSelected ? <Check className="h-3 w-3" /> : null}
               </span>
 
-              <span className="text-sm text-neutral-900">
-                {prettyLabel(opt)}
-              </span>
+              <span className="text-sm text-neutral-900">{prettyLabel(opt)}</span>
             </DropdownMenuItem>
           );
         })}
