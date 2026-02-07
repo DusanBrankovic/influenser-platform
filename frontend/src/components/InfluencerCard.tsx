@@ -40,15 +40,17 @@ export default function InfluencerCard({
       >
         <CardContent className="p-4">
           <div className="w-full overflow-hidden rounded-2xl flex items-center justify-center">
-            {influencer.profilePicture ? (
-                      <img
-                        src={influencer.profilePicture}
-                        className="h-full w-full object-cover"
-                        alt={`${influencer.name} avatar`}
-                      />
-                    ) : (
-                      <AvatarInitials name={influencer.name} size={240} />
-                    )}
+            <div className="h-[240px] w-[240px] overflow-hidden">
+              {influencer.profilePicture ? (
+                <img
+                  src={influencer.profilePicture}
+                  alt={`${influencer.name} avatar`}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <AvatarInitials name={influencer.name} size={240} />
+              )}
+            </div>
           </div>
 
           <div className="mt-3 flex flex-col items-start gap-3">
