@@ -39,7 +39,6 @@ enum Industry {
   PETS_ANIMALS
   AUTOMOTIVE_MOBILITY
   HOME_REAL_ESTATE
-  OTHER
 }
 
 enum Value {
@@ -73,7 +72,6 @@ enum Value {
   ACCESSIBILITY
   SUPPORTING_LOCAL_BRANDS
   EMPATHY
-  OTHER
 }
 
 enum PostAction {
