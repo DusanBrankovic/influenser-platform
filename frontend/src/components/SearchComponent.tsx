@@ -9,6 +9,7 @@ import {
 } from "./ui/dropdown-menu";
 import { ChevronDown, Search, X } from "lucide-react";
 import { IndustryLabels, ValueLabels } from "@/data/prettifyEnums";
+import MultiSelectDropdown from "./MultiSelectDropDown";
 
 type ExperienceOption = {
   label: string;
@@ -50,9 +51,9 @@ export default function SearchComponent({
     [],
   );
 
-  const [experience_range, setExperienceRange] = React.useState<number | undefined>(
-    undefined,
-  );
+  const [experience_range, setExperienceRange] = React.useState<
+    number | undefined
+  >(undefined);
 
   const [valuesOpen, setValuesOpen] = React.useState(false);
   const [industriesOpen, setIndustriesOpen] = React.useState(false);
@@ -64,12 +65,11 @@ export default function SearchComponent({
       value: next?.value ?? selectedValues,
       industry: next?.industry ?? selectedIndustries,
       experience_range:
-        "experience_range" in (next ?? {}) ? next?.experience_range : experience_range,
+        "experience_range" in (next ?? {})
+          ? next?.experience_range
+          : experience_range,
     });
   };
-
-  const toggleInArray = (arr: string[], value: string) =>
-    arr.includes(value) ? arr.filter((x) => x !== value) : [...arr, value];
 
   const valuesLabel =
     selectedValues.length === 0
@@ -102,7 +102,7 @@ export default function SearchComponent({
       <div className="mx-auto w-full rounded-2xl bg-neutral-300 p-4">
         <div className="relative flex w-full flex-col items-center justify-center sm:flex-row sm:items-center sm:gap-4">
           <Input
-            className="h-10 w-full sm:flex-[9] bg-white rounded-lg pr-10"
+            className="h-10 w-full rounded-lg bg-white pr-10 sm:flex-[9]"
             placeholder="Search by name..."
             value={name}
             onChange={(e) => {
@@ -132,7 +132,7 @@ export default function SearchComponent({
           <Button
             type="button"
             onClick={() => runSearch()}
-            className="h-10 w-full sm:flex-[1] rounded-lg px-4 flex items-center justify-center bg-neutral-500 hover:bg-gray-500"
+            className="flex h-10 w-full items-center justify-center rounded-lg bg-neutral-500 px-4 hover:bg-gray-500 sm:flex-[1]"
           >
             <Search className="h-4 w-4" />
           </Button>
@@ -140,107 +140,38 @@ export default function SearchComponent({
       </div>
 
       <div className="mt-4 flex flex-wrap justify-evenly gap-3">
-        {/* Values */}
-        <DropdownMenu open={valuesOpen} onOpenChange={setValuesOpen}>
-          <DropdownMenuTrigger asChild>
-            <Button
-              type="button"
-              variant="secondary"
-              className="min-w-[200px] justify-between rounded-lg px-4 bg-neutral-300"
-            >
-              <span className="ps-2">{valuesLabel}</span>
-              <ChevronDown className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
+        <MultiSelectDropdown
+          open={valuesOpen}
+          onOpenChange={setValuesOpen}
+          triggerLabel={valuesLabel}
+          options={valueEnumValues}
+          selected={selectedValues}
+          onChange={(next) => {
+            setSelectedValues(next);
+            runSearch({ value: next });
+          }}
+          prettyLabel={(opt) => ValueLabels[opt]}
+        />
 
-          <DropdownMenuContent className="w-[240px] max-h-64 overflow-y-auto">
-            {valueEnumValues.map((opt) => {
-              const isSelected = selectedValues.includes(opt);
+        <MultiSelectDropdown
+          open={industriesOpen}
+          onOpenChange={setIndustriesOpen}
+          triggerLabel={industriesLabel}
+          options={industryEnumValues}
+          selected={selectedIndustries}
+          onChange={(next) => {
+            setSelectedIndustries(next);
+            runSearch({ industry: next });
+          }}
+          prettyLabel={(opt) => IndustryLabels[opt]}
+        />
 
-              return (
-                <DropdownMenuItem
-                  key={opt}
-                  className="cursor-pointer flex items-center justify-between"
-                  onSelect={(e) => {
-                    e.preventDefault();
-                    const next = toggleInArray(selectedValues, opt);
-                    setSelectedValues(next);
-                    runSearch({ value: next });
-                  }}
-                >
-                  <span>{ValueLabels[opt]}</span>
-                  {isSelected ? <span className="text-xs">✓</span> : null}
-                </DropdownMenuItem>
-              );
-            })}
-
-            <DropdownMenuItem
-              className="cursor-pointer text-muted-foreground"
-              onSelect={(e) => {
-                e.preventDefault();
-                setSelectedValues([]);
-                runSearch({ value: [] });
-              }}
-            >
-              Clear selection
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-        {/* Industries */}
-        <DropdownMenu open={industriesOpen} onOpenChange={setIndustriesOpen}>
-          <DropdownMenuTrigger asChild>
-            <Button
-              type="button"
-              variant="secondary"
-              className="min-w-[200px] justify-between rounded-lg px-4 bg-neutral-300"
-            >
-              <span className="ps-2">{industriesLabel}</span>
-              <ChevronDown className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-
-          <DropdownMenuContent className="w-[240px] max-h-64 overflow-y-auto">
-            {industryEnumValues.map((opt) => {
-              const isSelected = selectedIndustries.includes(opt);
-
-              return (
-                <DropdownMenuItem
-                  key={opt}
-                  className="cursor-pointer flex items-center justify-between"
-                  onSelect={(e) => {
-                    e.preventDefault();
-                    const next = toggleInArray(selectedIndustries, opt);
-                    setSelectedIndustries(next);
-                    runSearch({ industry: next });
-                  }}
-                >
-                  <span>{IndustryLabels[opt]}</span>
-                  {isSelected ? <span className="text-xs">✓</span> : null}
-                </DropdownMenuItem>
-              );
-            })}
-
-            <DropdownMenuItem
-              className="cursor-pointer text-muted-foreground"
-              onSelect={(e) => {
-                e.preventDefault();
-                setSelectedIndustries([]);
-                runSearch({ industry: [] });
-              }}
-            >
-              Clear selection
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-        {/* Experience (single select, max only) */}
         <DropdownMenu open={experienceOpen} onOpenChange={setExperienceOpen}>
           <DropdownMenuTrigger asChild>
             <Button
               type="button"
               variant="secondary"
-              className="min-w-[200px] justify-between rounded-lg px-4 bg-neutral-300"
+              className="min-w-[200px] justify-between rounded-lg bg-neutral-300 px-4"
             >
               <span className="ps-2">{experienceLabel}</span>
               <ChevronDown className="h-4 w-4" />
@@ -254,7 +185,7 @@ export default function SearchComponent({
               return (
                 <DropdownMenuItem
                   key={opt.label}
-                  className="cursor-pointer flex items-center justify-between"
+                  className="flex cursor-pointer items-center justify-between"
                   onSelect={(e) => {
                     e.preventDefault();
                     setExperienceRange(opt.max);
