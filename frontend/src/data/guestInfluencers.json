@@ -7,8 +7,8 @@
     "isPrivate": false,
     "profileUrl": "https://instagram.com/sophiemtravels",
     "profileImage": "https://picsum.photos/200?1",
-    "industries": ["Travel", "Lifestyle", "Photography"],
-    "values": ["Authenticity", "Creativity", "Adventure"]
+    "industries": ["TRAVEL_HOSPITALITY", "LIFESTYLE", "ART_CREATIVITY"],
+    "values": ["AUTHENTICITY", "CREATIVITY"]
   },
   {
     "userId": 2,
@@ -18,8 +18,8 @@
     "isPrivate": false,
     "profileUrl": "https://youtube.com/@liamtech",
     "profileImage": "https://picsum.photos/200?2",
-    "industries": ["Technology", "Gadgets", "AI"],
-    "values": ["Innovation", "Education", "Honesty"]
+    "industries": ["TECH_DIGITAL", "ENTERTAINMENT_MEDIA"],
+    "values": ["INNOVATION", "EDUCATION", "HONESTY"]
   },
   {
     "userId": 3,
@@ -29,8 +29,8 @@
     "isPrivate": false,
     "profileUrl": "https://instagram.com/emmafitlife",
     "profileImage": "https://picsum.photos/200?3",
-    "industries": ["Fitness", "Health", "Nutrition"],
-    "values": ["Discipline", "Motivation", "Health"]
+    "industries": ["HEALTH_WELLNESS", "SPORTS", "EDUCATION_KNOWLEDGE"],
+    "values": ["COMMITMENT", "CONSISTENCY", "WORK_LIFE_BALANCE"]
   },
   {
     "userId": 4,
@@ -40,8 +40,8 @@
     "isPrivate": true,
     "profileUrl": null,
     "profileImage": null,
-    "industries": ["Gaming", "Streaming"],
-    "values": ["Fun", "Community"]
+    "industries": ["GAMING_ESPORTS"],
+    "values": ["COMMUNITY"]
   },
   {
     "userId": 5,
@@ -51,8 +51,8 @@
     "isPrivate": false,
     "profileUrl": "https://tiktok.com/@oliviastyle",
     "profileImage": "https://picsum.photos/200?5",
-    "industries": ["Fashion", "Beauty"],
-    "values": ["Elegance", "Confidence", "Self-expression"]
+    "industries": ["FASHION_STYLE", "BEAUTY_PERSONAL_CARE"],
+    "values": ["SELF_CONFIDENCE"]
   },
   {
     "userId": 6,
@@ -62,8 +62,8 @@
     "isPrivate": false,
     "profileUrl": "https://instagram.com/mateocooks",
     "profileImage": "https://picsum.photos/200?6",
-    "industries": ["Food", "Cooking", "Hospitality"],
-    "values": ["Taste", "Creativity", "Tradition"]
+    "industries": ["FOOD_DRINK", "TRAVEL_HOSPITALITY"],
+    "values": ["CREATIVITY", "QUALITY"]
   },
   {
     "userId": 7,
@@ -73,8 +73,8 @@
     "isPrivate": false,
     "profileUrl": "https://pinterest.com/avahome",
     "profileImage": "https://picsum.photos/200?7",
-    "industries": ["Home Decor", "Lifestyle"],
-    "values": ["Simplicity", "Calm", "Mindfulness"]
+    "industries": ["HOME_REAL_ESTATE", "LIFESTYLE"],
+    "values": ["WORK_LIFE_BALANCE", "MENTAL_HEALTH_BALANCE"]
   },
   {
     "userId": 8,
@@ -84,8 +84,8 @@
     "isPrivate": false,
     "profileUrl": "https://youtube.com/@ethanfinance",
     "profileImage": "https://picsum.photos/200?8",
-    "industries": ["Finance", "Education"],
-    "values": ["Transparency", "Knowledge", "Security"]
+    "industries": ["FINANCE_INVESTING", "EDUCATION_KNOWLEDGE", "BUSINESS_ENTREPRENEURSHIP"],
+    "values": ["TRANSPARENCY", "KNOWLEDGE_SHARING"]
   },
   {
     "userId": 9,
@@ -95,8 +95,8 @@
     "isPrivate": false,
     "profileUrl": "https://instagram.com/isabelladraws",
     "profileImage": "https://picsum.photos/200?9",
-    "industries": ["Art", "Design", "NFT"],
-    "values": ["Creativity", "Originality", "Passion"]
+    "industries": ["ART_CREATIVITY", "ENTERTAINMENT_MEDIA", "TECH_DIGITAL"],
+    "values": ["CREATIVITY"]
   },
   {
     "userId": 10,
@@ -106,7 +106,7 @@
     "isPrivate": false,
     "profileUrl": "https://linkedin.com/in/lucasmeyer",
     "profileImage": "https://picsum.photos/200?10",
-    "industries": ["Business", "Startups", "Marketing"],
-    "values": ["Leadership", "Growth", "Strategy"]
+    "industries": ["BUSINESS_ENTREPRENEURSHIP", "EDUCATION_KNOWLEDGE"],
+    "values": ["PERSONAL_GROWTH"]
   }
 ]

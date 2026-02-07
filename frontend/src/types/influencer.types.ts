@@ -20,8 +20,8 @@ export type UpdateInfluencerDto = {
 };
 
 export type SearchQueryParams = {
-    name?: string;
-    industry?: string;
-    value?: string;
+  name?: string;
+  value?: string[];
+  industry?: string[];
 };
 

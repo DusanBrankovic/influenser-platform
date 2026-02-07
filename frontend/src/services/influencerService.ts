@@ -9,25 +9,29 @@ function authHeaders(): Record<string, string> {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-export async function getAllInfluencers(params?: SearchQueryParams): Promise<Influencer[]> {
+export async function getAllInfluencers(
+  params?: SearchQueryParams,
+): Promise<Influencer[]> {
+  const qs = new URLSearchParams();
 
-    const qs = new URLSearchParams();
+  if (params?.name?.trim()) qs.set("name", params.name.trim());
 
-    if (params?.name) qs.set("name", params.name);
-    if (params?.value != null && params.value !== undefined) qs.set("value", String(params.value));
-    if (params?.industry != null && params.industry !== undefined) qs.set("industry", String(params.industry));
+  params?.value?.forEach((v) => qs.append("value", v));
+  params?.industry?.forEach((i) => qs.append("industry", i));
 
-    const url = `${apiUrl}/influencers${qs.toString() ? `?${qs.toString()}` : ""}`;
+  const url = `${apiUrl}/influencers${qs.toString() ? `?${qs.toString()}` : ""}`;
 
-    const res = await fetch(url, {
-        method: "GET",
-        headers: { 
-            "Content-Type": "application/json",
-            ...authHeaders(),
-        },
-    });
-    if (!res.ok) throw new Error("Failed to fetch influencers");
-    return res.json();
+  const res = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(),
+    },
+  });
+
+  if (!res.ok) throw new Error("Failed to fetch influencers");
+
+  return res.json();
 }
 
 export async function getLoggedInInfluencer(userId: number): Promise<Influencer> {
