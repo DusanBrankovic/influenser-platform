@@ -45,7 +45,7 @@ export default function MultiSelectDropdown({
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="w-[260px] max-h-72 overflow-y-auto rounded-md bg-neutral-200 p-2">
-        {options.map((opt) => {
+        {options.map((opt: string) => {
           const isSelected = selected.includes(opt);
 
           return (
@@ -61,7 +61,9 @@ export default function MultiSelectDropdown({
                 {isSelected ? <Check className="h-3 w-3" /> : null}
               </span>
 
-              <span className="text-sm text-neutral-900">{prettyLabel(opt)}</span>
+              <span className="text-sm text-neutral-900">
+                {prettyLabel(opt)}
+              </span>
             </DropdownMenuItem>
           );
         })}

@@ -9,7 +9,7 @@ import {
 } from "./ui/dropdown-menu";
 import { ChevronDown, Search, X } from "lucide-react";
 import { IndustryLabels, ValueLabels } from "@/data/prettifyEnums";
-import MultiSelectDropdown from "./MultiSelectDropDown";
+import MultiSelectDropdown from "./MultiSelectDropdown";
 
 type ExperienceOption = {
   label: string;
@@ -140,32 +140,35 @@ export default function SearchComponent({
       </div>
 
       <div className="mt-4 flex flex-wrap justify-evenly gap-3">
+        {/* Values */}
         <MultiSelectDropdown
           open={valuesOpen}
           onOpenChange={setValuesOpen}
           triggerLabel={valuesLabel}
           options={valueEnumValues}
           selected={selectedValues}
-          onChange={(next) => {
+          onChange={(next: string[]) => {
             setSelectedValues(next);
             runSearch({ value: next });
           }}
-          prettyLabel={(opt) => ValueLabels[opt]}
+          prettyLabel={(opt: string) => ValueLabels[opt]}
         />
 
+        {/* Industries */}
         <MultiSelectDropdown
           open={industriesOpen}
           onOpenChange={setIndustriesOpen}
           triggerLabel={industriesLabel}
           options={industryEnumValues}
           selected={selectedIndustries}
-          onChange={(next) => {
+          onChange={(next: string[]) => {
             setSelectedIndustries(next);
             runSearch({ industry: next });
           }}
-          prettyLabel={(opt) => IndustryLabels[opt]}
+          prettyLabel={(opt: string) => IndustryLabels[opt]}
         />
 
+        {/* Experience (single select, max only) */}
         <DropdownMenu open={experienceOpen} onOpenChange={setExperienceOpen}>
           <DropdownMenuTrigger asChild>
             <Button
@@ -179,7 +182,7 @@ export default function SearchComponent({
           </DropdownMenuTrigger>
 
           <DropdownMenuContent className="w-[240px] max-h-64 overflow-y-auto">
-            {EXPERIENCE_OPTIONS.slice(1).map((opt) => {
+            {EXPERIENCE_OPTIONS.slice(1).map((opt: ExperienceOption) => {
               const isSelected = experience_range === opt.max;
 
               return (
