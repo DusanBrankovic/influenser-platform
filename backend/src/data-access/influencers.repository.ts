@@ -136,6 +136,8 @@ export class InfluencersRepository {
         experience: true,
         industries: true,
         values: true,
+        profilePicture: true,
+        description: true,
       },
     });
   }

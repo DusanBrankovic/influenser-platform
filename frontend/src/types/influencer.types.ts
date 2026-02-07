@@ -6,7 +6,7 @@ export type Influencer = {
   experience: number | null;
   isPrivate: boolean;
   profileUrl: string | null;
-  profileImage: string | null;
+  profilePicture: string | null;
   industries: string[];
   values: string[];
 };

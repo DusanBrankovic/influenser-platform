@@ -6,8 +6,8 @@
     "description": "Travel & Lifestyle Content Creator",
     "experience": 5,
     "isPrivate": false,
-    "profileUrl": "https://instagram.com/sophiemtravels",
-    "profileImage": "https://picsum.photos/200?1",
+    "profileImage": "https://instagram.com/sophiemtravels",
+    "profilePicture": "https://picsum.photos/200?1",
     "industries": ["TRAVEL_HOSPITALITY", "LIFESTYLE", "ART_CREATIVITY"],
     "values": ["AUTHENTICITY", "CREATIVITY"]
   },
@@ -18,8 +18,8 @@
     "description": "Tech Reviewer & Gadget Enthusiast",
     "experience": 3,
     "isPrivate": false,
-    "profileUrl": "https://youtube.com/@liamtech",
-    "profileImage": "https://picsum.photos/200?2",
+    "profileImage": "https://youtube.com/@liamtech",
+    "profilePicture": "https://picsum.photos/200?2",
     "industries": ["TECH_DIGITAL", "ENTERTAINMENT_MEDIA"],
     "values": ["INNOVATION", "EDUCATION", "HONESTY"]
   },
@@ -30,8 +30,8 @@
     "description": "Fitness Coach & Wellness Advocate",
     "experience": 7,
     "isPrivate": false,
-    "profileUrl": "https://instagram.com/emmafitlife",
-    "profileImage": "https://picsum.photos/200?3",
+    "profileImage": "https://instagram.com/emmafitlife",
+    "profilePicture": "https://picsum.photos/200?3",
     "industries": ["HEALTH_WELLNESS", "SPORTS", "EDUCATION_KNOWLEDGE"],
     "values": ["COMMITMENT", "CONSISTENCY", "WORK_LIFE_BALANCE"]
   },
@@ -42,8 +42,8 @@
     "description": null,
     "experience": null,
     "isPrivate": true,
-    "profileUrl": null,
     "profileImage": null,
+    "profilePicture": null,
     "industries": ["GAMING_ESPORTS"],
     "values": ["COMMUNITY"]
   },
@@ -54,8 +54,8 @@
     "description": "Fashion Stylist & Trend Hunter",
     "experience": 4,
     "isPrivate": false,
-    "profileUrl": "https://tiktok.com/@oliviastyle",
-    "profileImage": "https://picsum.photos/200?5",
+    "profileImage": "https://tiktok.com/@oliviastyle",
+    "profilePicture": "https://picsum.photos/200?5",
     "industries": ["FASHION_STYLE", "BEAUTY_PERSONAL_CARE"],
     "values": ["SELF_CONFIDENCE"]
   },
@@ -66,8 +66,8 @@
     "description": "Food Blogger & Recipe Creator",
     "experience": 6,
     "isPrivate": false,
-    "profileUrl": "https://instagram.com/mateocooks",
-    "profileImage": "https://picsum.photos/200?6",
+    "profileImage": "https://instagram.com/mateocooks",
+    "profilePicture": "https://picsum.photos/200?6",
     "industries": ["FOOD_DRINK", "TRAVEL_HOSPITALITY"],
     "values": ["CREATIVITY", "QUALITY"]
   },
@@ -78,8 +78,8 @@
     "description": "Minimalist Living & Home Decor",
     "experience": 2,
     "isPrivate": false,
-    "profileUrl": "https://pinterest.com/avahome",
-    "profileImage": "https://picsum.photos/200?7",
+    "profileImage": "https://pinterest.com/avahome",
+    "profilePicture": "https://picsum.photos/200?7",
     "industries": ["HOME_REAL_ESTATE", "LIFESTYLE"],
     "values": ["WORK_LIFE_BALANCE", "MENTAL_HEALTH_BALANCE"]
   },
@@ -90,8 +90,8 @@
     "description": "Finance Tips & Investment Basics",
     "experience": 8,
     "isPrivate": false,
-    "profileUrl": "https://youtube.com/@ethanfinance",
-    "profileImage": "https://picsum.photos/200?8",
+    "profileImage": "https://youtube.com/@ethanfinance",
+    "profilePicture": "https://picsum.photos/200?8",
     "industries": ["FINANCE_INVESTING", "EDUCATION_KNOWLEDGE", "BUSINESS_ENTREPRENEURSHIP"],
     "values": ["TRANSPARENCY", "KNOWLEDGE_SHARING"]
   },
@@ -102,8 +102,8 @@
     "description": "Digital Artist & Illustrator",
     "experience": 5,
     "isPrivate": false,
-    "profileUrl": "https://instagram.com/isabelladraws",
-    "profileImage": "https://picsum.photos/200?9",
+    "profileImage": "https://instagram.com/isabelladraws",
+    "profilePicture": "https://picsum.photos/200?9",
     "industries": ["ART_CREATIVITY", "ENTERTAINMENT_MEDIA", "TECH_DIGITAL"],
     "values": ["CREATIVITY"]
   },
@@ -114,8 +114,8 @@
     "description": "Entrepreneurship & Startup Mentor",
     "experience": 10,
     "isPrivate": false,
-    "profileUrl": "https://linkedin.com/in/lucasmeyer",
-    "profileImage": "https://picsum.photos/200?10",
+    "profileImage": "https://linkedin.com/in/lucasmeyer",
+    "profilePicture": "https://picsum.photos/200?10",
     "industries": ["BUSINESS_ENTREPRENEURSHIP", "EDUCATION_KNOWLEDGE"],
     "values": ["PERSONAL_GROWTH"]
   }

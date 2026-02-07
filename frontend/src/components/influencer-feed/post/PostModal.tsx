@@ -36,7 +36,7 @@ export default function PostModal() {
       <div className="bg-white rounded-lg shadow-md w-1/3 h-[80%] p-10 flex flex-col">
         <UserHeader
           name={influencer.name}
-          profileUrl={influencer.profileUrl}
+          profileUrl={influencer.profilePicture || ''}
         />
         <PostContent />
         <PostFooter isEditMode={isPostEditMode} postId={selectedPostId || 0} />

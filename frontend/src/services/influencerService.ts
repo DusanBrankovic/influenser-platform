@@ -23,7 +23,7 @@ export async function getAllInfluencers(
     qs.set("experience_range", String(params.experience_range));
   }
 
-  const url = `${apiUrl}/influencers${qs.toString() ? `?${qs.toString()}` : ""}`;
+  const url = `${apiUrl}/influencers/or${qs.toString() ? `?${qs.toString()}` : ""}`;
 
   console.log("Fetching influencers with URL:", url);
 
@@ -96,6 +96,22 @@ export async function isLoggedInUserPublished(): Promise<boolean> {
     if (!res.ok) throw new Error("Failed to check profile publication status");
     return res.json();
 }
+
+export const updateProfilePicture = async (file: File) => {
+  const formData = new FormData();
+  formData.append("image", file);
+
+  const res = await fetch(`${apiUrl}/influencers/me/profile-picture`, {
+    method: "PATCH",
+    headers: {
+      ...authHeaders(),
+    },
+    body: formData,
+  });
+
+  if (!res.ok) throw new Error("Failed to update profile picture");
+  return res.json();
+};
 
 export async function deleteInfluencer(userId: number) {
     await fetch(`${apiUrl}/influencers/${userId}`, {

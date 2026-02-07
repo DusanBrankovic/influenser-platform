@@ -33,7 +33,7 @@ export default function PostCard({
   return (
     <div className="border border-primary rounded-lg p-6 mb-16 bg-white">
       <SinglePostModal
-        influencer={{...influencer, profileUrl: influencer.profileUrl || ''} }
+        influencer={{...influencer, profileUrl: influencer.profilePicture || ''} }
         comments={data ?? []}
         post={post}
         openedPost={openSinglePostModal}
@@ -74,7 +74,7 @@ export default function PostCard({
         <CommentsSection
           postId={post.id}
           comments={data ?? []}
-          influencer={{...influencer, profileUrl: influencer.profileUrl || ''} }
+          influencer={{...influencer, profileUrl: influencer.profilePicture || ''} }
         />
       )}
     </div>

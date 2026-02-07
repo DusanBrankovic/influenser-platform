@@ -59,8 +59,21 @@ export class InfluencersService {
     return this.influencersRepository.findAll(searchQuery);
   }
   
-  findAllOr(searchQuery: SearchQueryDto) {
-    return this.influencersRepository.findAllOr(searchQuery);
+  async findAllOr(searchQuery: SearchQueryDto) {
+    const influencers = await this.influencersRepository.findAllOr(searchQuery);
+
+    return Promise.all(
+      influencers.map(async (influencer) => {
+        if (influencer.profilePicture) {
+          influencer.profilePicture = await this.bucketService.getFile(
+            influencer.profilePicture,
+            60 * 60,
+          );
+        }
+
+        return influencer;
+      }),
+    );
   }
 
   async findOne(id: number, currentUser?: JwtPayload) {
@@ -72,8 +85,18 @@ export class InfluencersService {
     const influencer = await this.influencersRepository.findOne(id, onlyPublic);
 
     if (!influencer) {
-      throw new NotFoundException(`Influencer with ID ${id} not found or is private.`);
+      throw new NotFoundException(
+        `Influencer with ID ${id} not found or is private.`,
+      );
     }
+
+    if (influencer.profilePicture) {
+      influencer.profilePicture = await this.bucketService.getFile(
+        influencer.profilePicture,
+        60 * 60,
+      );
+    }
+
     return influencer;
   }
 
