@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 type EditProfilePopupValues = {
-  headline: string;
+  description: string;
   experience: string;
 };
 
@@ -36,7 +36,7 @@ export function EditBioAndExperiencePopUp({
   saving = false,
 }: EditBioAndExperiencePopUpProps) {
   const [description, setDescription] = React.useState(
-    initialValues?.headline ?? ""
+    initialValues?.description ?? ""
   );
   const [yearsOfExperience, setYearsOfExperience] = React.useState(
     initialValues?.experience ?? ""
@@ -44,9 +44,9 @@ export function EditBioAndExperiencePopUp({
 
   React.useEffect(() => {
     if (!open) return;
-    setDescription(initialValues?.headline ?? "");
+    setDescription(initialValues?.description ?? "");
     setYearsOfExperience(initialValues?.experience ?? "");
-  }, [open, initialValues?.headline, initialValues?.experience]);
+  }, [open, initialValues?.description, initialValues?.experience]);
 
   const handleClose = () => {
     onCancel?.();
@@ -55,7 +55,7 @@ export function EditBioAndExperiencePopUp({
 
   const handleSave = () => {
     onSave({
-      headline: description.trim(),
+      description: description.trim(),
       experience: yearsOfExperience.trim(),
     });
   };

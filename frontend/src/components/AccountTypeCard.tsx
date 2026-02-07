@@ -16,16 +16,30 @@ export const AccountTypeCard = ({
   fill = "outlined",
   onClick,
 }: AccountTypeCardProps) => {
+  const variant =
+    fill === "rounded"
+      ? "rounded"
+      : "outlined";
+
+  const filled = fill === "filled";
+
   return (
     <div
-      className="max-w-76 max-h-64 flex flex-col items-center justify-center cursor-pointer"
+      className="max-w-76 max-h-64 flex cursor-pointer flex-col items-center justify-center"
       onClick={onClick}
     >
-      <Card className="w-full flex flex-col items-center justify-center border-2 border-primary gap-1 bg-background cursor-pointer hover:shadow-2xl  transition-shadow duration-200 p-11">
-        <GoogleFontIcon icon={icon} fill={fill} size={50} weight={500} />
-        <div className="flex flex-col justify-center items-center gap-1">
-          <h2 className="text-2xl text-primary font-bold">{title}</h2>
-          <p className="text-sm px-3 text-primary font-normal text-center">
+      <Card className="flex w-full cursor-pointer flex-col items-center justify-center gap-1 border-2 border-primary bg-background p-11 transition-shadow duration-200 hover:shadow-2xl">
+        <GoogleFontIcon
+          icon={icon}
+          variant={variant}
+          filled={filled}
+          size={50}
+          weight={500}
+        />
+
+        <div className="flex flex-col items-center justify-center gap-1">
+          <h2 className="text-2xl font-bold text-primary">{title}</h2>
+          <p className="px-3 text-center text-sm font-normal text-primary">
             {description}
           </p>
         </div>

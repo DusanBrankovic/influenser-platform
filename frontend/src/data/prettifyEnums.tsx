@@ -28,8 +28,7 @@ export const ValueLabels: Record<string, string> = {
   PREMIUM_STANDARDS: "Premium standards",
   ACCESSIBILITY: "Accessibility",
   SUPPORTING_LOCAL_BRANDS: "Supporting local brands",
-  EMPATHY: "Empathy",
-  OTHER: "Other",
+  EMPATHY: "Empathy"
 };
 
 export const IndustryLabels: Record<string, string> = {
@@ -51,7 +50,6 @@ export const IndustryLabels: Record<string, string> = {
   SUSTAINABILITY_ETHICS: "Sustainability & Ethics",
   PETS_ANIMALS: "Pets & Animals",
   AUTOMOTIVE_MOBILITY: "Automotive & Mobility",
-  HOME_REAL_ESTATE: "Home & Real Estate",
-  OTHER: "Other",
+  HOME_REAL_ESTATE: "Home & Real Estate"
 };
 

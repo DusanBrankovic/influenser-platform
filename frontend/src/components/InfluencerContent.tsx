@@ -1,4 +1,4 @@
-import { useState } from "react";
+import * as React from "react";
 import InfluencerProfileFeed from "./influencer-feed/InfluencerProfileFeed";
 import type { Influencer } from "@/types/influencer.types";
 import SavedPostsFeed from "./infuencer-saved-posts/SavedPostsFeed";
@@ -7,7 +7,6 @@ import { ReviewFeed } from "./influencer-reviewa/ReviewFeed";
 
 type NavContent = {
   name: string;
-  selected: boolean;
   display: boolean;
 };
 
@@ -21,49 +20,50 @@ export default function InfluencerContent({
   isEditable,
 }: InfluencerContentProps) {
   const userId = getUserIdFromToken();
-  const [navContent, setNavContent] = useState<NavContent[]>([
-    { name: "Posts", selected: true, display: true },
-    { name: "Campaigns", selected: false, display: false },
-    {
-      name: "Saved Items",
-      selected: false,
-      display: influencer.userId === userId,
-    },
-    { name: "Reviews", selected: false, display: true },
-  ]);
 
-  const filteredNavContent = navContent.filter((item) => item.display);
+  const [selectedTab, setSelectedTab] = React.useState<string>("Posts");
 
-  if (filteredNavContent.length !== navContent.length) {
-    setNavContent(filteredNavContent);
-  }
+  const navContent: NavContent[] = React.useMemo(() => {
+    return [
+      { name: "Posts", display: true },
+      { name: "Campaigns", display: false },
+      { name: "Saved Items", display: Boolean(isEditable)},
+      { name: "Reviews", display: true },
+    ];
+  }, [influencer.userId, userId, isEditable]);
 
-  const isSelectedItem = (name: string) =>
-    navContent.find((item) => item.name === name)?.selected;
+  const filteredNavContent = React.useMemo(
+    () => navContent.filter((i) => i.display),
+    [navContent],
+  );
+
+  React.useEffect(() => {
+    const stillVisible = filteredNavContent.some((i) => i.name === selectedTab);
+    if (!stillVisible) setSelectedTab("Posts");
+  }, [filteredNavContent, selectedTab]);
+
+  const isSelectedItem = (name: string) => selectedTab === name;
 
   return (
     <div>
       <div className="flex justify-between items-center rounded-xl">
         <ContentNavBar
           navContent={filteredNavContent}
-          setNavContent={setNavContent}
+          selectedTab={selectedTab}
+          setSelectedTab={setSelectedTab}
         />
       </div>
 
       {isSelectedItem("Posts") && (
-        <InfluencerProfileFeed
-          influencer={influencer}
-          isEditable={isEditable}
-        />
+        <InfluencerProfileFeed influencer={influencer} isEditable={isEditable} />
       )}
 
       {isSelectedItem("Campaigns") && (
-        <InfluencerProfileFeed
-          influencer={influencer}
-          isEditable={isEditable}
-        />
+        <InfluencerProfileFeed influencer={influencer} isEditable={isEditable} />
       )}
+
       {isSelectedItem("Saved Items") && <SavedPostsFeed />}
+
       {isSelectedItem("Reviews") && <ReviewFeed influencer={influencer} />}
     </div>
   );
@@ -71,16 +71,14 @@ export default function InfluencerContent({
 
 function ContentNavBar({
   navContent,
-  setNavContent,
+  selectedTab,
+  setSelectedTab,
 }: {
-  navContent: NavContent[];
-  setNavContent: React.Dispatch<React.SetStateAction<NavContent[]>>;
+  navContent: { name: string; display: boolean }[];
+  selectedTab: string;
+  setSelectedTab: React.Dispatch<React.SetStateAction<string>>;
 }) {
-  const calculateBorderClasses = (
-    idx: number,
-    length: number,
-    selected: boolean,
-  ) => {
+  const calculateBorderClasses = (idx: number, length: number, selected: boolean) => {
     const isFirst = idx === 0;
     const isLast = idx === length - 1;
     const isMiddle = idx > 0 && idx < length - 1;
@@ -98,23 +96,18 @@ function ContentNavBar({
       .join(" ");
   };
 
-  const onSelect = (name: string) => {
-    setNavContent((prev) =>
-      prev.map((item) => ({
-        ...item,
-        selected: item.name === name,
-      })),
-    );
-  };
+  return navContent.map((item, idx) => {
+    const selected = item.name === selectedTab;
 
-  return navContent.map((item, idx) => (
-    <div
-      key={idx}
-      className={`bg-background w-full py-4 text-center cursor-pointer border-b border-primary hover:bg-white
-        ${calculateBorderClasses(idx, navContent.length, item.selected)}`}
-      onClick={() => onSelect(item.name)}
-    >
-      {item.name}
-    </div>
-  ));
+    return (
+      <div
+        key={item.name}
+        className={`bg-background w-full py-4 text-center cursor-pointer border-b border-primary hover:bg-white
+          ${calculateBorderClasses(idx, navContent.length, selected)}`}
+        onClick={() => setSelectedTab(item.name)}
+      >
+        {item.name}
+      </div>
+    );
+  });
 }

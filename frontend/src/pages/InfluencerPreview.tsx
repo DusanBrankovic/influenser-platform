@@ -67,7 +67,7 @@ export default function InfluencerPreview() {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">
                 <CardTitle className="text-xl sm:text-2xl">{influencer.name}</CardTitle>
-                <p className="text-sm text-black">@{influencer.userId}</p>
+                <p className="text-sm text-black">@{influencer.nametag}</p>
               </div>
 
               {/* <div className="flex flex-col items-start sm:items-end gap-2">
@@ -90,8 +90,8 @@ export default function InfluencerPreview() {
                 Bio
               </Label>
               <Textarea
-                value={influencer.headline ?? ""}
-                placeholder="Headline will appear here..."
+                value={influencer.description ?? ""}
+                placeholder="Description will appear here..."
                 disabled
                 className="min-h-23 resize-none rounded-xl bg-white/60 border border-black disabled:cursor-default disabled:opacity-100 p-5"
               />

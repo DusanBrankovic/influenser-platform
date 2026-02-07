@@ -100,7 +100,7 @@ export default function ProfilePage() {
                 <CardTitle className="text-xl sm:text-2xl">
                   {influencer.name}
                 </CardTitle>
-                <p className="text-sm text-black">@{influencer.userId}</p>
+                <p className="text-sm text-black">@{influencer.nametag}</p>
               </div>
               <CanAccess roles={["INFLUENCER"]}>
                 <div className="flex items-center gap-2 sm:gap-3 pr-2 sm:pr-5">
@@ -165,9 +165,9 @@ export default function ProfilePage() {
 
               <div className="relative">
                 <Textarea
-                  value={influencer.headline ?? ""}
+                  value={influencer.description ?? ""}
                   disabled
-                  placeholder="Headline will appear here..."
+                  placeholder="Description will appear here..."
                   className="min-h-23 resize-none rounded-xl border border-black bg-white/60 p-5 disabled:cursor-default disabled:opacity-100"
                 />
 
@@ -308,12 +308,12 @@ export default function ProfilePage() {
         open={editOpen}
         onOpenChange={setEditOpen}
         initialValues={{
-          headline: influencer.headline ?? "",
+          description: influencer.description ?? "",
           experience: String(influencer.experience ?? ""),
         }}
         onSave={async (vals) => {
           const updateInfluencerDto: UpdateInfluencerDto = {
-            headline: vals.headline,
+            description: vals.description,
             experience: Number(vals.experience),
           };
           await updateInfluencer(updateInfluencerDto);
