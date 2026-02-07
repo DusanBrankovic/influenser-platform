@@ -143,14 +143,14 @@ export default function ProfilePage() {
                         className="flex items-center gap-2 cursor-pointer rounded-lg text-black hover:bg-black/5"
                       >
                         <LogOut className="h-4 w-4" />
-                        <span>Izloguj se</span>
+                        <span>Log out</span>
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => setIsConfirmOpen(true)}
                         className="flex items-center gap-2 cursor-pointer rounded-lg text-red-600 focus:text-red-600 focus:bg-red-50"
                       >
                         <Trash2 className="h-4 w-4" />
-                        <span>Obriši profil</span>
+                        <span>Delete profile</span>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -329,7 +329,7 @@ export default function ProfilePage() {
         isOpen={isConfirmOpen}
         onClose={() => setIsConfirmOpen(false)}
         onConfirm={handleDeleteProfile}
-        text="Da li ste sigurni da želite da obrišete profil?"
+        text="Are you sure you want to delete your profile?"
       />
     </div>
   );
