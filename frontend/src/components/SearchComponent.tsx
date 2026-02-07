@@ -31,11 +31,11 @@ export default function SearchComponent({
   const [selectedValue, setSelectedValue] = React.useState<string | undefined>();
   const [selectedIndustry, setSelectedIndustry] = React.useState<string | undefined>();
 
-  const submitSearch = () => {
+  const submitSearch = (overrides: Partial<SearchParams> = {}) => {
     onSearch({
       name: name.trim(),
-      value: selectedValue,
-      industry: selectedIndustry,
+      value: ("value" in overrides) ? overrides.value : selectedValue,
+      industry: ("industry" in overrides) ? overrides.industry : selectedIndustry,
     });
   };
 
@@ -67,8 +67,7 @@ export default function SearchComponent({
           )}
 
           <Button
-            type="submit"
-            onClick={submitSearch}
+            type="button"
             className="h-10 w-full sm:flex-[1] rounded-lg px-4 flex items-center justify-center bg-neutral-500 hover:bg-gray-500"
           >
             <Search className="h-4 w-4" />
@@ -95,7 +94,11 @@ export default function SearchComponent({
                 <DropdownMenuItem
                   key={opt}
                   className="cursor-pointer"
-                  onSelect={() => setSelectedValue(opt)}
+                  onSelect={() => {
+                    setSelectedValue(opt)
+                    submitSearch({ value: opt });
+                    }
+                  }
                 >
                   {ValueLabels[opt]}
                 </DropdownMenuItem>
@@ -103,7 +106,11 @@ export default function SearchComponent({
 
               <DropdownMenuItem
                 className="cursor-pointer text-muted-foreground"
-                onSelect={() => setSelectedValue(undefined)}
+                onSelect={() => {
+                    setSelectedValue(undefined)
+                    submitSearch({ value: undefined });
+                    }
+                  }
               >
                 Clear selection
               </DropdownMenuItem>
@@ -131,7 +138,11 @@ export default function SearchComponent({
                 <DropdownMenuItem
                   key={opt}
                   className="cursor-pointer"
-                  onSelect={() => setSelectedIndustry(opt)}
+                  onSelect={() => {
+                    setSelectedIndustry(opt)
+                    submitSearch({ industry: opt });
+                    }
+                  }
                 >
                   {IndustryLabels[opt]}
                 </DropdownMenuItem>
@@ -139,7 +150,11 @@ export default function SearchComponent({
 
               <DropdownMenuItem
                 className="cursor-pointer text-muted-foreground"
-                onSelect={() => setSelectedIndustry(undefined)}
+                onSelect={() => {
+                    setSelectedIndustry(undefined)
+                    submitSearch({ industry: undefined });
+                    }
+                  }
               >
                 Clear selection
               </DropdownMenuItem>
