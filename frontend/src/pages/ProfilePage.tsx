@@ -1,32 +1,44 @@
-import AvatarInitials from "@/components/AvatarInitials";
+// ProfilePage.tsx
 import InfluencerContent from "@/components/InfluencerContent";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  togglePrivateProfile,
-  updateInfluencer,
-  deleteInfluencer,
-} from "@/services/influencerService";
-import { useRouteContext, useRouter } from "@tanstack/react-router";
-import { Globe, Mail, MapPin, Pencil, Phone, Share2, Settings, LogOut, Trash2 } from "lucide-react";
-import React from "react";
-import { EditBioAndExperiencePopUp } from "@/components/EditBioAndExperiencePopUp"; // adjust path
-import type { UpdateInfluencerDto } from "@/types/influencer.types";
-import { IndustryLabels, ValueLabels } from "@/data/prettifyEnums";
-import Spinner from "@/components/Spinner";
-import { CanAccess } from "@/auth/CanAccess";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { CanAccess } from "@/auth/CanAccess";
 import { getActions } from "@/auth/authStore";
 import ConfirmModal from "@/components/ConfirmModal";
+import { EditBioAndExperiencePopUp } from "@/components/EditBioAndExperiencePopUp";
+import Spinner from "@/components/Spinner";
+import { IndustryLabels, ValueLabels } from "@/data/prettifyEnums";
+import {
+  deleteInfluencer,
+  togglePrivateProfile,
+  updateInfluencer,
+  updateProfilePicture,
+} from "@/services/influencerService";
+import type { UpdateInfluencerDto } from "@/types/influencer.types";
+import { useRouteContext, useRouter } from "@tanstack/react-router";
+import {
+  Globe,
+  LogOut,
+  Mail,
+  MapPin,
+  Pencil,
+  Phone,
+  Settings,
+  Share2,
+  Trash2,
+} from "lucide-react";
+import React from "react";
+import ProfilePictureDialog from "@/components/ProfilePictureDialog";
 
 export default function ProfilePage() {
   const { influencer, isPublished } = useRouteContext({
@@ -34,13 +46,14 @@ export default function ProfilePage() {
   });
 
   const router = useRouter();
+  const { clearTokens, setIsUnregistered } = getActions();
 
   const [isToggled, setIsToggled] = React.useState<boolean>(() => !isPublished);
-
   const [editOpen, setEditOpen] = React.useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = React.useState(false);
 
-  const { clearTokens, setIsUnregistered } = getActions();
+  // ✅ profile image dialog
+  const [openUpload, setOpenUpload] = React.useState(false);
 
   const handleToggle = (checked: boolean) => {
     setIsToggled(checked);
@@ -77,22 +90,26 @@ export default function ProfilePage() {
           <Pencil className="h-5 w-5" />
         </Button>
 
-        <div className="absolute -bottom-20 left-6 z-20 h-20 w-20 sm:h-40 sm:w-40 rounded-full bg-white/80 p-2 shadow-sm">
-          <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-full">
-            {influencer.profileImage ? (
-              <img
-                src={influencer.profileImage}
-                className="h-full w-full object-cover"
-                alt={`${influencer.name} profile`}
-              />
-            ) : (
-              <AvatarInitials name={influencer.name} size={145} />
-            )}
-          </div>
-        </div>
+        <ProfilePictureDialog
+          name={influencer.name}
+          profilePicture={influencer.profilePicture}
+          open={openUpload}
+          onOpenChange={setOpenUpload}
+          onUpload={async (file) => {
+            await updateProfilePicture(file);
+
+            await router.invalidate({
+              filter: (match) => match.routeId === "/_private/profile",
+            });
+          }}
+          onDelete={() => {
+            console.log("delete image");
+            // TODO: call delete image service here + refresh route data
+          }}
+        />
       </div>
 
-      <div className="px-4 pb-10 pt-20 sm:px-8">
+      <div className="px-4 pb-10 pt-24 sm:px-8">
         <Card className="mx-auto max-w-5xl rounded-2xl border-none">
           <CardHeader className="py-3 ps-15">
             <div className="flex flex-row justify-between gap-3">
@@ -104,7 +121,6 @@ export default function ProfilePage() {
               </div>
               <CanAccess roles={["INFLUENCER"]}>
                 <div className="flex items-center gap-2 sm:gap-3 pr-2 sm:pr-5">
-                  
                   <div className="relative flex h-8 w-44 sm:w-50 items-center rounded-full bg-neutral-800 p-1">
                     <div
                       className={`absolute top-1 bottom-1 w-[48%] rounded-full bg-neutral-500 transition-all duration-300 ${isToggled ? "left-1" : "left-1/2"
@@ -125,7 +141,6 @@ export default function ProfilePage() {
                       Unpublish
                     </button>
                   </div>
-                  
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
@@ -143,14 +158,14 @@ export default function ProfilePage() {
                         className="flex items-center gap-2 cursor-pointer rounded-lg text-black hover:bg-black/5"
                       >
                         <LogOut className="h-4 w-4" />
-                        <span>Izloguj se</span>
+                        <span>Log out</span>
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => setIsConfirmOpen(true)}
                         className="flex items-center gap-2 cursor-pointer rounded-lg text-red-600 focus:text-red-600 focus:bg-red-50"
                       >
                         <Trash2 className="h-4 w-4" />
-                        <span>Obriši profil</span>
+                        <span>Delete profile</span>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -162,7 +177,6 @@ export default function ProfilePage() {
           <CardContent>
             <div className="flex flex-col gap-2">
               <Label className="ps-5 font-semibold text-black">Bio</Label>
-
               <div className="relative">
                 <Textarea
                   value={influencer.description ?? ""}
@@ -170,7 +184,6 @@ export default function ProfilePage() {
                   placeholder="Description will appear here..."
                   className="min-h-23 resize-none rounded-xl border border-black bg-white/60 p-5 disabled:cursor-default disabled:opacity-100"
                 />
-
                 <Button
                   size="icon"
                   variant="ghost"
@@ -260,27 +273,27 @@ export default function ProfilePage() {
             <div className="mt-6 flex flex-col gap-2 pb-5">
               <Label className="ps-5 font-semibold text-black">Contact</Label>
 
-              <div className="relative flex flex-col gap-3 rounded-xl border border-black p-5 pb-5">
+              <div className="relative flex flex-col gap-3 rounded-xl border border-black p-5">
                 <div className="grid gap-4 md:grid-cols-2 text-sm">
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
-                      <Phone className="h-4 w-4 text-black/70" />
+                      <Phone className="h-4 w-4" />
                       <span>Placeholder</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Mail className="h-4 w-4 text-black/70" />
+                      <Mail className="h-4 w-4" />
                       <span>Placeholder</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Globe className="h-4 w-4 text-black/70" />
+                      <Globe className="h-4 w-4" />
                       <span>Placeholder</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-black/70" />
+                      <MapPin className="h-4 w-4" />
                       <span>Placeholder</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Share2 className="h-4 w-4 text-black/70" />
+                      <Share2 className="h-4 w-4" />
                       <span>Placeholder</span>
                     </div>
                   </div>
@@ -296,7 +309,7 @@ export default function ProfilePage() {
               </div>
             </div>
             <CanAccess roles={["INFLUENCER"]}>
-              <CardContent className="rounded-xl border border-black bg-white p-0 mb-20">
+              <CardContent className="mb-20 rounded-xl border border-black bg-white p-0">
                 <InfluencerContent influencer={influencer} isEditable />
               </CardContent>
             </CanAccess>
@@ -329,7 +342,7 @@ export default function ProfilePage() {
         isOpen={isConfirmOpen}
         onClose={() => setIsConfirmOpen(false)}
         onConfirm={handleDeleteProfile}
-        text="Da li ste sigurni da želite da obrišete profil?"
+        text="Are you sure you want to delete your profile?"
       />
     </div>
   );

@@ -48,9 +48,9 @@ export default function InfluencerPreview() {
       <div className="relative h-44 bg-[#9B9B9B]">
         <div className="absolute -bottom-20 left-6 z-20 h-20 w-20 sm:h-40 sm:w-40 rounded-full bg-white/80 p-2 shadow-sm">
           <div className="h-full w-full overflow-hidden rounded-full flex items-center justify-center">
-            {influencer.profileImage ? (
+            {influencer.profilePicture ? (
               <img
-                src={influencer.profileImage}
+                src={influencer.profilePicture}
                 className="h-full w-full object-cover"
               />
             ) : (

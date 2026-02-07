@@ -77,7 +77,7 @@ export default function PostHeader({
 
       <UserHeader
         name={influencer?.name || ""}
-        profileUrl={influencer?.profileImage || null}
+        profileUrl={influencer?.profilePicture || null}
         textBelowName={transformToFormat(post.createdAt)}
       />
 

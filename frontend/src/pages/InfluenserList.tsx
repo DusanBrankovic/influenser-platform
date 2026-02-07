@@ -60,7 +60,7 @@ export default function InfluenserList({
       </div>
 
         {loading && (
-          <div className="text-sm text-muted-foreground">Učitavanje...</div>
+          <div className="text-sm text-muted-foreground">Loading...</div>
         )}
       </div>
     </div>

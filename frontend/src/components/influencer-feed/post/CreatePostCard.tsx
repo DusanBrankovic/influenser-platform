@@ -28,7 +28,7 @@ export default function CreatePostCard() {
     >
       <UserHeader
         name={influencer.name}
-        profileUrl={influencer.profileImage}
+        profileUrl={influencer.profilePicture || ''}
         displayName={false}
       />
 
